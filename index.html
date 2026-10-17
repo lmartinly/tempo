@@ -732,7 +732,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.34.0';
+const APP_VERSION = '1.34.1';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -1644,7 +1644,7 @@ function vialConsumption() {
   const remaining = {};
   vials.forEach(v => remaining[v.id] = +v.totalMg || 0);
   let unaccountedMg = 0;
-  const vialDay = {};
+  const vialDay = {}, firstDraw = {};
   vials.forEach(v => vialDay[v.id] = dateKey(v.addedDate));
   injectionsSorted(false).forEach(i => {
     const ik = dateKey(i.dateTime); /* compared by calendar day: a vial added on the 20th covers a morning shot on the 20th too */
@@ -1655,11 +1655,12 @@ function vialConsumption() {
       if (remaining[v.id] <= 0) continue;
       const take = Math.min(remaining[v.id], need);
       remaining[v.id] -= take; need -= take;
+      if (take > 0 && !firstDraw[v.id]) firstDraw[v.id] = i.dateTime;
     }
     if (need > 0) unaccountedMg += need;
   });
   return {
-    vials: vials.map(v => Object.assign({}, v, { mgLeft: Math.round(Math.max(0, remaining[v.id]) * 100) / 100 })),
+    vials: vials.map(v => Object.assign({}, v, { mgLeft: Math.round(Math.max(0, remaining[v.id]) * 100) / 100, firstDrawAt: firstDraw[v.id] || null })),
     unaccountedMg: Math.round(unaccountedMg * 100) / 100
   };
 }
@@ -1719,15 +1720,33 @@ function suggestPlanLinks() {
     return match ? { plan: p, injection: match } : null;
   }).filter(Boolean);
 }
-/* actual spend logged within [startDate, endDate) — a vial's cost only counts if the vial was
-   explicitly marked to count, so vial costs never silently double up with a separately-logged expense */
+/* Which dose period does a cost belong to?
+   - an explicit choice on the item (periodStart = that period's start day) always wins;
+   - a vial's cost goes to the period where it is first used (you buy for the NEXT dose, before its first shot);
+   - everything else goes by calendar day, and anything dated before the very first shot belongs to the first period.
+   A vial's cost only counts if it was explicitly marked to count, so it never silently doubles an expense. */
+function costAttribution() {
+  const periods = dosePeriods();
+  const per = periods.map(() => ({ spends: [], vials: [] }));
+  if (!periods.length) return { periods, per };
+  const starts = periods.map(p => dateKey(p.startDate));
+  const byDay = t => { const k = dateKey(t); let idx = 0; starts.forEach((sk, i) => { if (sk <= k) idx = i; }); return idx; };
+  const byChoice = item => item.periodStart ? starts.indexOf(item.periodStart) : -1;
+  Store.state.spends.forEach(sp => { let i = byChoice(sp); if (i < 0) i = byDay(sp.date); per[i].spends.push(sp); });
+  const firstDraw = {};
+  vialConsumption().vials.forEach(v => { firstDraw[v.id] = v.firstDrawAt; });
+  Store.state.vials.filter(v => v.countsTowardPlan && v.costAmount != null).forEach(v => {
+    let i = byChoice(v); if (i < 0) i = byDay(firstDraw[v.id] || v.addedDate); per[i].vials.push(v);
+  });
+  return { periods, per };
+}
 function spendForPeriod(startDate, endDate) {
-  const startT = new Date(startDate).getTime(), endT = endDate ? new Date(endDate).getTime() : Infinity;
-  const spends = Store.state.spends.filter(s => { const t = new Date(s.date).getTime(); return t >= startT && t < endT; });
-  const spendTotal = spends.reduce((a, s) => a + (+s.amount || 0), 0);
-  const countedVials = Store.state.vials.filter(v => v.countsTowardPlan && v.costAmount != null && (() => { const t = new Date(v.addedDate).getTime(); return t >= startT && t < endT; })());
-  const vialTotal = countedVials.reduce((a, v) => a + (+v.costAmount || 0), 0);
-  return { spendTotal, vialTotal, actual: spendTotal + vialTotal, n: spends.length, vialN: countedVials.length };
+  const { periods, per } = costAttribution();
+  const idx = periods.findIndex(p => dateKey(p.startDate) === dateKey(startDate));
+  const x = idx >= 0 ? per[idx] : { spends: [], vials: [] };
+  const spendTotal = x.spends.reduce((a, sp) => a + (+sp.amount || 0), 0);
+  const vialTotal = x.vials.reduce((a, v) => a + (+v.costAmount || 0), 0);
+  return { spendTotal, vialTotal, actual: spendTotal + vialTotal, n: x.spends.length, vialN: x.vials.length };
 }
 /* spend, by dose period and by dose level — tracked only as what was actually spent (no separate
    "planned budget" concept: amounts are logged once bought, so there's nothing to plan against) */
@@ -3470,6 +3489,16 @@ function openDosePlanSheet(existing) {
     }
   });
 }
+
+/* "Counts toward" picker shared by the expense and vial sheets */
+function periodChoiceHtml(id, current) {
+  const ps = dosePeriods();
+  if (!ps.length) return '';
+  return '<div class="f-label">Counts toward <span style="font-weight:400;color:var(--faint)">(dose period)</span></div>' +
+    '<select class="field" id="' + id + '"><option value="">Automatic</option>' +
+    ps.map(p => '<option value="' + dateKey(p.startDate) + '"' + (current === dateKey(p.startDate) ? ' selected' : '') + '>' + fmtMg(+p.doseMg) + ' mg · from ' + esc(fmtDate(p.startDate)) + (p.ongoing ? ' (current)' : '') + '</option>').join('') + '</select>' +
+    '<div class="f-hint">Automatic puts an expense in the period of its date, and a vial in the period where you first use it. Pick a period here to override — e.g. a purchase made before a new dose started.</div>';
+}
 function openVialSheet(existing) {
   let countsTowardPlan = existing ? !!existing.countsTowardPlan : false;
   Sheet.open({
@@ -3483,6 +3512,7 @@ function openVialSheet(existing) {
       '<div class="f-hint">Off by default — turn this on only if you haven’t already logged this vial’s cost as a separate expense, so it doesn’t get counted twice.</div>' +
       '<div class="f-label">Date added</div>' +
       '<input class="field" type="date" id="vial-date" value="' + (existing ? dateKey(existing.addedDate) : dateKey(new Date())) + '">' +
+      periodChoiceHtml('vial-period', existing && existing.periodStart) +
       '<div class="sheet-actions">' +
       (existing ? '<button class="btn btn-danger" id="vial-del">' + ic('trash', 17) + '</button>' : '') +
       '<button class="btn btn-primary" id="vial-save" style="flex:1">' + (existing ? 'Save changes' : 'Add vial') + '</button></div>',
@@ -3499,7 +3529,7 @@ function openVialSheet(existing) {
           const dup = Store.state.spends.find(sp => Math.abs((+sp.amount || 0) - cost) < 0.005);
           if (dup && !(await confirmDlg('Already logged as an expense', Store.state.settings.currency + fmtMoney(dup.amount) + ' on ' + fmtDate(dup.date) + ' is already in your expenses. Counting this vial too would double it.', 'Count it anyway', true))) return;
         }
-        Actions.saveVial({ id: existing ? existing.id : null, totalMg, costAmount: cost, countsTowardPlan, addedDate: d + 'T12:00:00' });
+        Actions.saveVial({ id: existing ? existing.id : null, totalMg, costAmount: cost, countsTowardPlan, addedDate: d + 'T12:00:00', periodStart: ($('#vial-period', el) && $('#vial-period', el).value) || null });
         close(); toast(existing ? 'Vial updated' : 'Vial added');
       });
       if (existing) $('#vial-del', el).addEventListener('click', async () => {
@@ -3518,6 +3548,7 @@ function openSpendSheet(existing) {
       '<input class="field" type="date" id="sp-date" value="' + (existing ? dateKey(existing.date) : dateKey(new Date())) + '">' +
       '<div class="f-label">Note <span style="font-weight:400;color:var(--faint)">(optional)</span></div>' +
       '<input class="field" id="sp-note" value="' + esc(existing && existing.note || '') + '">' +
+      periodChoiceHtml('sp-period', existing && existing.periodStart) +
       '<div class="sheet-actions">' +
       (existing ? '<button class="btn btn-danger" id="sp-del">' + ic('trash', 17) + '</button>' : '') +
       '<button class="btn btn-primary" id="sp-save" style="flex:1">' + (existing ? 'Save changes' : 'Log expense') + '</button></div>',
@@ -3526,7 +3557,7 @@ function openSpendSheet(existing) {
         const amt = parseNum($('#sp-amt', el).value);
         if (!amt || amt <= 0) return toast('Enter an amount');
         const d = $('#sp-date', el).value; if (!d) return toast('Set a date');
-        Actions.saveSpend({ id: existing ? existing.id : null, amount: amt, date: d + 'T12:00:00', note: $('#sp-note', el).value.trim() });
+        Actions.saveSpend({ id: existing ? existing.id : null, amount: amt, date: d + 'T12:00:00', note: $('#sp-note', el).value.trim(), periodStart: ($('#sp-period', el) && $('#sp-period', el).value) || null });
         close(); toast(existing ? 'Updated' : 'Logged');
       });
       if (existing) $('#sp-del', el).addEventListener('click', async () => {
