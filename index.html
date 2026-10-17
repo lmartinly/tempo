@@ -732,7 +732,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.34.1';
+const APP_VERSION = '1.34.2';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -3382,6 +3382,35 @@ function openCheckInSheet(existingOrDateKey) {
     }
   });
 }
+
+/* -------- Check-ins page: add or fix any recent day (reached from Settings) -------- */
+function openCheckInsPage() {
+  let days = 14;
+  Pages.push({
+    title: 'Check-ins',
+    render(body) {
+      const S = Store.state, now = new Date();
+      let h = '<div class="footnote" style="margin:0 0 12px">Tap a day to add or fix its check-in — for a day you missed, or one you dismissed by mistake.</div><div class="list">';
+      for (let i = 0; i < days; i++) {
+        const d = new Date(now); d.setDate(d.getDate() - i);
+        const k = dateKey(d);
+        const c = S.checkIns.find(x => x.dateKey === k);
+        let status;
+        if (!c) status = 'Not logged';
+        else if (c.nothingToReport && !checkInHasData(c)) status = 'Nothing to report';
+        else status = [c.appetite != null ? 'Appetite ' + c.appetite + '/5' : null, c.energy != null ? 'Energy ' + c.energy + '/5' : null, c.proteinG != null ? Math.round(c.proteinG) + ' g protein' : null, (c.gi && c.gi.length) ? c.gi.join(', ') : null].filter(Boolean).join(' · ') || 'Logged';
+        const label = (i === 0 ? 'Today · ' : i === 1 ? 'Yesterday · ' : '') + fmtDate(k + 'T12:00:00');
+        h += '<div class="row"><button class="rmain" style="text-align:left;background:none;border:0;padding:0" data-act="ci-day" data-k="' + k + '"><div class="rtitle">' + esc(label) + '</div>' +
+          '<div class="rsub"' + (c ? '' : ' style="color:var(--coral-deep)"') + '>' + esc(status) + '</div></button>' +
+          (c ? '<span class="chev-ico">' + ic('chevR', 15) + '</span>' : '<button class="btn btn-tonal btn-sm" style="flex:none" data-act="ci-nothing-day" data-k="' + k + '">Nothing to report</button>') + '</div>';
+      }
+      h += '</div><button class="btn btn-tonal" style="width:100%;margin-top:12px" data-act="ci-more">Show earlier days</button>' +
+        '<button class="btn btn-ghost" style="width:100%;margin-top:8px" data-act="add-checkin">Pick any other date…</button>';
+      body.innerHTML = h;
+    }
+  });
+  openCheckInsPage.page = { more() { days += 14; } };
+}
 function checkInHasData(c) {
   if (!c) return false;
   return !!(c.appetite != null || (c.gi && c.gi.length) || c.energy != null || c.sleepHours != null || c.proteinG != null || c.kcal != null || (c.note && c.note.trim()));
@@ -4564,6 +4593,8 @@ function openSettingsPage() {
         '<div class="f-hint">Sets the plan line on the Goal Path card. Changing your goal weight later won’t silently rewrite past progress — the pace is measured from when you set this date.</div>' +
         '<button class="btn btn-primary btn-sm" style="margin-top:12px" data-act="save-goals">Save</button></div>';
       /* checklist */
+      h += '<div class="sec-label">Check-ins</div><div class="card"><button class="btn btn-tonal" style="width:100%" data-act="open-checkins">' + ic('plus', 16) + ' Add or fix a check-in…</button>' +
+        '<div class="f-hint">Missed a day, or dismissed one by mistake? Add or correct any recent day here.</div></div>';
       h += '<div class="sec-label">Shot day checklist</div><div class="card">' +
         '<textarea class="field" id="set-checklist" rows="5" style="margin-top:0">' + esc(set.checklistItems.join('\n')) + '</textarea>' +
         '<div class="f-hint">One item per line. Resets automatically every shot day.</div>' +
@@ -5139,6 +5170,15 @@ const Handlers = {
   'add-symptom': () => openSymptomSheet(null),
   'add-measurement': () => openMeasurementSheet(null),
   'add-checkin': () => openCheckInSheet(),
+  'open-checkins': () => openCheckInsPage(),
+  'ci-day': el => openCheckInSheet(el.dataset.k),
+  'ci-more': () => { if (openCheckInsPage.page) openCheckInsPage.page.more(); Pages.render(); },
+  'ci-nothing-day': el => {
+    const k = el.dataset.k, ex = Store.state.checkIns.find(c => c.dateKey === k);
+    if (checkInHasData(ex)) { toast('That day already has details — tap it to edit.'); return; }
+    Actions.saveCheckIn({ id: ex ? ex.id : null, dateKey: k, nothingToReport: true, appetite: null, gi: [], energy: null, sleepHours: null, proteinG: null, kcal: null, note: '' });
+    toast('Noted 🌿');
+  },
   'checkin-nothing': () => logNothingToReportToday(),
   'add-cycle': () => openCycleSheet(),
   'add-doseplan': () => openDosePlanSheet(),
