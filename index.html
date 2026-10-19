@@ -442,6 +442,9 @@ html[data-theme="sunset"]{
 .st-pink{background:linear-gradient(160deg,var(--pink-soft),var(--surface));color:var(--pink-deep)}
 
 /* ---------- Journey Bingo ---------- */
+.bingo-tabs{display:flex;gap:6px;background:var(--surface2);padding:4px;border-radius:14px;margin-bottom:12px}
+.bingo-tab{flex:1;padding:8px 6px;border-radius:11px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.bingo-tab.on{background:var(--surface);color:var(--coral-deep);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .bingo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .bsq{aspect-ratio:1/1;border-radius:16px;background:var(--surface2);border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px;text-align:center;position:relative;transition:transform .15s var(--ease)}
 .bsq:active{transform:scale(.95)}
@@ -732,7 +735,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.34.2';
+const APP_VERSION = '1.34.4';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -802,7 +805,7 @@ const Store = {
       meta: {
         createdAt: new Date().toISOString(), quarantineKey: null, feelGoodKey: null,
         photoPromptHandled: false, dismissedFlags: {}, measurementReminderSnoozeUntil: null, premigrateOfferDismissedAt: null,
-        lastBackupAt: null, backupNudgeSnoozeUntil: null, bingoSeen: null, achSeen: null, weekWrappedSeen: null
+        lastBackupAt: null, backupNudgeSnoozeUntil: null, bingoSeen: null, bingoSeen2: null, bingo2Init: false, achSeen: null, weekWrappedSeen: null
       }
     };
   },
@@ -3892,7 +3895,13 @@ function maxWeekStreak(injections) {
   weeks.forEach(w => { run = (prev != null && w - prev === 1) ? run + 1 : 1; prev = w; if (run > best) best = run; });
   return best;
 }
-function bingoSquares() {
+function maxWeekStreakKeys(keys) {
+  const weeks = [...new Set(keys.map(k => weekIndex(new Date(k + 'T12:00:00'))))].sort((a, b) => a - b);
+  let best = 0, run = 0, prev = null;
+  weeks.forEach(w => { run = (prev != null && w - prev === 1) ? run + 1 : 1; prev = w; if (run > best) best = run; });
+  return best;
+}
+function bingoSquares1() {
   const S = Store.state;
   const injs = injectionsSorted(false);
   const daily = dailyWeightSeries();
@@ -3900,7 +3909,7 @@ function bingoSquares() {
   const loss = (sw != null && daily.length) ? sw - daily[daily.length - 1].kg : 0;
   const ci = S.checkIns;
   const ciStreak = maxDayStreak(ci.map(c => c.dateKey));
-  const wStreak = maxDayStreak(daily.map(d => d.k));
+  const wWeeks = maxWeekStreakKeys(daily.map(d => d.k));
   const wkStreak = maxWeekStreak(injs);
   const target = +S.settings.proteinTarget || 0;
   const proteinHit = target > 0 && ci.some(c => c.proteinG != null && +c.proteinG >= target);
@@ -3915,7 +3924,7 @@ function bingoSquares() {
     { id: 'kg-1', e: '🌱', t: '1 kg down', how: 'Be 1 kg below your starting weight.', done: loss >= 1, prog: kgOf(1) },
     { id: 'ci-7', e: '📅', t: '7-day check-in streak', how: 'Log the daily check-in 7 days in a row.', done: ciStreak >= 7, prog: 'best streak ' + of(ciStreak, 7, 'days') },
     { id: 'wk-4', e: '🔥', t: '4 weeks in a row', how: 'Inject in 4 consecutive calendar weeks.', done: wkStreak >= 4, prog: 'best streak ' + of(wkStreak, 4, 'weeks') },
-    { id: 'w-7', e: '⚖️', t: '7-day weigh-in streak', how: 'Weigh in 7 days in a row.', done: wStreak >= 7, prog: 'best streak ' + of(wStreak, 7, 'days') },
+    { id: 'w-wk4', e: '⚖️', t: 'Weighed in 4 weeks running', how: 'Weigh in at least once in 4 consecutive calendar weeks — no need to step on the scale every day.', done: wWeeks >= 4, prog: 'best run ' + of(wWeeks, 4, 'weeks') },
     { id: 'dose-up', e: '📈', t: 'Dose stepped up', how: 'Move to a different dose (a 2nd dose period).', done: periodsN >= 2, prog: of(periodsN, 2, 'dose periods') },
     { id: 'ci-30', e: '📝', t: '30 check-ins', how: 'Log 30 daily check-ins in total.', done: ci.length >= 30, prog: of(ci.length, 30) },
     { id: 'backup', e: '🛟', t: 'Backup made', how: 'Export a backup from Settings.', done: !!S.meta.lastBackupAt, prog: S.meta.lastBackupAt ? 'done' : 'not yet' },
@@ -3929,6 +3938,64 @@ function bingoSquares() {
     { id: 'kg-10', e: '🌳', t: '10 kg down', how: 'Be 10 kg below your starting weight.', done: loss >= 10, prog: kgOf(10) }
   ];
 }
+/* Card 2 — "Next chapter": unlocks once Card 1 is mostly filled. Every square is derived from logs. */
+function bingoSquares2() {
+  const S = Store.state;
+  const injs = injectionsSorted(false);
+  const daily = dailyWeightSeries();
+  const sw = startWeight();
+  const cur = daily.length ? daily[daily.length - 1].kg : null;
+  const loss = (sw != null && cur != null) ? sw - cur : 0;
+  const goal = +S.settings.goalKg || 0;
+  const span = (sw != null && goal > 0 && sw > goal) ? sw - goal : 0;
+  const ci = S.checkIns;
+  const target = +S.settings.proteinTarget || 0;
+  const hitKeys = target > 0 ? ci.filter(c => c.proteinG != null && +c.proteinG >= target).map(c => c.dateKey) : [];
+  const hitDays = new Set(hitKeys).size;
+  const hitStreak = maxDayStreak(hitKeys);
+  const sleepDays = new Set(ci.filter(c => c.sleepHours != null).map(c => c.dateKey)).size;
+  const wDays = daily.length;
+  const wWeeks = maxWeekStreakKeys(daily.map(d => d.k));
+  const wkStreak = maxWeekStreak(injs);
+  const maxMg = injs.reduce((m, i) => Math.max(m, +i.doseMg || 0), 0);
+  const ms = S.measurements.slice().sort((a, b) => a.dateTime < b.dateTime ? -1 : 1);
+  const waists = ms.filter(m => m.waist != null);
+  const waistDrop = waists.length >= 2 ? waists[0].waist - waists[waists.length - 1].waist : 0;
+  const gapMax = ((+S.settings.measurementIntervalDays) || 14) + 3;
+  let onTime = 0, run = 0;
+  ms.forEach((m, i) => {
+    const gap = i ? (new Date(m.dateTime) - new Date(ms[i - 1].dateTime)) / DAY : null;
+    run = (gap != null && gap <= gapMax) ? run + 1 : 1;
+    if (run > onTime) onTime = run;
+  });
+  const first = injs[0];
+  const daysIn = first ? Math.floor((Date.now() - new Date(first.dateTime).getTime()) / DAY) : 0;
+  const of = (v, n, unit) => Math.min(v, n) + ' / ' + n + (unit ? ' ' + unit : '');
+  const n1 = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
+  const kgOf = n => n1(Math.min(Math.max(loss, 0), n)) + ' / ' + n + ' kg';
+  const underOf = n => cur == null ? 'no weigh-in yet' : (cur < n ? 'done' : n1(cur - n) + ' kg to go');
+  return [
+    { id: 'w-wk10', e: '⚖️', t: '10 weigh-in weeks running', how: 'Weigh in at least once in 10 consecutive calendar weeks.', done: wWeeks >= 10, prog: 'best run ' + of(wWeeks, 10, 'weeks') },
+    { id: 'w-50', e: '📊', t: '50 weigh-in days', how: 'Log a weight on 50 different days.', done: wDays >= 50, prog: of(wDays, 50, 'days') },
+    { id: 'under-80', e: '🎯', t: 'Under 80 kg', how: 'Log a weight below 80 kg.', done: cur != null && cur < 80, prog: underOf(80) },
+    { id: 'kg-25', e: '🏔️', t: '25 kg down', how: 'Be 25 kg below your starting weight.', done: loss >= 25, prog: kgOf(25) },
+    { id: 'ci-150', e: '📝', t: '150 check-ins', how: 'Log 150 daily check-ins in total.', done: ci.length >= 150, prog: of(ci.length, 150) },
+    { id: 'prot-100', e: '🥚', t: '100 protein-target days', how: target ? 'Hit at least ' + target + ' g protein on 100 different days.' : 'Set a protein target in Settings, then hit it on 100 days.', done: hitDays >= 100, prog: target ? of(hitDays, 100, 'days') : 'no target set' },
+    { id: 'prot-21', e: '💪', t: '21 protein days in a row', how: target ? 'Hit ' + target + ' g protein 21 days in a row.' : 'Set a protein target in Settings first.', done: hitStreak >= 21, prog: target ? 'best streak ' + of(hitStreak, 21, 'days') : 'no target set' },
+    { id: 'sleep-14', e: '😴', t: 'Sleep tracked 14 nights', how: 'Log your sleep hours in 14 check-ins.', done: sleepDays >= 14, prog: of(sleepDays, 14, 'nights') },
+    { id: 'halfway', e: '🧭', t: 'Halfway to goal', how: 'Cover half the distance from your starting weight to your goal.', done: span > 0 && loss >= span / 2, prog: span > 0 ? n1(Math.min(Math.max(loss, 0), span / 2)) + ' / ' + n1(span / 2) + ' kg' : 'set a goal in Settings' },
+    { id: 'waist-15', e: '📐', t: 'Waist −15 cm', how: 'Measure a waist 15 cm smaller than your first measurement.', done: waistDrop >= 15, prog: waists.length >= 2 ? n1(Math.min(Math.max(waistDrop, 0), 15)) + ' / 15 cm' : 'needs 2 waist measurements' },
+    { id: 'meas-3', e: '🗓️', t: 'Measured on schedule ×3', how: 'Log 3 measurement sessions in a row, each within ' + gapMax + ' days of the last.', done: onTime >= 3, prog: 'best run ' + of(onTime, 3, 'sessions') },
+    { id: 'mg-10', e: '🚀', t: 'Reach 10 mg', how: 'Log an injection at a dose of 10 mg or more.', done: maxMg >= 10, prog: maxMg ? 'highest so far ' + fmtMg(maxMg) + ' mg' : 'no injection yet' },
+    { id: 'wk-20', e: '🔥', t: '20 weeks in a row', how: 'Inject in 20 consecutive calendar weeks.', done: wkStreak >= 20, prog: 'best streak ' + of(wkStreak, 20, 'weeks') },
+    { id: 'inj-25', e: '💉', t: '25 shots logged', how: 'Log 25 injections in total.', done: injs.length >= 25, prog: of(injs.length, 25) },
+    { id: 'days-180', e: '🌗', t: '6 months in', how: 'Be 180 days past your first injection.', done: daysIn >= 180, prog: first ? of(daysIn, 180, 'days') : 'no injection yet' },
+    { id: 'kg-30', e: '🌋', t: '30 kg down', how: 'Be 30 kg below your starting weight.', done: loss >= 30, prog: kgOf(30) }
+  ];
+}
+function bingoCard2Unlocked() { return bingoState(1).done >= 12; }
+function bingoSquares(card) { return card === 2 ? bingoSquares2() : bingoSquares1(); }
+let bingoViewCard = 1;
 const BINGO_LINES = (() => {
   const L = [];
   for (let r = 0; r < 4; r++) L.push([0, 1, 2, 3].map(c => r * 4 + c));
@@ -3936,31 +4003,44 @@ const BINGO_LINES = (() => {
   L.push([0, 5, 10, 15], [3, 6, 9, 12]);
   return L;
 })();
-function bingoState() {
-  const sq = bingoSquares();
+function bingoState(card) {
+  const sq = bingoSquares(card);
   const lines = BINGO_LINES.filter(l => l.every(i => sq[i].done));
   const inLine = new Set(); lines.forEach(l => l.forEach(i => inLine.add(i)));
   return { squares: sq, lines, inLine, done: sq.filter(x => x.done).length };
 }
 function openBingoPage() {
-  const before = Store.state.meta.bingoSeen;
-  const firstLook = !Array.isArray(before);
+  const unlocked = bingoCard2Unlocked();
+  bingoViewCard = unlocked ? 2 : 1;
+  const seenKeyFor = c => c === 2 ? 'bingoSeen2' : 'bingoSeen';
+  const before = { 1: Store.state.meta.bingoSeen, 2: Store.state.meta.bingoSeen2 };
   Pages.push({
     title: 'Journey Bingo',
     render(body) {
-      const st = bingoState();
-      const seen = Array.isArray(before) ? before : [];
-      let h = '<div class="bingo-head"><div class="jstat"><b>' + st.done + '/16</b><span>squares</span></div>' +
+      const card = (bingoViewCard === 2 && bingoCard2Unlocked()) ? 2 : 1;
+      const st = bingoState(card);
+      const prior = before[card];
+      const firstLook = !Array.isArray(prior);
+      const seen = Array.isArray(prior) ? prior : [];
+      let h = '';
+      if (bingoCard2Unlocked()) {
+        h += '<div class="bingo-tabs">' +
+          '<button class="bingo-tab' + (card === 1 ? ' on' : '') + '" data-act="bingo-card" data-n="1">Card 1 · The start</button>' +
+          '<button class="bingo-tab' + (card === 2 ? ' on' : '') + '" data-act="bingo-card" data-n="2">Card 2 · Next chapter</button></div>';
+      }
+      h += '<div class="bingo-head"><div class="jstat"><b>' + st.done + '/16</b><span>squares</span></div>' +
         '<div class="jstat"><b>' + st.lines.length + '</b><span>bingo line' + (st.lines.length === 1 ? '' : 's') + '</span></div></div>';
       h += '<div class="bingo-grid">' + st.squares.map((q, i) =>
         '<button class="bsq' + (q.done ? ' done' : '') + (st.inLine.has(i) ? ' line' : '') + '" data-act="bingo-square" data-i="' + i + '">' +
         (q.done && !firstLook && seen.indexOf(q.id) < 0 ? '<span class="bnew">NEW</span>' : '') +
         '<span class="be">' + q.e + '</span><span class="bt">' + esc(q.t) + '</span></button>').join('') + '</div>';
-      h += '<div class="footnote" style="margin-top:14px">Every square fills itself from what you log — rows, columns and both diagonals count as a bingo line. Tap a square to see how to earn it.</div>';
+      h += '<div class="footnote" style="margin-top:14px">' + (card === 2
+        ? 'Card 2 is the next chapter — tougher, longer-horizon squares built around where you are now. Same rules: every square fills itself from what you log, and rows, columns and both diagonals count as a bingo line.'
+        : 'Every square fills itself from what you log — rows, columns and both diagonals count as a bingo line. Tap a square to see how to earn it.') + '</div>';
       body.innerHTML = h;
-      if (!Array.isArray(Store.state.meta.bingoSeen) || Store.state.meta.bingoSeen.length !== st.done) {
-        Store.state.meta.bingoSeen = st.squares.filter(x => x.done).map(x => x.id); Store.save();
-      }
+      const k = seenKeyFor(card), cur = st.squares.filter(x => x.done).map(x => x.id);
+      const have = Store.state.meta[k];
+      if (!Array.isArray(have) || have.length !== cur.length) { Store.state.meta[k] = cur; Store.save(); }
     }
   });
 }
@@ -4250,7 +4330,11 @@ const Celebrate = {
 };
 function achievementItems() {
   const items = [];
-  bingoSquares().forEach(q => { if (q.done) items.push({ key: 'sq:' + q.id, emoji: q.e, kicker: 'Bingo square', title: q.t, sub: q.how }); });
+  bingoSquares(1).forEach(q => { if (q.done) items.push({ key: 'sq:' + q.id, emoji: q.e, kicker: 'Bingo square', title: q.t, sub: q.how }); });
+  if (bingoCard2Unlocked()) {
+    items.push({ key: 'card2', emoji: '🎴', kicker: 'New bingo card', title: 'Card 2 · Next chapter', sub: 'Card 1 is nearly full — a fresh board of tougher squares is waiting in Journey Bingo.' });
+    bingoSquares(2).forEach(q => { if (q.done) items.push({ key: 'sq2:' + q.id, emoji: q.e, kicker: 'Bingo square · Card 2', title: q.t, sub: q.how }); });
+  }
   badgeDefs().forEach(b => { for (let t = 1; t <= b.tier; t++) items.push({ key: 'bd:' + b.id + ':' + t, emoji: b.e, kicker: 'Badge unlocked', title: b.name + ' · ' + TIER_NAMES[t], sub: b.how }); });
   const road = goalRoad();
   if (road.stops) road.stops.forEach(x => { if (x.reached) items.push({ key: 'rd:' + x.key, emoji: x.isGoal ? '🏁' : '🛣️', kicker: x.isGoal ? 'Goal reached' : 'Road stop reached', title: fmtKg(x.kg) + ' kg', sub: x.isGoal ? 'You made it to the end of the road.' : 'Next stop is waiting.', note: x.note }); });
@@ -4261,8 +4345,13 @@ function achievementsCheck() {
   try {
     const items = achievementItems();
     const keys = items.map(i => i.key);
-    const seen = Store.state.meta.achSeen;
-    if (!Array.isArray(seen)) { Store.state.meta.achSeen = keys; Store.save(); return; }
+    let seen = Store.state.meta.achSeen;
+    if (!Array.isArray(seen)) { Store.state.meta.achSeen = keys; Store.state.meta.bingo2Init = true; Store.save(); return; }
+    /* Card 2 appears later: squares it already satisfies are recorded quietly, the card itself is celebrated once */
+    if (!Store.state.meta.bingo2Init && bingoCard2Unlocked()) {
+      seen = seen.concat(items.filter(i => i.key.indexOf('sq2:') === 0).map(i => i.key));
+      Store.state.meta.achSeen = seen; Store.state.meta.bingo2Init = true; Store.save();
+    }
     const fresh = items.filter(i => seen.indexOf(i.key) < 0);
     if (!fresh.length) return;
     Store.state.meta.achSeen = Array.from(new Set(seen.concat(keys)));
@@ -5141,8 +5230,9 @@ const Handlers = {
   'road-note': el => openRoadNoteSheet(el.dataset.key),
   'open-thennow': () => openThenNowPage(),
   'celebrate-close': () => Celebrate.close(),
+  'bingo-card': el => { bingoViewCard = +el.dataset.n === 2 ? 2 : 1; Pages.render(); },
   'bingo-square': el => {
-    const st = bingoState(); const q = st.squares[+el.dataset.i]; if (!q) return;
+    const st = bingoState(bingoViewCard === 2 && bingoCard2Unlocked() ? 2 : 1); const q = st.squares[+el.dataset.i]; if (!q) return;
     Dlg.show({ title: q.e + ' ' + q.t, msg: (q.done ? 'Earned. ' : 'Not yet. ') + q.how + ' (' + q.prog + ')',
       buttons: [{ label: 'OK', key: 'ok', style: 'btn-primary' }] });
   },
