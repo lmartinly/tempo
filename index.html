@@ -803,7 +803,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.37.2';
+const APP_VERSION = '1.37.3';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -4668,7 +4668,7 @@ const EQUIP_KINDS = [['strength', 'Weights', 'sets × reps × kg'], ['treadmill'
 const PHASES = [['warm', 'Warm-up'], ['main', 'Weights'], ['cardio', 'Cardio (optional)'], ['cool', 'Cool-down']];
 /* the gym's machines (seeded into My equipment the first time Workouts opens) — [region, kind, name] */
 const EQUIPMENT_LIBRARY = [
-  ['legs', 'strength', 'Leg Press'], ['legs', 'strength', 'Inner Thigh (iç bacak)'], ['legs', 'strength', 'Outer Thigh (dış bacak)'],
+  ['legs', 'strength', 'Leg Press'], ['legs', 'strength', 'Inner Thigh'], ['legs', 'strength', 'Outer Thigh'],
   ['chest', 'strength', 'Multi Press · Chest'], ['chest', 'strength', 'Multi Press · Incline'], ['shoulders', 'strength', 'Multi Press · Shoulder'],
   ['chest', 'strength', 'Pec Fly'], ['shoulders', 'strength', 'Rear Delt'], ['back', 'strength', 'Seated Row (V-bar)'], ['back', 'strength', 'Lat Pulldown'],
   ['chest', 'strength', 'Dumbbell Bench Press'],
@@ -4689,17 +4689,17 @@ const tC = (phase, name, reps) => ({ phase, name, sets: 1, reps: reps || '' });
 const PROGRAM_TEMPLATES = [
   { id: 'fullbody2', name: 'Full Body · A / B', note: 'Two whole-body sessions to alternate, with the weights from your own notebook as the starting point.',
     days: [
-      { name: 'Full Body A', items: [tT('warm', 'Treadmill', 7, 6, 5), tW('Dumbbell Hip Thrust', 2, 8, 7.5), tW('Dumbbell RDL', 3, 10, 6), tW('Multi Press · Shoulder', 3, 10, 15), tW('Outer Thigh (dış bacak)', 3, 15, 50), tW('Inner Thigh (iç bacak)', 2, 12, 32), tW('Seated Row (V-bar)', 3, 10, 25), tW('Lat Pulldown', 3, 10, 30), tW('Leg Press', 3, 12, 30), tT('cardio', 'Treadmill', 4, 6, 4), tC('cool', 'Light stretching', '3–5 min')] },
-      { name: 'Full Body B', items: [tL('warm', 'Stationary Bike', 3, 15), tT('warm', 'Treadmill', 5, 6, 5), tW('Inner Thigh (iç bacak)', 3, 8, 32), tW('Outer Thigh (dış bacak)', 3, 10, 50), tW('Seated Row (V-bar)', 3, 10, 25), tW('Lat Pulldown', 3, 12, 25), tW('Dumbbell RDL', 3, 8, 6), tW('Multi Press · Shoulder', 3, 10, 15), tW('Multi Press · Chest', 2, 8, 12), tW('Leg Press', 3, 12, 30), tT('cardio', 'Treadmill', 5), tC('cool', 'Light stretching', '3–5 min')] }
+      { name: 'Full Body A', items: [tT('warm', 'Treadmill', 7, 6, 5), tW('Dumbbell Hip Thrust', 2, 8, 7.5), tW('Dumbbell RDL', 3, 10, 6), tW('Multi Press · Shoulder', 3, 10, 15), tW('Outer Thigh', 3, 15, 50), tW('Inner Thigh', 2, 12, 32), tW('Seated Row (V-bar)', 3, 10, 25), tW('Lat Pulldown', 3, 10, 30), tW('Leg Press', 3, 12, 30), tT('cardio', 'Treadmill', 4, 6, 4), tC('cool', 'Light stretching', '3–5 min')] },
+      { name: 'Full Body B', items: [tL('warm', 'Stationary Bike', 3, 15), tT('warm', 'Treadmill', 5, 6, 5), tW('Inner Thigh', 3, 8, 32), tW('Outer Thigh', 3, 10, 50), tW('Seated Row (V-bar)', 3, 10, 25), tW('Lat Pulldown', 3, 12, 25), tW('Dumbbell RDL', 3, 8, 6), tW('Multi Press · Shoulder', 3, 10, 15), tW('Multi Press · Chest', 2, 8, 12), tW('Leg Press', 3, 12, 30), tT('cardio', 'Treadmill', 5), tC('cool', 'Light stretching', '3–5 min')] }
     ] },
   { id: 'lowerupper', name: 'Lower / Upper · 2 days', note: 'One lower-body day and one upper-body day on your machines. Pick the weights yourself — start light.',
     days: [
-      { name: 'Lower', items: [tL('warm', 'Stationary Bike', 5), tW('Leg Press', 4, 12), tW('Outer Thigh (dış bacak)', 3, 12), tW('Inner Thigh (iç bacak)', 3, 12), tW('Dumbbell RDL', 3, 10), tW('Dumbbell Hip Thrust', 3, 10), tC('cool', 'Light stretching', '3–5 min')] },
+      { name: 'Lower', items: [tL('warm', 'Stationary Bike', 5), tW('Leg Press', 4, 12), tW('Outer Thigh', 3, 12), tW('Inner Thigh', 3, 12), tW('Dumbbell RDL', 3, 10), tW('Dumbbell Hip Thrust', 3, 10), tC('cool', 'Light stretching', '3–5 min')] },
       { name: 'Upper', items: [tT('warm', 'Treadmill', 5), tW('Multi Press · Chest', 3, 10), tW('Multi Press · Incline', 3, 10), tW('Multi Press · Shoulder', 3, 10), tW('Pec Fly', 3, 12), tW('Lat Pulldown', 3, 10), tW('Seated Row (V-bar)', 3, 10), tW('Rear Delt', 3, 12), tC('cool', 'Light stretching', '3–5 min')] }
     ] },
   { id: 'starter', name: 'Starter circuit', note: 'Seven easy machines, two sets each. A friendly first month, or a lighter day.',
     days: [
-      { name: 'Circuit', items: [tL('warm', 'Stationary Bike', 5), tW('Leg Press', 2, 12), tW('Multi Press · Chest', 2, 12), tW('Seated Row (V-bar)', 2, 12), tW('Multi Press · Shoulder', 2, 12), tW('Lat Pulldown', 2, 12), tW('Inner Thigh (iç bacak)', 2, 12), tW('Outer Thigh (dış bacak)', 2, 12), tT('cardio', 'Treadmill', 5), tC('cool', 'Light stretching', '3–5 min')] }
+      { name: 'Circuit', items: [tL('warm', 'Stationary Bike', 5), tW('Leg Press', 2, 12), tW('Multi Press · Chest', 2, 12), tW('Seated Row (V-bar)', 2, 12), tW('Multi Press · Shoulder', 2, 12), tW('Lat Pulldown', 2, 12), tW('Inner Thigh', 2, 12), tW('Outer Thigh', 2, 12), tT('cardio', 'Treadmill', 5), tC('cool', 'Light stretching', '3–5 min')] }
     ] }
 ];
 
@@ -4717,6 +4717,13 @@ function libInfo(n) {
 }
 function kindOfName(n) { const i = libInfo(n); return i ? i.kind : 'strength'; }
 function regionOfName(n) { const i = libInfo(n); return i ? i.region : 'other'; }
+/* renaming a piece of equipment keeps its history, programs and any workout in progress attached to it */
+function renameExercise(from, to) {
+  const S = Store.state, f = normName(from), t = new Date().toISOString();
+  S.workouts.forEach(w => { let hit = false; (w.entries || []).forEach(e => { if (normName(e.name) === f) { e.name = to; hit = true; } }); if (hit) w.updatedAt = t; });
+  S.programs.forEach(p => { let hit = false; p.days.forEach(d => d.items.forEach(i => { if (normName(i.name) === f) { i.name = to; hit = true; } })); if (hit) p.updatedAt = t; });
+  const dr = S.meta.workoutDraft; if (dr) dr.entries.forEach(e => { if (normName(e.name) === f) e.name = to; });
+}
 function ensureEquipmentSeed() {
   const S = Store.state; if (S.meta.equipSeeded) return;
   S.meta.equipSeeded = true;
@@ -4797,7 +4804,7 @@ function workoutDashCard(now) {
 /* ---- the live session: a checklist draft that survives closing the app until you finish or discard it ---- */
 let wkSaveT = null;
 function newDraft(init) {
-  return Object.assign({ startedAt: new Date().toISOString(), dateKey: dateKey(new Date()), programId: null, programName: '', dayName: '', entries: [], note: '', editingId: null, editingDuration: null }, init || {});
+  return Object.assign({ startedAt: new Date().toISOString(), dateKey: dateKey(new Date()), programId: null, programName: '', dayName: '', entries: [], note: '', editingId: null }, init || {});
 }
 function firstNum(v) { const m = String(v == null ? '' : v).match(/\d+([.,]\d+)?/); const n = m ? parseNum(m[0]) : null; return n == null ? '' : n; }
 function blankRow(kind) {
@@ -4821,7 +4828,7 @@ function entryFromItem(it, phaseOverride) {
 }
 function draftFromWorkout(w) {
   return newDraft({
-    startedAt: w.dateTime, dateKey: dateKey(w.dateTime), programId: w.programId || null, programName: w.programName || '', dayName: w.dayName || '', note: w.note || '', editingId: w.id, editingDuration: w.durationMin || null,
+    startedAt: w.dateTime, dateKey: dateKey(w.dateTime), programId: w.programId || null, programName: w.programName || '', dayName: w.dayName || '', note: w.note || '', editingId: w.id,
     entries: (w.entries || []).map(e => ({ name: e.name, equipId: e.equipId || null, kind: normKind(e.kind || kindOfName(e.name)), phase: e.phase || 'main', region: e.region || regionOfName(e.name), target: { sets: e.sets.length, reps: '' }, note: e.note || '',
       sets: e.sets.map(s => Object.assign({}, s, { done: true })) }))
   });
@@ -4978,7 +4985,6 @@ async function finishWorkout() {
   const today = dateKey(new Date());
   const dt = d.editingId ? new Date(d.startedAt) : (d.dateKey === today ? new Date(d.startedAt) : new Date(d.dateKey + 'T12:00:00'));
   if (d.editingId && d.dateKey !== dateKey(d.startedAt)) dt.setTime(new Date(d.dateKey + 'T12:00:00').getTime());
-  const dur = d.editingId ? d.editingDuration : (d.dateKey === today ? Math.max(1, Math.min(360, Math.round((Date.now() - new Date(d.startedAt).getTime()) / 60000))) : null);
   const prs = [];
   entries.forEach(e => {
     if (!isStrength(e.kind)) return;
@@ -4987,7 +4993,7 @@ async function finishWorkout() {
     const before = exerciseBest(hist), now = exerciseBest([{ e }]);
     if (now.e1 > before.e1 + 0.01) prs.push({ name: e.name, set: now.bestSet });
   });
-  const rec = { id: d.editingId || null, dateTime: dt.toISOString(), programId: d.programId || null, programName: d.programName || '', dayName: d.dayName || '', durationMin: dur, note: (d.note || '').trim(), entries };
+  const rec = { id: d.editingId || null, dateTime: dt.toISOString(), programId: d.programId || null, programName: d.programName || '', dayName: d.dayName || '', note: (d.note || '').trim(), entries };
   Store.state.meta.workoutDraft = null;
   const saved = Actions.saveWorkout(rec);
   Pages.pop(false);
@@ -5016,7 +5022,7 @@ function openWorkoutDetailSheet(id, justFinished) {
   }).join('');
   Sheet.open({
     title: justFinished ? 'Saved' : DTF.mdy.format(new Date(w.dateTime)),
-    sub: esc(workoutTitle(w) + (w.durationMin ? ' · ' + w.durationMin + ' min' : '') + (workoutVolume(w) ? ' · ' + fmtVolume(workoutVolume(w)) : '')),
+    sub: esc(workoutTitle(w) + (workoutVolume(w) ? ' · ' + fmtVolume(workoutVolume(w)) : '')),
     html: (focus ? '<div class="card" style="background:var(--mint-soft);color:var(--mint-deep);margin-bottom:6px"><div style="font-size:22px;font-weight:750">' + esc(focus) + '</div>' + (detail ? '<div style="font-size:13.5px;margin-top:3px">' + esc(detail) + ' sets</div>' : '') + '</div>' : '') +
       byPhase + (w.note ? '<div class="footnote">' + esc(w.note) + '</div>' : '') +
       '<div class="sheet-actions"><button class="btn btn-tonal" id="wkd-prog">Save as checklist</button><button class="btn btn-tonal" id="wkd-edit">' + ic('pencil', 16) + ' Edit</button><button class="btn btn-danger" id="wkd-del">' + ic('trash', 16) + ' Delete</button></div>',
@@ -5064,7 +5070,7 @@ function openWorkoutsPage() {
         h += '<div class="sec-label">History</div><div class="list">' + ws.slice(0, 30).map(w => {
           const f = workoutFocus(w), sc = strengthSetCount(w);
           return '<button class="row" style="width:100%;text-align:left" data-act="wk-open" data-id="' + w.id + '"><div class="rmain"><div class="rtitle">' + esc(DTF.mdy.format(new Date(w.dateTime))) + (f ? ' <span class="badge-day">' + esc(f) + '</span>' : '') + '</div>' +
-            '<div class="rsub">' + esc((w.programName ? workoutTitle(w) + ' · ' : '') + (sc ? sc + ' sets' : (w.entries || []).length + ' items') + (w.durationMin ? ' · ' + w.durationMin + ' min' : '')) + '</div></div>' +
+            '<div class="rsub">' + esc((w.programName ? workoutTitle(w) + ' · ' : '') + (sc ? sc + ' sets' : (w.entries || []).length + ' items')) + '</div></div>' +
             '<div class="rside"><div class="rval num">' + esc(workoutVolume(w) ? fmtVolume(workoutVolume(w)) : '') + '</div></div></button>';
         }).join('') + '</div>';
       } else h += '<div class="empty"><div class="big">🏋️</div>No workouts yet. Add a checklist from Programs and start one.</div>';
@@ -5165,6 +5171,7 @@ function openEquipmentSheet(existing) {
         const dup = Store.state.equipment.find(e => normName(e.name) === normName(name) && (!existing || e.id !== existing.id));
         if (dup) return toast('You already have “' + dup.name + '”');
         const reg = kind === 'strength' ? region : (kind === 'check' ? 'other' : 'cardio');
+        if (existing && existing.name !== name) renameExercise(existing.name, name);
         Actions.saveEquipment({ id: existing ? existing.id : null, name, region: reg, kind, note: $('#eq-note', el).value.trim() });
         close(); toast(existing ? 'Updated' : 'Added');
       });
@@ -5298,8 +5305,6 @@ function trainingSlide(st, prevDays, prevLabel) {
   const mix = {}; ws.forEach(w => { const f = workoutFocus(w); if (f) mix[f] = (mix[f] || 0) + 1; });
   const mixTxt = Object.keys(mix).sort((a, b) => mix[b] - mix[a]).map(k => k + ' ×' + mix[k]).join(' · ');
   if (mixTxt) lines.push('Focus <b>' + esc(mixTxt) + '</b>');
-  const mins = ws.map(w => w.durationMin).filter(v => v);
-  if (mins.length) lines.push('Typical session <b>' + Math.round(mins.reduce((a, b) => a + b, 0) / mins.length) + ' min</b>');
   return { cls: 'st-mint', emoji: '🏋️', kicker: 'Training', big: days + (days === 1 ? ' workout day' : ' workout days'), lines: lines.slice(0, 5),
     foot: prevDays != null ? (prevLabel[0].toUpperCase() + prevLabel.slice(1) + ': ' + prevDays + ' workout day' + (prevDays === 1 ? '' : 's') + '.') : '' };
 }

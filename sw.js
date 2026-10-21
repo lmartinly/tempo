@@ -1,5 +1,5 @@
 /* Tempo service worker — bump CACHE on every app release */
-const CACHE = 'tempo-v1.37.2';
+const CACHE = 'tempo-v1.37.3';
 const PRECACHE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 
 self.addEventListener('install', e => {
