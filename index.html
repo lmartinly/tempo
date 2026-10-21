@@ -803,7 +803,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.37.1';
+const APP_VERSION = '1.37.2';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -4275,7 +4275,11 @@ function windowStats(keys) {
   const ext = (arr, dir) => arr.length ? arr.reduce((b, x) => (dir > 0 ? x.v > b.v : x.v < b.v) ? x : b) : null;
   const prot = ser('proteinG'), app = ser('appetite'), en = ser('energy'), sl = ser('sleepHours');
   const half = Math.floor(prot.length / 2);
-  const daily = dailyWeightSeries().filter(d => set.has(d.k));
+  const allDaily = dailyWeightSeries();
+  const daily = allDaily.filter(d => set.has(d.k));
+  /* change is measured from the last weigh-in BEFORE the window, so consecutive windows add up to the real total */
+  const kgPrev = keys.length ? allDaily.filter(d => d.k < keys[0]).slice(-1)[0] || null : null;
+  const kgStart = kgPrev || daily[0] || null;
   const mins = cis.map(checkInMinutes).filter(v => v != null).sort((a, b) => a - b);
   const gi = {}; cis.forEach(c => (c.gi || []).forEach(g => { gi[g] = (gi[g] || 0) + 1; }));
   const giList = Object.keys(gi).map(n => ({ name: n, n: gi[n] })).sort((a, b) => b.n - a.n);
@@ -4297,6 +4301,7 @@ function windowStats(keys) {
     times: { n: mins.length, min: mins[0], max: mins[mins.length - 1], median: mins.length ? mins[Math.floor(mins.length / 2)] : null,
       late: mins.filter(m => m >= 22 * 60).length, early: mins.filter(m => m < 9 * 60).length },
     daily, kgA: daily[0] || null, kgB: daily[daily.length - 1] || null, nW: daily.length,
+    kgPrev, kgStart, kgDelta: (daily.length && kgStart && kgStart.k !== daily[daily.length - 1].k) ? daily[daily.length - 1].kg - kgStart.kg : null,
     kgLow: daily.length ? daily.reduce((b, x) => x.kg < b.kg ? x : b) : null,
     workouts: S.workouts.filter(w => set.has(dateKey(w.dateTime))).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)),
     syms: S.symptoms.filter(x => set.has(dateKey(x.dateTime))),
@@ -4321,8 +4326,8 @@ function personaList(st, ctx) {
   const scope = ctx.scope || 'week', prior = ctx.prior || [];
   const S = Store.state, target = +S.settings.proteinTarget || 0;
   const n1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
-  const kg = st.kgA && st.kgB && st.nW >= 2 ? st.kgB.kg - st.kgA.kg : null;
-  const priorKg = prior.map(p => (p.kgA && p.kgB && p.nW >= 2) ? p.kgB.kg - p.kgA.kg : null).filter(v => v != null);
+  const kg = st.kgDelta;
+  const priorKg = prior.map(p => p.kgDelta).filter(v => v != null);
   const days = st.n;
   const list = [];
   const add = (name, emoji, why) => { if (why) list.push({ name, emoji, why }); };
@@ -4409,7 +4414,7 @@ function weekWrappedSlides(endKey) {
   let headline = 'Your week in numbers';
   const priorProt = prior.filter(x => x.proteinN >= 3).map(x => x.protein);
   const priorCi = prior.map(x => x.ciDays);
-  const kgDelta = (cur.kgA && cur.kgB && cur.nW >= 2) ? cur.kgB.kg - cur.kgA.kg : null;
+  const kgDelta = cur.kgDelta;
   if (cur.proteinN >= 3 && priorProt.length >= 2 && cur.protein > Math.max.apply(null, priorProt)) headline = 'Your best protein week yet';
   else if (cur.ciDays >= 5 && priorCi.length >= 2 && cur.ciDays > Math.max.apply(null, priorCi)) headline = 'Your most consistent week yet';
   else if (cur.ciDays === 7) headline = 'Seven for seven';
@@ -4464,7 +4469,7 @@ function weekWrappedSlides(endKey) {
   { const ts = trainingSlide(cur, prior[0] ? trainingDays(prior[0]) : null, 'last week'); if (ts) slides.push(ts); }
   if (kgDelta != null) {
     slides.push({ cls: 'st-teal', emoji: '⚖️', kicker: 'On the scale', big: fmtSign(kgDelta, 'kg'),
-      sub: fmtKg(cur.kgA.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg', foot: cur.nW + ' weigh-in days this week' + (cur.kgLow && cur.nW >= 3 ? ' · lowest ' + fmtKg(cur.kgLow.kg) + ' on ' + dayShort(cur.kgLow.k) : '') + '.' });
+      sub: fmtKg(cur.kgStart.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg' + (cur.kgPrev ? ' (from ' + dayShort(cur.kgPrev.k) + ')' : ''), foot: cur.nW + ' weigh-in day' + (cur.nW === 1 ? '' : 's') + ' this week' + (cur.kgLow && cur.nW >= 3 ? ' · lowest ' + fmtKg(cur.kgLow.kg) + ' on ' + dayShort(cur.kgLow.k) : '') + '.' });
   }
   if (cur.syms.length) {
     const g = {};
@@ -4531,11 +4536,11 @@ function monthWrappedSlides(ym) {
   const prior = [];
   let pm = prevMonthKey(ym);
   for (let i = 0; i < 8; i++) { const st = windowStats(monthKeys(pm)); if (st.ciDays || st.nW) prior.push(st); pm = prevMonthKey(pm); }
-  const priorKg = prior.map(p => (p.kgA && p.kgB && p.nW >= 2) ? p.kgB.kg - p.kgA.kg : null).filter(v => v != null);
+  const priorKg = prior.map(p => p.kgDelta).filter(v => v != null);
   const n1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
   const sgn = (v, d) => (v >= 0 ? '+' : '−') + n1(Math.abs(v)) + (d || '');
   const slides = [];
-  const kg = (cur.kgA && cur.kgB && cur.nW >= 2) ? cur.kgB.kg - cur.kgA.kg : null;
+  const kg = cur.kgDelta;
   const streak = maxDayStreak(cur.cis.map(c => c.dateKey));
   slides.push({ cls: 'st-coral', emoji: '🗓️', kicker: 'Month wrapped', big: monthLabel(ym).split(' ')[0], sub: monthLabel(ym),
     foot: cur.ciDays + ' check-in day' + (cur.ciDays === 1 ? '' : 's') + ' · ' + cur.nW + ' weigh-in day' + (cur.nW === 1 ? '' : 's') + ' · ' + cur.injs.length + ' shot' + (cur.injs.length === 1 ? '' : 's') });
@@ -4556,7 +4561,7 @@ function monthWrappedSlides(ym) {
       if (w.length >= 2) wk.push(w[w.length - 1].kg - w[0].kg);
     }
     const big = wk.length ? wk.reduce((b, v) => v < b ? v : b, 0) : 0;
-    slides.push({ cls: 'st-teal', emoji: '⚖️', kicker: 'On the scale', big: fmtSign(kg, 'kg'), sub: fmtKg(cur.kgA.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg',
+    slides.push({ cls: 'st-teal', emoji: '⚖️', kicker: 'On the scale', big: fmtSign(kg, 'kg'), sub: fmtKg(cur.kgStart.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg' + (cur.kgPrev ? ' (from ' + DTF.md.format(new Date(cur.kgPrev.k + 'T12:00:00')) + ')' : ''),
       foot: cur.nW + ' weigh-in days · lowest ' + fmtKg(cur.kgLow.kg) + ' on ' + DTF.md.format(new Date(cur.kgLow.k + 'T12:00:00')) + (big < -0.2 ? ' · best week ' + fmtSign(big, 'kg') : '') + '.' });
   }
   if (cur.proteinN >= 4) {
@@ -4632,7 +4637,7 @@ function openMonthWrappedPage() {
       body.innerHTML = '<div class="footnote" style="margin:0 0 12px">A recap of each calendar month — built only from what you logged.</div><div class="list">' +
         months.map(ym => {
           const st = windowStats(monthKeys(ym));
-          const kg = (st.kgA && st.kgB && st.nW >= 2) ? st.kgB.kg - st.kgA.kg : null;
+          const kg = st.kgDelta;
           const cur = ym === dateKey(new Date()).slice(0, 7);
           return '<button class="row" style="width:100%;text-align:left" data-act="open-monthwrapped" data-ym="' + ym + '"><div class="ichip lav" style="margin-right:2px">' + ic('sparkle', 16) + '</div>' +
             '<div class="rmain"><div class="rtitle">' + esc(monthLabel(ym)) + (cur ? ' <span class="badge-day">so far</span>' : '') + '</div>' +
