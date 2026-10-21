@@ -418,6 +418,7 @@ html[data-theme="sunset"]{
 #story .st-bars i{flex:1;height:3.5px;border-radius:3px;background:var(--line);overflow:hidden;display:block}
 #story .st-bars i.done,#story .st-bars i.cur{background:var(--text)}
 #story .st-bars i.cur{opacity:.55}
+#story .st-share{position:absolute;left:12px;top:calc(22px + env(safe-area-inset-top));z-index:4;width:34px;height:34px;border-radius:50%;background:var(--glass);display:grid;place-items:center}
 #story .st-close{position:absolute;right:12px;top:calc(22px + env(safe-area-inset-top));z-index:4;width:34px;height:34px;border-radius:50%;background:var(--glass);display:grid;place-items:center;font-size:18px;font-weight:700}
 #story .st-card{flex:1;margin:12px 14px calc(18px + env(safe-area-inset-bottom));border-radius:30px;padding:34px 26px;display:flex;flex-direction:column;justify-content:center;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow)}
 #story .st-card>*{animation:stIn .5s var(--ease) both}
@@ -441,7 +442,50 @@ html[data-theme="sunset"]{
 .st-peach{background:linear-gradient(160deg,var(--peach-soft),var(--surface));color:var(--peach-deep)}
 .st-pink{background:linear-gradient(160deg,var(--pink-soft),var(--surface));color:var(--pink-deep)}
 
+
+/* ---------- Workouts ---------- */
+.wk-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wk-day{border-radius:12px;background:var(--surface2);text-align:center;padding:8px 0 6px;font-size:12px;color:var(--faint);border:1.5px solid transparent}
+.wk-day b{display:block;font-weight:700}
+.wk-day i{display:block;font-style:normal;height:16px;line-height:16px;font-size:13px;font-weight:700}
+.wk-day.plan{border-color:var(--faint);border-style:dashed}
+.wk-day.today{color:var(--text);font-weight:700}
+.wk-day.done{background:var(--mint-soft);color:var(--mint-deep);border-style:solid;border-color:transparent}
+.wk-card{padding:14px}
+.wk-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.wk-set{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.wk-set:has(.wk-f){align-items:flex-end}
+.wk-n{width:20px;text-align:center;font-weight:700;color:var(--faint);font-size:13px;flex:none}
+.wk-in{flex:1;min-width:0;padding:10px 6px;text-align:center}
+.wk-u{font-size:12px;color:var(--faint);flex:none;width:30px}
+.wk-ck{width:38px;height:38px;border-radius:12px;background:var(--surface2);color:var(--faint);display:flex;align-items:center;justify-content:center;flex:none;border:0;padding:0}
+.wk-ck.on{background:var(--mint-deep);color:#fff}
+.wk-del{width:24px;height:30px;color:var(--faint);display:flex;align-items:center;justify-content:center;flex:none;border:0;background:none;padding:0}
+.wk-x{width:32px;height:32px;flex:none}
+.wk-f{flex:1;min-width:0;display:block}
+.wk-f i{display:block;font-style:normal;font-size:11px;color:var(--faint);margin:0 0 3px 3px;white-space:nowrap}
+.wk-line{display:flex;align-items:center;gap:12px;padding:10px 14px}
+.wk-note{margin-top:6px;padding:8px 12px;font-size:14px}
+.wk-addnote{height:32px;padding:0 10px;font-size:13px;color:var(--muted)}
+
 /* ---------- Journey Bingo ---------- */
+.heat-wrap{display:flex;gap:6px;align-items:flex-start;margin-top:12px}
+.heat-days{display:grid;grid-template-rows:repeat(7,18px);gap:3px;font-size:9.5px;color:var(--faint);line-height:18px;width:26px;flex:none}
+.heat-days i{font-style:normal}
+.heat-scroll{overflow-x:auto;flex:1;-webkit-overflow-scrolling:touch}
+.heat-grid{display:flex;gap:3px;width:max-content}
+.heat-col{display:grid;grid-template-rows:repeat(7,18px);gap:3px}
+.hc{width:18px;height:18px;border-radius:5px;background:var(--surface2);display:block;padding:0;border:0;position:relative}
+.hc::before{content:'';position:absolute;inset:0;border-radius:5px;background:var(--mint);opacity:var(--o,0)}
+.hc.l1{--o:.25}.hc.l2{--o:.5}.hc.l3{--o:.75}.hc.l4{--o:1}
+.hc.off{background:none}.hc.off::before{display:none}
+.hc.shot::after{content:'';position:absolute;inset:0;border-radius:5px;box-shadow:inset 0 0 0 2px var(--coral)}
+.heat-legend{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--faint);margin-top:10px}
+.heat-legend .hc{width:13px;height:13px;border-radius:4px}
+.logo-wrap{position:relative;display:block;width:24px;height:24px;flex:none}
+.logo-wrap::after{content:attr(data-g);position:absolute;right:-6px;top:-8px;font-size:11px;line-height:1;font-style:normal}
+.topbar .title span.shimmer{background:linear-gradient(90deg,var(--text) 30%,var(--coral) 50%,var(--text) 70%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wordShim 4s linear infinite}
+@keyframes wordShim{from{background-position:120% 0}to{background-position:-120% 0}}
 .bingo-tabs{display:flex;gap:6px;background:var(--surface2);padding:4px;border-radius:14px;margin-bottom:12px}
 .bingo-tab{flex:1;padding:8px 6px;border-radius:11px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .bingo-tab.on{background:var(--surface);color:var(--coral-deep);box-shadow:0 1px 4px rgba(0,0,0,.12)}
@@ -567,7 +611,31 @@ function toInputDT(d) { d = new Date(d); return d.getFullYear() + '-' + pad2(d.g
 function fmtKg(v) { return (Math.round(v * 10) / 10).toFixed(1).replace(".", ","); }
 function fmtMg(v) { return String(+(v.toFixed(v >= 10 ? 1 : 2))).replace('.', ','); }
 function fmtCm(v) { return String(+(+v).toFixed(1)).replace('.', ','); }
-function fmtMoney(v) { return (Math.round((+v || 0) * 100) / 100).toFixed(2).replace('.', ','); }
+/* Turkish money style: dot-grouped thousands, no decimals unless the amount has some (27.200 · 1.250,50) */
+function fmtMoney(v) {
+  const n = Math.round((+v || 0) * 100) / 100;
+  const parts = Math.abs(n).toFixed(2).split('.');
+  const frac = parts[1].replace(/0+$/, '');
+  return (n < 0 ? '−' : '') + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (frac ? ',' + frac : '');
+}
+/* sleep is stored as decimal hours but shown and typed as h:mm */
+function fmtHM(h) {
+  if (h == null || isNaN(+h)) return '';
+  const m = Math.round(+h * 60);
+  return Math.floor(m / 60) + ':' + pad2(m % 60);
+}
+function parseHM(v) {
+  v = String(v == null ? '' : v).trim().toLowerCase().replace(/\s+/g, ' ');
+  if (!v) return null;
+  let m = v.match(/^(\d{1,2})\s*(?::|h|sa)\s*(\d{1,2})\s*(?:m|dk)?$/);
+  if (m) { const mm = +m[2]; return mm < 60 ? +m[1] + mm / 60 : null; }
+  m = v.match(/^(\d{1,2})\s*(?:h|sa)$/); if (m) return +m[1];
+  m = v.match(/^(\d{1,2})[.,](\d{2})$/); if (m) { const mm = +m[2]; return mm < 60 ? +m[1] + mm / 60 : null; }   /* 7.30 → 7:30 */
+  m = v.match(/^(\d{1,2})[.,](\d)$/); if (m) return +m[1] + (+m[2]) / 10;                                          /* 7.5 → 7:30 */
+  m = v.match(/^(\d{1,2})$/); if (m) return +m[1];
+  m = v.match(/^(\d{1,2})(\d{2})$/); if (m) { const mm = +m[2]; return mm < 60 ? +m[1] + mm / 60 : null; }          /* 730 → 7:30 */
+  return null;
+}
 function fmtDateTR(d) { d = new Date(d); return pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + d.getFullYear(); }
 function fmtNumTR(v, digits) { digits = digits == null ? 1 : digits; const n = +v || 0; return (Math.round(n * Math.pow(10, digits)) / Math.pow(10, digits)).toFixed(digits).replace('.', ','); }
 function relDays(n) { return n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : n === -1 ? 'Yesterday' : n > 0 ? 'in ' + n + 'd' : Math.abs(n) + 'd ago'; }
@@ -735,7 +803,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.34.4';
+const APP_VERSION = '1.37.1';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -773,7 +841,7 @@ function stampNew(rec) {
   return rec;
 }
 function stampUpdate(rec) { rec.updatedAt = nowISO(); return rec; }
-const RECORD_COLLECTIONS = ['injections', 'weights', 'symptoms', 'measurements', 'checkIns', 'dosePlans', 'vials', 'spends', 'cycles'];
+const RECORD_COLLECTIONS = ['injections', 'weights', 'symptoms', 'measurements', 'checkIns', 'dosePlans', 'vials', 'spends', 'cycles', 'equipment', 'programs', 'workouts'];
 
 /* ---------------- Store ---------------- */
 const Store = {
@@ -796,16 +864,18 @@ const Store = {
         reorderLeadDays: 7,
         measurementIntervalDays: 14,
         theme: 'classic',
-        roadNotes: {}
+        roadNotes: {},
+        workoutDays: [1, 3, 5]
       },
       injections: [], weights: [], symptoms: [], measurements: [],
       checkIns: [], dosePlans: [], vials: [], spends: [], cycles: [],
+      equipment: [], programs: [], workouts: [],
       tombstones: [],
       checklist: { dateKey: null, done: [] },
       meta: {
         createdAt: new Date().toISOString(), quarantineKey: null, feelGoodKey: null,
         photoPromptHandled: false, dismissedFlags: {}, measurementReminderSnoozeUntil: null, premigrateOfferDismissedAt: null,
-        lastBackupAt: null, backupNudgeSnoozeUntil: null, bingoSeen: null, bingoSeen2: null, bingo2Init: false, achSeen: null, weekWrappedSeen: null
+        lastBackupAt: null, backupNudgeSnoozeUntil: null, bingoSeen: null, bingoSeen2: null, bingo2Init: false, eggInit: false, achSeen: null, weekWrappedSeen: null, monthWrappedSeen: null, workoutDraft: null, equipSeeded: false
       }
     };
   },
@@ -820,6 +890,8 @@ const Store = {
     if (!(+d.settings.measurementIntervalDays > 0)) d.settings.measurementIntervalDays = 14;
     if (['classic', 'planner', 'midnight', 'sage', 'sunset'].indexOf(d.settings.theme) < 0) d.settings.theme = 'classic';
     if (!d.settings.roadNotes || typeof d.settings.roadNotes !== 'object' || Array.isArray(d.settings.roadNotes)) d.settings.roadNotes = {};
+    if (!Array.isArray(d.settings.workoutDays)) d.settings.workoutDays = [1, 3, 5];
+    d.settings.workoutDays = d.settings.workoutDays.map(Number).filter(n => n >= 0 && n <= 6);
     RECORD_COLLECTIONS.concat('tombstones').forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
     /* every record gets a stable id + honest (not invented) createdAt/updatedAt if missing */
     RECORD_COLLECTIONS.forEach(k => {
@@ -1727,7 +1799,7 @@ function suggestPlanLinks() {
    - an explicit choice on the item (periodStart = that period's start day) always wins;
    - a vial's cost goes to the period where it is first used (you buy for the NEXT dose, before its first shot);
    - everything else goes by calendar day, and anything dated before the very first shot belongs to the first period.
-   A vial's cost only counts if it was explicitly marked to count, so it never silently doubles an expense. */
+   A vial's cost always counts, except when older separately-logged expenses exist and the vial wasn't opted in (no double counting). */
 function costAttribution() {
   const periods = dosePeriods();
   const per = periods.map(() => ({ spends: [], vials: [] }));
@@ -1738,7 +1810,8 @@ function costAttribution() {
   Store.state.spends.forEach(sp => { let i = byChoice(sp); if (i < 0) i = byDay(sp.date); per[i].spends.push(sp); });
   const firstDraw = {};
   vialConsumption().vials.forEach(v => { firstDraw[v.id] = v.firstDrawAt; });
-  Store.state.vials.filter(v => v.countsTowardPlan && v.costAmount != null).forEach(v => {
+  const legacySpends = Store.state.spends.length > 0;
+  Store.state.vials.filter(v => (v.countsTowardPlan || !legacySpends) && v.costAmount != null).forEach(v => {
     let i = byChoice(v); if (i < 0) i = byDay(firstDraw[v.id] || v.addedDate); per[i].vials.push(v);
   });
   return { periods, per };
@@ -2207,6 +2280,13 @@ const Actions = {
   /* -------- period log (start date only) -------- */
   saveCycle(d) { return genericSave('cycles', d); },
   deleteCycle(id) { genericDelete('cycles', 'cycle', id); },
+  /* -------- workouts, equipment, programs -------- */
+  saveWorkout(d) { return genericSave('workouts', d); },
+  deleteWorkout(id) { genericDelete('workouts', 'workout', id); },
+  saveEquipment(d) { return genericSave('equipment', d); },
+  deleteEquipment(id) { genericDelete('equipment', 'equipment', id); },
+  saveProgram(d) { return genericSave('programs', d); },
+  deleteProgram(id) { genericDelete('programs', 'program', id); },
   toggleChecklist(idx) {
     const c = checklistState();
     c.done[idx] = !c.done[idx];
@@ -2237,10 +2317,23 @@ const Actions = {
 };
 
 /* ---------------- dashboard ---------------- */
+function logoGlyph() {
+  const n = currentDayStreak(Store.state.checkIns.map(c => c.dateKey));
+  return n >= 100 ? '👑' : n >= 30 ? '★' : n >= 7 ? '✦' : '';
+}
+function atGoalWeight() {
+  const g = +Store.state.settings.goalKg, cw = currentWeight();
+  return !!(g > 0 && cw && cw.kg <= g);
+}
+let logoTaps = [];
+function logoTap() {
+  const t = Date.now(); logoTaps = logoTaps.filter(x => t - x < 2500); logoTaps.push(t);
+  if (logoTaps.length >= 7) { logoTaps = []; Celebrate.show([{ emoji: '🫧', kicker: 'Psst', title: 'Hello, you.', sub: 'A few small things hide around Tempo. This was one of them.' }]); }
+}
 function renderTopbar() {
   $('#dash-topbar').innerHTML =
     '<div class="topbar">' +
-    '<div class="title"><img class="logo-img" alt="" src="' + (document.querySelector('link[rel="apple-touch-icon"]') || {href:''}).href + '"><span>Tempo</span></div>' +
+    '<div class="title"><i class="logo-wrap" data-act="logo-tap" data-g="' + logoGlyph() + '"><img class="logo-img" alt="" src="' + (document.querySelector('link[rel="apple-touch-icon"]') || {href:''}).href + '"></i><span' + (atGoalWeight() ? ' class="shimmer"' : '') + '>Tempo</span></div>' +
     '<button class="tbtn" data-act="open-tools" aria-label="Tools">' + ic('sparkle', 20) + '</button>' +
     '<button class="tbtn" data-act="open-cal" aria-label="Calendar">' + ic('cal', 20) + '</button>' +
     '<button class="tbtn" data-act="open-settings" aria-label="Settings">' + ic('gear', 20) + '</button>' +
@@ -2358,11 +2451,14 @@ function renderDashboard() {
     '<button class="btn btn-ghost btn-sm" data-act="snooze-backup-nudge">Later</button></div></div>';
 
   html += weekWrappedCard(now);
+  html += monthWrappedCard(now);
 
   /* 1 — today, whatever today needs */
   html += renderTodayCard({ now, isShotDay, cycleDay });
   const mood = moodLine(now);
   if (mood) html += '<div class="banner fadeup" style="background:var(--mint-soft);color:var(--mint-deep)">' + mood.emoji + ' ' + esc(mood.text) + '</div>';
+  html += expectationCard(now);
+  html += workoutDashCard(now);
 
   /* 2 — priority tiles: next shot & what's in your system */
   html += '<div class="tilegrid">' +
@@ -3350,7 +3446,7 @@ function openCheckInSheet(existingOrDateKey) {
       '<div class="f-label">Energy</div>' +
       '<div class="sevpick" id="ci-energy">' + [1, 2, 3, 4, 5].map(n => '<button class="sevbtn' + (n === energy ? ' on' : '') + '" data-v="' + n + '">' + n + '</button>').join('') + '</div>' +
       '<div class="f-2col">' +
-      '<div><div class="f-label" style="margin-top:0">Sleep (hours)</div><input class="field num" type="text" inputmode="decimal" id="ci-sleep" value="' + (existing && existing.sleepHours != null ? existing.sleepHours : '') + '" placeholder="e.g. 7.5"></div>' +
+      '<div><div class="f-label" style="margin-top:0">Sleep (h:mm)</div><input class="field num" type="text" inputmode="decimal" id="ci-sleep" value="' + (existing && existing.sleepHours != null ? fmtHM(existing.sleepHours) : '') + '" placeholder="e.g. 7:30"></div>' +
       '<div><div class="f-label" style="margin-top:0">Protein (g)</div><input class="field num" type="text" inputmode="decimal" id="ci-protein" value="' + (existing && existing.proteinG != null ? existing.proteinG : '') + '" placeholder="optional"></div>' +
       '</div>' +
       '<div class="f-label">Calories</div>' +
@@ -3375,7 +3471,8 @@ function openCheckInSheet(existingOrDateKey) {
           if (!ok) return;
           Actions.deleteCheckIn(collision.id);
         }
-        const sleep = parseNum($('#ci-sleep', el).value), protein = parseNum($('#ci-protein', el).value), kcal = parseNum($('#ci-kcal', el).value);
+        const sleepRaw = $('#ci-sleep', el).value.trim(), sleep = parseHM(sleepRaw), protein = parseNum($('#ci-protein', el).value), kcal = parseNum($('#ci-kcal', el).value);
+        if (sleepRaw && (sleep == null || sleep > 24)) return toast('Sleep looks like 7:30 (hours:minutes)');
         Actions.saveCheckIn({ id: existing ? existing.id : null, dateKey: dk, appetite, gi, energy, sleepHours: sleep, proteinG: protein, kcal, note: $('#ci-note', el).value.trim(), nothingToReport: false });
         close(); toast(existing ? 'Check-in updated' : 'Check-in logged');
       });
@@ -3387,6 +3484,13 @@ function openCheckInSheet(existingOrDateKey) {
 }
 
 /* -------- Check-ins page: add or fix any recent day (reached from Settings) -------- */
+/* earliest day with any logged data (cycles excluded) — nothing before it is worth a check-in row */
+function trackingStartKey() {
+  const S = Store.state, ks = [];
+  S.checkIns.forEach(c => ks.push(c.dateKey));
+  ['weights', 'injections', 'symptoms', 'measurements', 'workouts'].forEach(n => S[n].forEach(x => { if (x.dateTime) ks.push(dateKey(x.dateTime)); }));
+  return ks.length ? ks.sort()[0] : null;
+}
 function openCheckInsPage() {
   let days = 14;
   Pages.push({
@@ -3394,9 +3498,12 @@ function openCheckInsPage() {
     render(body) {
       const S = Store.state, now = new Date();
       let h = '<div class="footnote" style="margin:0 0 12px">Tap a day to add or fix its check-in — for a day you missed, or one you dismissed by mistake.</div><div class="list">';
+      const floor = trackingStartKey();
+      let reachedStart = false;
       for (let i = 0; i < days; i++) {
         const d = new Date(now); d.setDate(d.getDate() - i);
         const k = dateKey(d);
+        if (floor && k < floor) { reachedStart = true; break; }
         const c = S.checkIns.find(x => x.dateKey === k);
         let status;
         if (!c) status = 'Not logged';
@@ -3407,7 +3514,7 @@ function openCheckInsPage() {
           '<div class="rsub"' + (c ? '' : ' style="color:var(--coral-deep)"') + '>' + esc(status) + '</div></button>' +
           (c ? '<span class="chev-ico">' + ic('chevR', 15) + '</span>' : '<button class="btn btn-tonal btn-sm" style="flex:none" data-act="ci-nothing-day" data-k="' + k + '">Nothing to report</button>') + '</div>';
       }
-      h += '</div><button class="btn btn-tonal" style="width:100%;margin-top:12px" data-act="ci-more">Show earlier days</button>' +
+      h += '</div>' + (reachedStart ? '' : '<button class="btn btn-tonal" style="width:100%;margin-top:12px" data-act="ci-more">Show earlier days</button>') +
         '<button class="btn btn-ghost" style="width:100%;margin-top:8px" data-act="add-checkin">Pick any other date…</button>';
       body.innerHTML = h;
     }
@@ -3529,10 +3636,11 @@ function periodChoiceHtml(id, current) {
   return '<div class="f-label">Counts toward <span style="font-weight:400;color:var(--faint)">(dose period)</span></div>' +
     '<select class="field" id="' + id + '"><option value="">Automatic</option>' +
     ps.map(p => '<option value="' + dateKey(p.startDate) + '"' + (current === dateKey(p.startDate) ? ' selected' : '') + '>' + fmtMg(+p.doseMg) + ' mg · from ' + esc(fmtDate(p.startDate)) + (p.ongoing ? ' (current)' : '') + '</option>').join('') + '</select>' +
-    '<div class="f-hint">Automatic puts an expense in the period of its date, and a vial in the period where you first use it. Pick a period here to override — e.g. a purchase made before a new dose started.</div>';
+    '<div class="f-hint">Automatic puts a vial’s cost in the period where you first use it. Pick a period here to override — e.g. a purchase made before a new dose started.</div>';
 }
 function openVialSheet(existing) {
-  let countsTowardPlan = existing ? !!existing.countsTowardPlan : false;
+  const legacySpends = Store.state.spends.length > 0;
+  let countsTowardPlan = existing ? (!!existing.countsTowardPlan || !legacySpends) : !legacySpends;
   Sheet.open({
     title: existing ? 'Edit vial' : 'Add vial',
     html:
@@ -3540,8 +3648,8 @@ function openVialSheet(existing) {
       '<input class="field num" type="text" inputmode="decimal" id="vial-mg" value="' + (existing && existing.totalMg != null ? existing.totalMg : '') + '">' +
       '<div class="f-label">Cost <span style="font-weight:400;color:var(--faint)">(optional, ' + esc(Store.state.settings.currency) + ')</span></div>' +
       '<input class="field num" type="text" inputmode="decimal" id="vial-cost" value="' + (existing && existing.costAmount != null ? existing.costAmount : '') + '">' +
-      '<div class="chips" id="vial-counts" style="margin-top:8px"><button class="chip' + (countsTowardPlan ? ' on' : '') + '" data-v="1">Counts as spend</button></div>' +
-      '<div class="f-hint">Off by default — turn this on only if you haven’t already logged this vial’s cost as a separate expense, so it doesn’t get counted twice.</div>' +
+      (legacySpends ? '<div class="chips" id="vial-counts" style="margin-top:8px"><button class="chip' + (countsTowardPlan ? ' on' : '') + '" data-v="1">Counts as spend</button></div>' +
+      '<div class="f-hint">Turn this on only if you haven’t already logged this vial’s cost as a separate expense, so it doesn’t get counted twice.</div>' : '') +
       '<div class="f-label">Date added</div>' +
       '<input class="field" type="date" id="vial-date" value="' + (existing ? dateKey(existing.addedDate) : dateKey(new Date())) + '">' +
       periodChoiceHtml('vial-period', existing && existing.periodStart) +
@@ -3549,7 +3657,7 @@ function openVialSheet(existing) {
       (existing ? '<button class="btn btn-danger" id="vial-del">' + ic('trash', 17) + '</button>' : '') +
       '<button class="btn btn-primary" id="vial-save" style="flex:1">' + (existing ? 'Save changes' : 'Add vial') + '</button></div>',
     mount(el, close) {
-      $('#vial-counts', el).addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; countsTowardPlan = !countsTowardPlan; b.classList.toggle('on', countsTowardPlan); });
+      if ($('#vial-counts', el)) $('#vial-counts', el).addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; countsTowardPlan = !countsTowardPlan; b.classList.toggle('on', countsTowardPlan); });
       $('#vial-save', el).addEventListener('click', async () => {
         const totalMg = parseNum($('#vial-mg', el).value);
         if (!totalMg || totalMg <= 0) return toast('Enter the vial’s total mg content');
@@ -3557,7 +3665,7 @@ function openVialSheet(existing) {
         const d = $('#vial-date', el).value; if (!d) return toast('Set a date');
         /* backfilling an old vial whose price you already logged as an expense: with "Counts as
            spend" on, that price would be counted twice — say so instead of silently doubling */
-        if (countsTowardPlan && cost != null) {
+        if (legacySpends && countsTowardPlan && cost != null) {
           const dup = Store.state.spends.find(sp => Math.abs((+sp.amount || 0) - cost) < 0.005);
           if (dup && !(await confirmDlg('Already logged as an expense', Store.state.settings.currency + fmtMoney(dup.amount) + ' on ' + fmtDate(dup.date) + ' is already in your expenses. Counting this vial too would double it.', 'Count it anyway', true))) return;
         }
@@ -3646,10 +3754,14 @@ function openToolsPage() {
     render(body) {
       const rows = [
         ['open-dosejourney', 'syringe', 'coral', 'Dose Journey', 'Dose history, future plan & budget'],
+        ['open-workouts', 'sparkle', 'mint', 'Workouts', 'Gym days, sets & weights, programs, equipment'],
         ['open-dosestory', 'sparkle', 'pink', 'Dose Story', 'A swipeable recap of each dose period'],
         ['open-bingo', 'sparkle', 'mint', 'Journey Bingo', 'A 4×4 board of milestones that fills itself'],
         ['open-weekwrapped', 'sparkle', 'coral', 'Week Wrapped', 'Your last 7 days as a recap'],
+        ['open-monthwrapped-list', 'sparkle', 'lav', 'Month Wrapped', 'Each calendar month as a recap'],
         ['open-badges', 'sparkle', 'lav', 'Badges', 'Bronze · Silver · Gold, earned from your logs'],
+        ['open-records', 'sparkle', 'peach', 'Records', 'Your personal bests, with dates'],
+        ['open-heatmap', 'cal', 'mint', 'Heatmap', 'Every day as a square — check-ins, protein, sleep'],
         ['open-road', 'sparkle', 'teal', 'Goal Road', 'Stops to your goal + sealed notes to future you'],
         ['open-thennow', 'sparkle', 'peach', 'Then & Now', 'Day one next to today'],
         ['open-whatchanged', 'compare', 'teal', 'What Changed?', 'Compare two periods or date ranges'],
@@ -3716,11 +3828,13 @@ function openDoseJourneyPage() {
           '</div>'
         ).join('') + '</div>';
       }
-      h += '<div class="sec-label">All logged expenses</div><div class="card">' +
-        '<div class="footnote" style="margin:0">Spend here is only ever what you logged — a vial’s cost only counts toward it if you marked it "counts as spend", so it never silently doubles up with an expense you logged separately.</div></div>';
-      const spends = Store.state.spends.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-      h += '<div class="list">' + (spends.length ? spends.map(s => '<button class="row" style="width:100%;text-align:left" data-act="edit-spend" data-id="' + s.id + '"><div class="rmain"><div class="rtitle">' + fmtDate(s.date) + '</div>' + (s.note ? '<div class="rsub">' + esc(s.note) + '</div>' : '') + '</div><div class="rside"><div class="rval num">' + esc(Store.state.settings.currency) + fmtMoney(s.amount) + '</div></div></button>').join('') : '') + '</div>';
-      h += '<button class="btn btn-tonal" style="width:100%" data-act="add-spend">' + ic('plus', 16) + ' Log an expense</button>';
+      if (Store.state.spends.length) {
+        h += '<div class="sec-label">Earlier logged expenses</div>';
+        const spends = Store.state.spends.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+        h += '<div class="list">' + spends.map(s => '<button class="row" style="width:100%;text-align:left" data-act="edit-spend" data-id="' + s.id + '"><div class="rmain"><div class="rtitle">' + fmtDate(s.date) + '</div>' + (s.note ? '<div class="rsub">' + esc(s.note) + '</div>' : '') + '</div><div class="rside"><div class="rval num">' + esc(Store.state.settings.currency) + fmtMoney(s.amount) + '</div></div></button>').join('') + '</div>';
+      } else {
+        h += '<div class="footnote">Spend comes from your vials — add a vial with its cost in Vial &amp; Supply and it lands in the right dose period.</div>';
+      }
       body.innerHTML = h;
     }
   });
@@ -3773,7 +3887,7 @@ function doseStorySlides(idx) {
     if (ap != null) lines.push('Appetite <b>' + n1(ap) + '/5</b>');
     if (en != null) lines.push('Energy <b>' + n1(en) + '/5</b>');
     if (pr != null) lines.push('Protein <b>' + Math.round(pr) + ' g</b> a day');
-    if (sl != null) lines.push('Sleep <b>' + n1(sl) + ' h</b>');
+    if (sl != null) lines.push('Sleep <b>' + fmtHM(sl) + ' h</b>');
     slides.push({ cls: 'st-mint', emoji: '📝', kicker: 'How it felt', big: cis.length + ' check-ins',
       lines, foot: lines.length ? 'Averages of what you logged — ' + withData.length + ' with details.' : 'You showed up for the daily check-in. That counts.' });
   }
@@ -3799,11 +3913,57 @@ function doseStorySlides(idx) {
       sub: 'after the shot — appetite averaged ' + n1(low.avg) + '/5', foot: 'Day 1 is shot day. Based on ' + low.n + ' check-ins that day.' });
   }
 
+  /* richer slides from the same window */
+  const pkeys = keysBetween(startK, p.endDate ? dateKey(new Date(endMs - DAY)) : endK);
+  const pst = windowStats(pkeys);
+  const paceSelf = periodPaceKgPerWeek(p, daily);
+  const personaP = personaFor(pst, { scope: 'period', pace: paceSelf, otherPaces: periods.filter((_, j) => j !== idx).map(q => periodPaceKgPerWeek(q, daily)) });
+  if (personaP) slides.push(personaSlide(personaP, pst, ''));
+  if (pst.proteinN >= 5) {
+    const bits = [];
+    if (pst.proteinDaysHit != null) bits.push(pst.proteinDaysHit + ' of ' + pst.proteinN + ' logged days hit your ' + S.settings.proteinTarget + ' g target');
+    if (pst.proteinBest) bits.push('best day ' + DTF.md.format(new Date(pst.proteinBest.k + 'T12:00:00')) + ' (' + Math.round(pst.proteinBest.v) + ' g)');
+    if (pst.proteinWd) bits.push('strongest weekday ' + WEEKDAYS[pst.proteinWd.d]);
+    slides.push({ cls: 'st-peach', emoji: '🥚', kicker: 'Protein', big: Math.round(pst.protein) + ' g', sub: 'average across ' + pst.proteinN + ' logged days', foot: bits.join(' · ') + '.' });
+  }
+  if (pst.sleepN >= 5) {
+    slides.push({ cls: 'st-lav', emoji: '🛏️', kicker: 'Sleep', big: fmtHM(pst.sleep) + ' h', sub: 'average over ' + pst.sleepN + ' nights',
+      foot: 'Longest ' + fmtHM(pst.sleepBest.v) + ' (' + DTF.md.format(new Date(pst.sleepBest.k + 'T12:00:00')) + ') · shortest ' + fmtHM(pst.sleepWorst.v) + ' (' + DTF.md.format(new Date(pst.sleepWorst.k + 'T12:00:00')) + ').' });
+  }
+  const enB = bucketByDaysSinceInjection(cis, c => dayAfterInjection(S.injections, c.dateKey + 'T12:00:00'), c => c.energy).filter(b => b.n >= 2);
+  if (enB.length >= 3) {
+    const hi = enB.slice().sort((a, b) => b.avg - a.avg)[0], lo = enB.slice().sort((a, b) => a.avg - b.avg)[0];
+    if (hi.day !== lo.day && hi.avg - lo.avg >= 0.4) slides.push({ cls: 'st-teal', emoji: '⚡', kicker: 'Energy rhythm', big: 'Day ' + hi.day, sub: 'is your brightest — energy averaged ' + n1(hi.avg) + '/5',
+      foot: 'Lowest on day ' + lo.day + ' (' + n1(lo.avg) + '/5). Day 1 is shot day.' });
+  }
+  if (daily.length >= 3) {
+    const inP = daily.filter(d => inRange(d.k));
+    let best = null;
+    for (let i = 0; i < inP.length; i++) for (let j = i + 1; j < inP.length; j++) {
+      const span = (new Date(inP[j].k + 'T12:00:00') - new Date(inP[i].k + 'T12:00:00')) / DAY;
+      if (span >= 5 && span <= 9) { const dlt = inP[j].kg - inP[i].kg; if (!best || dlt < best.dlt) best = { dlt, a: inP[i], b: inP[j], span }; }
+    }
+    if (best && best.dlt <= -0.3) slides.push({ cls: 'st-teal', emoji: '📉', kicker: 'Best stretch', big: fmtSign(best.dlt, 'kg'),
+      sub: DTF.md.format(new Date(best.a.k + 'T12:00:00')) + ' → ' + DTF.md.format(new Date(best.b.k + 'T12:00:00')), foot: 'Your steepest ' + Math.round(best.span) + '-day drop at this dose.' });
+  }
+  if (pst.gi.length) {
+    slides.push({ cls: 'st-peach', emoji: '🫧', kicker: 'Gut notes', big: pst.gi[0].name, sub: pst.gi.map(x => x.name + ' ×' + x.n).slice(0, 4).join(' · '), foot: 'From the quick chips on your check-ins.' });
+  }
+  const sites = {}; p.injections.forEach(i => { if (i.site) sites[i.site] = (sites[i.site] || 0) + 1; });
+  const siteList = Object.keys(sites).sort((a, b) => sites[b] - sites[a]);
+  if (siteList.length >= 2) slides.push({ cls: 'st-pink', emoji: '🔄', kicker: 'Rotation', big: siteList.length + ' sites', sub: siteList.map(x => x + (sites[x] > 1 ? ' ×' + sites[x] : '')).join(' · '), foot: '' });
+  const mIn = S.measurements.filter(m => inRange(dateKey(m.dateTime))).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+  if (mIn.length) {
+    const before = S.measurements.filter(m => new Date(m.dateTime) <= new Date(p.startDate)).sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))[0] || mIn[0];
+    const last = mIn[mIn.length - 1], lines = [];
+    if (before !== last) MEAS_FIELDS.forEach(f => { if (last[f[0]] != null && before[f[0]] != null && last[f[0]] !== before[f[0]]) lines.push(esc(f[1]) + ' <b>' + fmtSign(last[f[0]] - before[f[0]], 'cm', fmtCm) + '</b>'); });
+    if (lines.length) slides.push({ cls: 'st-teal', emoji: '📏', kicker: 'Tape measure', big: 'Measured', lines: lines.slice(0, 5), foot: 'From the session before this dose to the last one inside it.' });
+  }
   const sp = spendForPeriod(p.startDate, p.endDate);
   if (sp.actual > 0) {
     slides.push({ cls: 'st-pink', emoji: '🧾', kicker: 'Spend', big: cur + fmtMoney(sp.actual),
-      sub: sp.n + ' expense' + (sp.n === 1 ? '' : 's') + (sp.vialN ? ' + ' + sp.vialN + ' vial' + (sp.vialN === 1 ? '' : 's') : ''),
-      foot: nInj ? 'About ' + cur + fmtMoney(sp.actual / nInj) + ' per injection in this period.' : '' });
+      sub: [sp.vialN ? sp.vialN + ' vial' + (sp.vialN === 1 ? '' : 's') : '', sp.n ? sp.n + ' expense' + (sp.n === 1 ? '' : 's') : ''].filter(Boolean).join(' + '),
+      foot: (nInj >= 2 ? 'About ' + cur + fmtMoney(Math.round(sp.actual / nInj)) + ' per injection' : '') + (chg && chg.delta < -0.5 ? (nInj >= 2 ? ' · ' : '') + 'about ' + cur + fmtMoney(Math.round(sp.actual / -chg.delta)) + ' per kg lost' : '') + '.' });
   }
 
   const prev = periods[idx - 1];
@@ -3842,6 +4002,7 @@ const Story = {
     const last = this.i === this.slides.length - 1;
     this.el.innerHTML =
       '<div class="st-bars">' + this.slides.map((_, k) => '<i class="' + (k < this.i ? 'done' : k === this.i ? 'cur' : '') + '"></i>').join('') + '</div>' +
+      '<button class="st-share" data-act="story-share" aria-label="Save or share this card">' + ic('share', 16) + '</button>' +
       '<button class="st-close" data-act="story-close" aria-label="Close">×</button>' +
       '<div class="st-card ' + sl.cls + '">' +
         '<div class="st-emoji">' + sl.emoji + '</div>' +
@@ -3856,7 +4017,50 @@ const Story = {
   },
   next() { if (this.i >= this.slides.length - 1) this.close(); else { this.i++; this.render(); } },
   prev() { if (this.i > 0) { this.i--; this.render(); } },
-  close() { if (this.el) { this.el.remove(); this.el = null; } }
+  close() { if (this.el) { this.el.remove(); this.el = null; } },
+  /* draw the current card to a PNG you can post or keep — nothing is sent anywhere */
+  async share() {
+    const sl = this.slides[this.i]; if (!sl) return;
+    const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1350;
+    const g = cv.getContext && cv.getContext('2d');
+    if (!g) { toast('This browser can’t draw the card'); return; }
+    const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const tone = { 'st-coral': 'coral', 'st-teal': 'teal', 'st-mint': 'mint', 'st-lav': 'lav', 'st-peach': 'peach', 'st-pink': 'pink' }[sl.cls] || 'coral';
+    const soft = css('--' + tone + '-soft') || '#fde8e0', deep = css('--' + tone + '-deep') || '#8a3b22', base = css('--surface') || '#ffffff';
+    const bg = g.createLinearGradient(0, 0, 360, 1350); bg.addColorStop(0, soft); bg.addColorStop(1, base);
+    g.fillStyle = bg; g.fillRect(0, 0, 1080, 1350);
+    g.fillStyle = deep; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    const FF = '-apple-system, "SF Pro Display", system-ui, "Segoe UI", sans-serif';
+    const wrap = (txt, font, maxW) => {
+      g.font = font; const words = String(txt).split(/\s+/), lines = []; let cur = '';
+      words.forEach(w => { const t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; });
+      if (cur) lines.push(cur); return lines;
+    };
+    const strip = h => String(h).replace(/<[^>]+>/g, '');
+    /* lay everything out first, then centre the block vertically */
+    let fs = 150, bigLines;
+    for (; fs >= 64; fs -= 10) { bigLines = wrap(sl.big, '850 ' + fs + 'px ' + FF, 900); if (bigLines.length <= 3 && bigLines.every(l => g.measureText(l).width <= 900)) break; }
+    const rows = [];
+    rows.push({ t: sl.emoji, f: '150px ' + FF, a: 1, h: 170, up: 0.82 });
+    rows.push({ t: String(sl.kicker).toUpperCase().split('').join(' '), f: '800 34px ' + FF, a: .75, h: 70, up: 1, gapBefore: 30 });
+    bigLines.forEach((l, i) => rows.push({ t: l, f: '850 ' + fs + 'px ' + FF, a: 1, h: fs * 1.08, up: 0.84, gapBefore: i === 0 ? 24 : 0 }));
+    (sl.lines || []).forEach((l, i) => rows.push({ t: strip(l), f: '650 48px ' + FF, a: 1, h: 70, up: 0.8, gapBefore: i === 0 ? 24 : 0 }));
+    if (sl.sub) wrap(sl.sub, '600 50px ' + FF, 900).slice(0, 4).forEach((l, i) => rows.push({ t: l, f: '600 50px ' + FF, a: 1, h: 68, up: 0.8, gapBefore: i === 0 ? 22 : 0 }));
+    if (sl.foot) wrap(sl.foot, '400 38px ' + FF, 900).slice(0, 4).forEach((l, i) => rows.push({ t: l, f: '400 38px ' + FF, a: .72, h: 54, up: 0.8, gapBefore: i === 0 ? 30 : 0 }));
+    const total = rows.reduce((a, r) => a + (r.gapBefore || 0) + r.h, 0);
+    let y = Math.max(90, (1240 - total) / 2);
+    rows.forEach(r => { y += r.gapBefore || 0; g.globalAlpha = r.a; g.font = r.f; g.fillText(r.t, 540, y + r.h * r.up); y += r.h; });
+    g.globalAlpha = .45; g.font = '800 34px ' + FF; g.fillText('tempo', 540, 1290);
+    const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+    if (!blob) { toast('Couldn’t save the card'); return; }
+    const file = new File([blob], 'tempo-card.png', { type: 'image/png' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tempo-card.png';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast('Card saved as an image');
+  }
 };
 function openDoseStoryPage() {
   Pages.push({
@@ -4047,37 +4251,161 @@ function openBingoPage() {
 
 
 /* -------- Week Wrapped: a 7-day recap (same swipeable engine as Dose Story) -------- */
+/* -------- Window stats: one engine behind Week Wrapped, Month Wrapped and the personas -------- */
+function checkInMinutes(c) {
+  if (!c.loggedAt) return null;
+  const d = new Date(c.loggedAt);
+  if (isNaN(d.getTime())) return null;
+  const lag = (new Date(dateKey(d) + 'T12:00:00') - new Date(c.dateKey + 'T12:00:00')) / DAY;
+  if (lag < 0 || lag > 1) return null;      /* back-filled entries say nothing about when you usually check in */
+  return d.getHours() * 60 + d.getMinutes();
+}
+function hhmmOf(min) { return pad2(Math.floor(min / 60)) + ':' + pad2(Math.round(min % 60)); }
+function dayShort(k) { return DTF.wd.format(new Date(k + 'T12:00:00')); }
+function keysBetween(a, b) {
+  const out = [];
+  for (let d = new Date(a + 'T12:00:00'); dateKey(d) <= b && out.length < 400; d.setDate(d.getDate() + 1)) out.push(dateKey(d));
+  return out;
+}
+function windowStats(keys) {
+  const S = Store.state, set = new Set(keys), target = +S.settings.proteinTarget || 0;
+  const cis = S.checkIns.filter(c => set.has(c.dateKey)).sort((a, b) => a.dateKey < b.dateKey ? -1 : 1);
+  const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  const ser = f => cis.filter(c => c[f] != null).map(c => ({ k: c.dateKey, v: +c[f] }));
+  const ext = (arr, dir) => arr.length ? arr.reduce((b, x) => (dir > 0 ? x.v > b.v : x.v < b.v) ? x : b) : null;
+  const prot = ser('proteinG'), app = ser('appetite'), en = ser('energy'), sl = ser('sleepHours');
+  const half = Math.floor(prot.length / 2);
+  const daily = dailyWeightSeries().filter(d => set.has(d.k));
+  const mins = cis.map(checkInMinutes).filter(v => v != null).sort((a, b) => a - b);
+  const gi = {}; cis.forEach(c => (c.gi || []).forEach(g => { gi[g] = (gi[g] || 0) + 1; }));
+  const giList = Object.keys(gi).map(n => ({ name: n, n: gi[n] })).sort((a, b) => b.n - a.n);
+  const wd = {}; prot.forEach(x => { const d = new Date(x.k + 'T12:00:00').getDay(); (wd[d] = wd[d] || []).push(x.v); });
+  const wdBest = Object.keys(wd).filter(d => wd[d].length >= 2).map(d => ({ d: +d, avg: avg(wd[d]), n: wd[d].length })).sort((a, b) => b.avg - a.avg)[0] || null;
+  return {
+    keys, first: keys[0], last: keys[keys.length - 1], n: keys.length, cis,
+    ciDays: new Set(cis.map(c => c.dateKey)).size,
+    ciNothing: cis.filter(c => c.nothingToReport && !checkInHasData(c)).length,
+    protein: avg(prot.map(x => x.v)), proteinN: prot.length,
+    proteinDaysHit: target > 0 ? prot.filter(x => x.v >= target).length : null,
+    proteinBest: ext(prot, 1), proteinWd: wdBest,
+    proteinEarly: half >= 2 ? avg(prot.slice(0, half).map(x => x.v)) : null,
+    proteinLate: half >= 2 ? avg(prot.slice(-half).map(x => x.v)) : null,
+    appetite: avg(app.map(x => x.v)), appetiteN: app.length,
+    energy: avg(en.map(x => x.v)), energyN: en.length, energyBest: ext(en, 1), energyWorst: ext(en, -1),
+    sleep: avg(sl.map(x => x.v)), sleepN: sl.length, sleepBest: ext(sl, 1), sleepWorst: ext(sl, -1),
+    gi: giList,
+    times: { n: mins.length, min: mins[0], max: mins[mins.length - 1], median: mins.length ? mins[Math.floor(mins.length / 2)] : null,
+      late: mins.filter(m => m >= 22 * 60).length, early: mins.filter(m => m < 9 * 60).length },
+    daily, kgA: daily[0] || null, kgB: daily[daily.length - 1] || null, nW: daily.length,
+    kgLow: daily.length ? daily.reduce((b, x) => x.kg < b.kg ? x : b) : null,
+    workouts: S.workouts.filter(w => set.has(dateKey(w.dateTime))).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)),
+    syms: S.symptoms.filter(x => set.has(dateKey(x.dateTime))),
+    injs: S.injections.filter(x => set.has(dateKey(x.dateTime))).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)),
+    meas: S.measurements.filter(m => set.has(dateKey(m.dateTime))).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime))
+  };
+}
 function weekWindowStats(endKey) {
-  const S = Store.state;
   const keys = [];
   for (let i = 6; i >= 0; i--) { const d = new Date(endKey + 'T12:00:00'); d.setDate(d.getDate() - i); keys.push(dateKey(d)); }
-  const set = new Set(keys);
-  const cis = S.checkIns.filter(c => set.has(c.dateKey));
-  const nums = f => cis.map(c => c[f]).filter(v => v != null);
-  const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
-  const daily = dailyWeightSeries().filter(d => set.has(d.k));
-  return {
-    first: keys[0], last: keys[6], keys,
-    ciDays: new Set(cis.map(c => c.dateKey)).size,
-    protein: avg(nums('proteinG')), proteinN: nums('proteinG').length,
-    appetite: avg(nums('appetite')), energy: avg(nums('energy')), sleep: avg(nums('sleepHours')),
-    proteinDaysHit: (+S.settings.proteinTarget > 0) ? nums('proteinG').filter(v => v >= +S.settings.proteinTarget).length : null,
-    kgA: daily[0] || null, kgB: daily[daily.length - 1] || null, nW: daily.length,
-    syms: S.symptoms.filter(x => set.has(dateKey(x.dateTime))),
-    injs: S.injections.filter(x => set.has(dateKey(x.dateTime)))
-  };
+  return windowStats(keys);
+}
+function baselineOf(list) {
+  const avg = f => { const a = list.map(x => x[f]).filter(v => v != null); return a.length ? a.reduce((x, y) => x + y, 0) / a.length : null; };
+  return { n: list.length, ciDays: avg('ciDays'), protein: avg('protein'), energy: avg('energy'), appetite: avg('appetite'), sleep: avg('sleep') };
+}
+
+/* -------- Personas: a dry label for how a window actually went, always with the receipts.
+   Every persona is a plain rule on logged data — it only appears when its condition really holds. -------- */
+function personaList(st, ctx) {
+  ctx = ctx || {};
+  const scope = ctx.scope || 'week', prior = ctx.prior || [];
+  const S = Store.state, target = +S.settings.proteinTarget || 0;
+  const n1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
+  const kg = st.kgA && st.kgB && st.nW >= 2 ? st.kgB.kg - st.kgA.kg : null;
+  const priorKg = prior.map(p => (p.kgA && p.kgB && p.nW >= 2) ? p.kgB.kg - p.kgA.kg : null).filter(v => v != null);
+  const days = st.n;
+  const list = [];
+  const add = (name, emoji, why) => { if (why) list.push({ name, emoji, why }); };
+  /* did the window start a new dose? */
+  let stepUp = null;
+  if (st.injs.length) {
+    const all = injectionsSorted(false);
+    st.injs.forEach(inj => { const i = all.findIndex(x => x.id === inj.id); if (i > 0 && +all[i - 1].doseMg !== +inj.doseMg && !stepUp) stepUp = inj; });
+  }
+  const priorProt = prior.filter(x => x.proteinN >= 3).map(x => x.protein);
+  if (scope === 'week') {
+    add('Personal Best', '🏅', st.proteinN >= 3 && priorProt.length >= 2 && st.protein > Math.max.apply(null, priorProt) ? 'Protein averaged ' + Math.round(st.protein) + ' g — higher than every one of your previous ' + priorProt.length + ' weeks.' : null);
+    add('Step Up', '🪜', stepUp ? 'First ' + fmtMg(+stepUp.doseMg) + ' mg shot logged on ' + dayShort(dateKey(stepUp.dateTime)) + '.' : null);
+    add('Floor Time', '🏋️', trainingDays(st) >= 3 ? workoutBlurb(st) : null);
+    if (st.meas.length) {
+      const prev = Store.state.measurements.filter(m => new Date(m.dateTime) < new Date(st.meas[0].dateTime) && m.waist != null).sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))[0];
+      const w = st.meas[st.meas.length - 1].waist;
+      add('Tape Week', '📏', 'Measurements logged' + (prev && w != null ? ' — waist ' + fmtSign(w - prev.waist, 'cm', fmtCm) + ' since the last session.' : '.'));
+    }
+    add('Full Ledger', '📒', st.ciDays >= 7 ? 'All 7 days have a check-in.' : null);
+    add('Clockwork', '⏱️', st.times.n >= 5 && st.times.max - st.times.min <= 90 ? st.times.n + ' check-ins, all between ' + hhmmOf(st.times.min) + ' and ' + hhmmOf(st.times.max) + '.' : null);
+    add('Strong Finish', '🏁', st.proteinEarly != null && st.proteinLate >= st.proteinEarly * 1.15 && st.proteinLate - st.proteinEarly >= 10 ? 'Protein climbed from ' + Math.round(st.proteinEarly) + ' g early in the week to ' + Math.round(st.proteinLate) + ' g at the end.' : null);
+    add('Target Practice', '🎯', target > 0 && st.proteinN >= 4 && st.proteinDaysHit >= Math.ceil(st.proteinN * 0.8) ? 'Hit ' + target + ' g on ' + st.proteinDaysHit + ' of ' + st.proteinN + ' logged days.' : null);
+    add('Slow Burn', '🕯️', st.nW >= 3 && kg != null && kg <= -0.2 && kg >= -2 ? fmtSign(kg, 'kg') + ' across ' + st.nW + ' weigh-in days.' : null);
+    let swing = null;
+    if (priorKg.length >= 3) { swing = priorKg.reduce((a, v) => a + Math.abs(v), 0) / priorKg.length; }
+    add('Scale Noise', '〰️', kg != null && kg >= 0.2 && swing != null ? fmtSign(kg, 'kg') + ' this week — your weeks usually swing about ±' + n1(swing) + ' kg.' : null);
+    add('Night Ledger', '🌙', st.times.n >= 4 && st.times.late >= Math.ceil(st.times.n * 0.6) ? st.times.late + ' of ' + st.times.n + ' check-ins were logged after 10 pm.' : null);
+    add('Early Shift', '🌅', st.times.n >= 4 && st.times.early >= Math.ceil(st.times.n * 0.6) ? st.times.early + ' of ' + st.times.n + ' check-ins were logged before 9 am.' : null);
+    add('Deep Reserve', '🛏️', st.sleepN >= 4 && st.sleep >= 8 ? 'Sleep averaged ' + fmtHM(st.sleep) + ' over ' + st.sleepN + ' nights.' : null);
+    add('Short Nights', '☁️', st.sleepN >= 4 && st.sleep < 6.5 ? 'Sleep averaged ' + fmtHM(st.sleep) + ' over ' + st.sleepN + ' nights.' : null);
+    add('Low Tide', '🌊', st.appetiteN >= 4 && st.appetite <= 2.2 && st.energy != null && st.energy >= 3 ? 'Appetite averaged ' + n1(st.appetite) + '/5 while energy held at ' + n1(st.energy) + '/5.' : null);
+    add('Airplane Mode', '✈️', st.ciDays >= 1 && st.ciDays <= 2 && !st.meas.length ? 'Only ' + st.ciDays + ' check-in' + (st.ciDays === 1 ? '' : 's') + ' this week. Quiet weeks are part of the record too.' : null);
+    add('Steady State', '🧭', st.ciDays >= 3 ? st.ciDays + ' check-ins' + (st.protein != null ? ', protein ' + Math.round(st.protein) + ' g' : '') + ' — nothing out of pattern.' : null);
+  } else if (scope === 'month') {
+    const priorDrops = (ctx.priorKg || []).filter(v => v < 0).map(v => -v);
+    add('Record Month', '🏔️', kg != null && kg <= -1 && priorDrops.length >= 1 && -kg > Math.max.apply(null, priorDrops) ? fmtSign(kg, 'kg') + ' — your biggest month so far.' : null);
+    add('Step Up', '🪜', stepUp ? 'Moved to ' + fmtMg(+stepUp.doseMg) + ' mg on ' + DTF.md.format(new Date(stepUp.dateTime)) + '.' : null);
+    add('Floor Time', '🏋️', trainingDays(st) >= 10 ? workoutBlurb(st) : null);
+    add('Long Game', '♟️', st.ciDays >= Math.ceil(days * 0.85) ? st.ciDays + ' of ' + days + ' days checked in.' : null);
+    add('Target Practice', '🎯', target > 0 && st.proteinN >= 12 && st.proteinDaysHit >= Math.ceil(st.proteinN * 0.7) ? 'Hit ' + target + ' g on ' + st.proteinDaysHit + ' of ' + st.proteinN + ' logged days.' : null);
+    add('Surveyor', '📏', st.meas.length >= 2 ? st.meas.length + ' measurement sessions this month.' : null);
+    const range = st.daily.length ? Math.max.apply(null, st.daily.map(d => d.kg)) - Math.min.apply(null, st.daily.map(d => d.kg)) : null;
+    add('Holding Pattern', '🛰️', st.nW >= 3 && range != null && range <= 1 ? 'Every weigh-in within ' + n1(range) + ' kg of each other (' + st.nW + ' days).' : null);
+    add('Slow Burn', '🕯️', st.nW >= 4 && kg != null && kg <= -1 && kg >= -4.5 ? fmtSign(kg, 'kg') + ' across ' + st.nW + ' weigh-in days.' : null);
+    add('Deep Reserve', '🛏️', st.sleepN >= 10 && st.sleep >= 8 ? 'Sleep averaged ' + fmtHM(st.sleep) + ' over ' + st.sleepN + ' nights.' : null);
+    add('Quiet Month', '🤫', st.ciDays < Math.min(10, Math.ceil(days / 3)) ? 'Only ' + st.ciDays + ' check-in days — less written down, not less lived.' : null);
+    add('Steady State', '🧭', st.ciDays >= 3 ? st.ciDays + ' check-in days, ' + st.nW + ' weigh-in day' + (st.nW === 1 ? '' : 's') + ' — a steady one.' : null);
+  } else if (scope === 'period') {
+    const paces = ctx.otherPaces || [];
+    add('Biggest Mover', '🚚', ctx.pace != null && ctx.pace < 0 && paces.length >= 1 && paces.every(p => p == null || -ctx.pace > -p) ? 'Fastest pace of any dose so far: ' + fmtSign(ctx.pace, 'kg') + ' per week.' : null);
+    add('Quiet Chapter', '🤫', !st.syms.length && st.ciDays >= 14 ? 'No symptoms logged across ' + st.ciDays + ' check-in days.' : null);
+    add('Full Documentation', '🗂️', days >= 14 && st.ciDays >= Math.ceil(days * 0.9) ? st.ciDays + ' of ' + days + ' days have a check-in.' : null);
+    add('Long Haul', '⏳', days >= 56 ? days + ' days at this dose.' : null);
+    add('Short Chapter', '⚡', days <= 21 && days >= 7 ? 'Only ' + days + ' days at this dose.' : null);
+  }
+  return list;
+}
+function personaFor(st, ctx) { return personaList(st, ctx)[0] || null; }
+function personaSlide(p, st, history) {
+  if (!p) return null;
+  return { cls: 'st-lav', emoji: p.emoji, kicker: 'Field note', big: p.name, sub: p.why, foot: history || '' };
+}
+
+/* -------- Week Wrapped: a 7-day recap (same swipeable engine as Dose Story) -------- */
+function priorWindows(endKey, size, count) {
+  const out = [];
+  for (let w = 1; w <= count; w++) {
+    const keys = [];
+    for (let i = size - 1; i >= 0; i--) { const d = new Date(endKey + 'T12:00:00'); d.setDate(d.getDate() - i - size * w); keys.push(dateKey(d)); }
+    const st = windowStats(keys);
+    if (st.ciDays || st.nW) out.push(st);
+  }
+  return out;
 }
 function weekWrappedSlides(endKey) {
   const S = Store.state, set = S.settings;
   const cur = weekWindowStats(endKey);
   if (!cur.ciDays && !cur.nW && !cur.injs.length && !cur.syms.length) return [];
-  const prior = [];
-  for (let w = 1; w <= 26; w++) {
-    const d = new Date(endKey + 'T12:00:00'); d.setDate(d.getDate() - 7 * w);
-    const st = weekWindowStats(dateKey(d));
-    if (st.ciDays || st.nW) prior.push(st);
-  }
+  const prior = priorWindows(endKey, 7, 26);
+  const base = baselineOf(prior.slice(0, 4));
   const n1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
+  const sgn = (v, d) => (v >= 0 ? '+' : '−') + n1(Math.abs(v)) + (d || '');
   let headline = 'Your week in numbers';
   const priorProt = prior.filter(x => x.proteinN >= 3).map(x => x.protein);
   const priorCi = prior.map(x => x.ciDays);
@@ -4090,24 +4418,53 @@ function weekWrappedSlides(endKey) {
   const range = DTF.md.format(new Date(cur.first + 'T12:00:00')) + ' – ' + DTF.md.format(new Date(cur.last + 'T12:00:00'));
   slides.push({ cls: 'st-coral', emoji: '🗓️', kicker: 'Week wrapped', big: headline, sub: range,
     foot: cur.ciDays + ' check-in day' + (cur.ciDays === 1 ? '' : 's') + ' · ' + cur.nW + ' weigh-in day' + (cur.nW === 1 ? '' : 's') });
+
+  const recent = prior.slice(0, 12);
+  const recentNames = recent.map(x => personaList(x, { scope: 'week', prior: [] }).map(q => q.name)[0]);
+  const cand = personaList(cur, { scope: 'week', prior });
+  /* a label that has described most of your recent weeks says little — prefer a more telling one when there is one */
+  const persona = cand.find(q => recentNames.filter(n => n === q.name).length <= Math.floor(recent.length / 3)) || cand[0] || null;
+  let hist = '';
+  if (persona) {
+    const same = recentNames.filter(n => n === persona.name).length;
+    hist = same ? 'Also the label for ' + same + ' of your last ' + recent.length + ' weeks.' : (recent.length >= 4 ? 'First time in your last ' + recent.length + ' weeks.' : '');
+    slides.push(personaSlide(persona, cur, hist));
+  }
+
   if (cur.ciDays) {
     const lines = [];
     if (cur.appetite != null) lines.push('Appetite <b>' + n1(cur.appetite) + '/5</b>');
     if (cur.energy != null) lines.push('Energy <b>' + n1(cur.energy) + '/5</b>');
-    if (cur.sleep != null) lines.push('Sleep <b>' + n1(cur.sleep) + ' h</b>');
+    if (cur.sleep != null) lines.push('Sleep <b>' + fmtHM(cur.sleep) + ' h</b>');
+    if (cur.times.n >= 3) lines.push('Usually logged around <b>' + hhmmOf(cur.times.median) + '</b>');
     slides.push({ cls: 'st-mint', emoji: '📝', kicker: 'Showing up', big: cur.ciDays + ' / 7 days', lines,
       foot: prior[0] ? 'Last week: ' + prior[0].ciDays + ' / 7.' : 'Your first full week of check-ins.' });
   }
   if (cur.proteinN >= 2) {
     const prev = prior[0] && prior[0].proteinN >= 2 ? prior[0].protein : null;
+    const bestBits = cur.proteinBest ? 'Best day: ' + dayShort(cur.proteinBest.k) + ' (' + Math.round(cur.proteinBest.v) + ' g). ' : '';
     slides.push({ cls: 'st-peach', emoji: '🥚', kicker: 'Protein', big: Math.round(cur.protein) + ' g',
       sub: 'average on the ' + cur.proteinN + ' days you logged it',
-      foot: (cur.proteinDaysHit != null ? cur.proteinDaysHit + ' of ' + cur.proteinN + ' days hit your ' + set.proteinTarget + ' g target. ' : '') +
+      foot: (cur.proteinDaysHit != null ? cur.proteinDaysHit + ' of ' + cur.proteinN + ' days hit your ' + set.proteinTarget + ' g target. ' : '') + bestBits +
         (prev != null ? 'Last week: ' + Math.round(prev) + ' g.' : '') });
   }
+  if (cur.energyN >= 3 && cur.energyBest && cur.energyWorst && cur.energyBest.v > cur.energyWorst.v) {
+    const day = cur.cis.find(c => c.dateKey === cur.energyBest.k) || {};
+    const lines = ['Energy <b>' + cur.energyBest.v + '/5</b>'];
+    if (day.proteinG != null) lines.push('Protein <b>' + Math.round(day.proteinG) + ' g</b>');
+    if (day.sleepHours != null) lines.push('Sleep <b>' + fmtHM(day.sleepHours) + ' h</b>');
+    slides.push({ cls: 'st-teal', emoji: '⚡', kicker: 'Best day', big: DTF.wdl.format(new Date(cur.energyBest.k + 'T12:00:00')), lines,
+      foot: 'Lowest energy: ' + dayShort(cur.energyWorst.k) + ' (' + cur.energyWorst.v + '/5).' });
+  }
+  if (cur.sleepN >= 3) {
+    slides.push({ cls: 'st-lav', emoji: '🛏️', kicker: 'Sleep', big: fmtHM(cur.sleep) + ' h', sub: 'average over ' + cur.sleepN + ' nights',
+      foot: 'Longest: ' + dayShort(cur.sleepBest.k) + ' ' + fmtHM(cur.sleepBest.v) + ' · shortest: ' + dayShort(cur.sleepWorst.k) + ' ' + fmtHM(cur.sleepWorst.v) +
+        (base.sleep != null ? ' · usual ' + fmtHM(base.sleep) : '') });
+  }
+  { const ts = trainingSlide(cur, prior[0] ? trainingDays(prior[0]) : null, 'last week'); if (ts) slides.push(ts); }
   if (kgDelta != null) {
     slides.push({ cls: 'st-teal', emoji: '⚖️', kicker: 'On the scale', big: fmtSign(kgDelta, 'kg'),
-      sub: fmtKg(cur.kgA.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg', foot: cur.nW + ' weigh-in days this week.' });
+      sub: fmtKg(cur.kgA.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg', foot: cur.nW + ' weigh-in days this week' + (cur.kgLow && cur.nW >= 3 ? ' · lowest ' + fmtKg(cur.kgLow.kg) + ' on ' + dayShort(cur.kgLow.k) : '') + '.' });
   }
   if (cur.syms.length) {
     const g = {};
@@ -4118,13 +4475,172 @@ function weekWrappedSlides(endKey) {
   } else if (cur.ciDays >= 3) {
     slides.push({ cls: 'st-lav', emoji: '🌤️', kicker: 'Body check', big: 'No symptoms', sub: 'None logged this week.', foot: 'Only what you logged is counted.' });
   }
+  if (cur.gi.length) {
+    slides.push({ cls: 'st-peach', emoji: '🫧', kicker: 'Gut notes', big: cur.gi[0].name, sub: cur.gi.map(x => x.name + ' ×' + x.n).slice(0, 4).join(' · '),
+      foot: 'From the quick chips on your check-ins.' });
+  }
   if (cur.injs.length) {
     const inj = cur.injs[cur.injs.length - 1];
-    slides.push({ cls: 'st-pink', emoji: '💉', kicker: 'Shot day', big: fmtMg(+inj.doseMg) + ' mg', sub: 'logged ' + fmtDate(inj.dateTime), foot: '' });
+    slides.push({ cls: 'st-pink', emoji: '💉', kicker: 'Shot day', big: fmtMg(+inj.doseMg) + ' mg', sub: 'logged ' + fmtDate(inj.dateTime), foot: inj.site ? 'Site: ' + inj.site + '.' : '' });
+  }
+  if (cur.meas.length) {
+    const m = cur.meas[cur.meas.length - 1];
+    const prev = S.measurements.filter(x => new Date(x.dateTime) < new Date(cur.meas[0].dateTime)).sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))[0];
+    const lines = [];
+    if (prev) MEAS_FIELDS.forEach(f => { if (m[f[0]] != null && prev[f[0]] != null && m[f[0]] !== prev[f[0]]) lines.push(esc(f[1]) + ' <b>' + fmtSign(m[f[0]] - prev[f[0]], 'cm', fmtCm) + '</b>'); });
+    if (lines.length) slides.push({ cls: 'st-teal', emoji: '📏', kicker: 'Tape measure', big: 'Measured', lines: lines.slice(0, 5), foot: 'Compared with your previous session.' });
+  }
+  if (base.n >= 2 && cur.ciDays) {
+    const lines = [];
+    if (cur.protein != null && base.protein != null) lines.push('Protein <b>' + sgn(cur.protein - base.protein, ' g') + '</b>');
+    if (cur.energy != null && base.energy != null) lines.push('Energy <b>' + sgn(cur.energy - base.energy) + '</b>');
+    if (cur.appetite != null && base.appetite != null) lines.push('Appetite <b>' + sgn(cur.appetite - base.appetite) + '</b>');
+    if (cur.sleep != null && base.sleep != null) { const d = (cur.sleep - base.sleep) * 60; lines.push('Sleep <b>' + (d >= 0 ? '+' : '−') + fmtHM(Math.abs(d) / 60) + '</b>'); }
+    lines.push('Check-in days <b>' + sgn(cur.ciDays - base.ciDays) + '</b>');
+    if (lines.length >= 2) slides.push({ cls: 'st-mint', emoji: '📊', kicker: 'Versus your usual', big: 'This week vs the last ' + base.n, lines, foot: 'Compared with your average of the previous ' + base.n + ' weeks.' });
   }
   const next = nextInjectionDate(new Date(), set.weekday, set.time);
   slides.push({ cls: 'st-coral', emoji: '➡️', kicker: 'Next up', big: relDays(daysBetween(new Date(), next)), sub: 'Next shot: ' + WEEKDAYS[set.weekday] + ' ' + set.time, foot: 'See you next week.' });
   return slides;
+}
+
+/* -------- Month Wrapped -------- */
+function monthKeys(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const last = new Date(y, m, 0).getDate(), today = dateKey(new Date());
+  const keys = [];
+  for (let d = 1; d <= last; d++) { const k = ym + '-' + pad2(d); if (k <= today) keys.push(k); }
+  return keys;
+}
+function prevMonthKey(ym) { const [y, m] = ym.split('-').map(Number); const d = new Date(y, m - 2, 1); return d.getFullYear() + '-' + pad2(d.getMonth() + 1); }
+function monthLabel(ym) { const [y, m] = ym.split('-').map(Number); return DTF.mo.format(new Date(y, m - 1, 1)); }
+function monthsWithData() {
+  const start = trackingStartKey();
+  if (!start) return [];
+  const out = [], now = dateKey(new Date()).slice(0, 7);
+  let ym = start.slice(0, 7);
+  while (ym <= now && out.length < 60) { out.push(ym); const [y, m] = ym.split('-').map(Number); const d = new Date(y, m, 1); ym = d.getFullYear() + '-' + pad2(d.getMonth() + 1); }
+  return out.reverse();
+}
+function monthWrappedSlides(ym) {
+  const S = Store.state, set = S.settings;
+  const keys = monthKeys(ym);
+  if (!keys.length) return [];
+  const cur = windowStats(keys);
+  if (!cur.ciDays && !cur.nW && !cur.injs.length && !cur.syms.length) return [];
+  const prior = [];
+  let pm = prevMonthKey(ym);
+  for (let i = 0; i < 8; i++) { const st = windowStats(monthKeys(pm)); if (st.ciDays || st.nW) prior.push(st); pm = prevMonthKey(pm); }
+  const priorKg = prior.map(p => (p.kgA && p.kgB && p.nW >= 2) ? p.kgB.kg - p.kgA.kg : null).filter(v => v != null);
+  const n1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
+  const sgn = (v, d) => (v >= 0 ? '+' : '−') + n1(Math.abs(v)) + (d || '');
+  const slides = [];
+  const kg = (cur.kgA && cur.kgB && cur.nW >= 2) ? cur.kgB.kg - cur.kgA.kg : null;
+  const streak = maxDayStreak(cur.cis.map(c => c.dateKey));
+  slides.push({ cls: 'st-coral', emoji: '🗓️', kicker: 'Month wrapped', big: monthLabel(ym).split(' ')[0], sub: monthLabel(ym),
+    foot: cur.ciDays + ' check-in day' + (cur.ciDays === 1 ? '' : 's') + ' · ' + cur.nW + ' weigh-in day' + (cur.nW === 1 ? '' : 's') + ' · ' + cur.injs.length + ' shot' + (cur.injs.length === 1 ? '' : 's') });
+  const persona = personaFor(cur, { scope: 'month', prior, priorKg });
+  if (persona) slides.push(personaSlide(persona, cur, ''));
+  if (cur.ciDays) {
+    const lines = [];
+    if (streak >= 3) lines.push('Longest run <b>' + streak + ' days</b>');
+    if (cur.times.n >= 5) lines.push('Usually logged around <b>' + hhmmOf(cur.times.median) + '</b>');
+    if (cur.ciNothing) lines.push('“Nothing to report” days <b>' + cur.ciNothing + '</b>');
+    slides.push({ cls: 'st-mint', emoji: '📝', kicker: 'Showing up', big: cur.ciDays + ' / ' + cur.n + ' days', lines,
+      foot: prior[0] ? 'Last month: ' + prior[0].ciDays + ' check-in days.' : '' });
+  }
+  if (kg != null) {
+    const wk = [];
+    for (let i = 0; i + 7 <= keys.length; i += 7) {
+      const w = cur.daily.filter(d => d.k >= keys[i] && d.k <= keys[i + 6]);
+      if (w.length >= 2) wk.push(w[w.length - 1].kg - w[0].kg);
+    }
+    const big = wk.length ? wk.reduce((b, v) => v < b ? v : b, 0) : 0;
+    slides.push({ cls: 'st-teal', emoji: '⚖️', kicker: 'On the scale', big: fmtSign(kg, 'kg'), sub: fmtKg(cur.kgA.kg) + ' → ' + fmtKg(cur.kgB.kg) + ' kg',
+      foot: cur.nW + ' weigh-in days · lowest ' + fmtKg(cur.kgLow.kg) + ' on ' + DTF.md.format(new Date(cur.kgLow.k + 'T12:00:00')) + (big < -0.2 ? ' · best week ' + fmtSign(big, 'kg') : '') + '.' });
+  }
+  if (cur.proteinN >= 4) {
+    const bits = [];
+    if (cur.proteinDaysHit != null) bits.push(cur.proteinDaysHit + ' of ' + cur.proteinN + ' days hit your ' + set.proteinTarget + ' g target');
+    if (cur.proteinWd) bits.push('strongest weekday: ' + WEEKDAYS[cur.proteinWd.d] + ' (' + Math.round(cur.proteinWd.avg) + ' g)');
+    if (prior[0] && prior[0].proteinN >= 4) bits.push('last month ' + Math.round(prior[0].protein) + ' g');
+    slides.push({ cls: 'st-peach', emoji: '🥚', kicker: 'Protein', big: Math.round(cur.protein) + ' g', sub: 'average on ' + cur.proteinN + ' logged days', foot: bits.join(' · ') + '.' });
+  }
+  if (cur.energyN >= 4 || cur.appetiteN >= 4 || cur.sleepN >= 4) {
+    const lines = [];
+    const vs = (v, p, f) => p != null && v != null ? ' <span style="opacity:.6;font-weight:600">(' + f(v - p) + ' vs last month)</span>' : '';
+    if (cur.appetite != null) lines.push('Appetite <b>' + n1(cur.appetite) + '/5</b>' + vs(cur.appetite, prior[0] && prior[0].appetite, d => sgn(d)));
+    if (cur.energy != null) lines.push('Energy <b>' + n1(cur.energy) + '/5</b>' + vs(cur.energy, prior[0] && prior[0].energy, d => sgn(d)));
+    if (cur.sleep != null) lines.push('Sleep <b>' + fmtHM(cur.sleep) + ' h</b>');
+    slides.push({ cls: 'st-lav', emoji: '🌡️', kicker: 'How it felt', big: 'The month’s mood', lines, foot: cur.energyBest ? 'Best energy day: ' + DTF.md.format(new Date(cur.energyBest.k + 'T12:00:00')) + ' (' + cur.energyBest.v + '/5).' : '' });
+  }
+  { const ts = trainingSlide(cur, prior[0] ? trainingDays(prior[0]) : null, 'last month'); if (ts) slides.push(ts); }
+  if (cur.syms.length || cur.gi.length) {
+    const g = {}, sy = {};
+    cur.syms.forEach(x => { sy[x.name] = (sy[x.name] || 0) + 1; });
+    Object.keys(sy).forEach(n => { g[n] = sy[n]; });
+    cur.gi.forEach(x => { g[x.name] = Math.max(g[x.name] || 0, x.n); });   /* the same event can be both a symptom and a chip */
+    const top = Object.keys(g).sort((a, b) => g[b] - g[a]);
+    slides.push({ cls: 'st-lav', emoji: '🫧', kicker: 'Body notes', big: top[0], sub: top.slice(0, 4).map(n => n + ' ×' + g[n]).join(' · '),
+      foot: cur.syms.length + ' symptom entr' + (cur.syms.length === 1 ? 'y' : 'ies') + ' + gut chips on ' + cur.cis.filter(c => c.gi && c.gi.length).length + ' check-ins.' });
+  } else if (cur.ciDays >= 8) {
+    slides.push({ cls: 'st-lav', emoji: '🌤️', kicker: 'Body notes', big: 'A quiet month', sub: 'No symptoms or gut chips logged.', foot: 'Only what you logged is counted.' });
+  }
+  if (cur.injs.length) {
+    const doses = Array.from(new Set(cur.injs.map(i => fmtMg(+i.doseMg) + ' mg')));
+    const sites = {}; cur.injs.forEach(i => { if (i.site) sites[i.site] = (sites[i.site] || 0) + 1; });
+    const siteList = Object.keys(sites).sort((a, b) => sites[b] - sites[a]);
+    slides.push({ cls: 'st-pink', emoji: '💉', kicker: 'Shots', big: cur.injs.length + (cur.injs.length === 1 ? ' shot' : ' shots'), sub: doses.join(' → '),
+      foot: siteList.length ? 'Sites: ' + siteList.map(s => s + (sites[s] > 1 ? ' ×' + sites[s] : '')).join(', ') + '.' : '' });
+  }
+  if (cur.meas.length) {
+    const prev = S.measurements.filter(x => new Date(x.dateTime) < new Date(cur.meas[0].dateTime)).sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))[0];
+    const m = cur.meas[cur.meas.length - 1];
+    const lines = [];
+    if (prev) MEAS_FIELDS.forEach(f => { if (m[f[0]] != null && prev[f[0]] != null && m[f[0]] !== prev[f[0]]) lines.push(esc(f[1]) + ' <b>' + fmtSign(m[f[0]] - prev[f[0]], 'cm', fmtCm) + '</b>'); });
+    if (lines.length) slides.push({ cls: 'st-teal', emoji: '📏', kicker: 'Tape measure', big: cur.meas.length + (cur.meas.length === 1 ? ' session' : ' sessions'), lines: lines.slice(0, 5), foot: 'Change since your session before this month.' });
+  }
+  const bought = S.vials.filter(v => v.costAmount != null && dateKey(v.addedDate).slice(0, 7) === ym);
+  if (bought.length) {
+    const total = bought.reduce((a, v) => a + (+v.costAmount || 0), 0), mg = bought.reduce((a, v) => a + (+v.totalMg || 0), 0);
+    slides.push({ cls: 'st-pink', emoji: '🧪', kicker: 'Restock', big: set.currency + fmtMoney(total), sub: bought.length + ' vial' + (bought.length === 1 ? '' : 's') + ' · ' + fmtMg(mg) + ' mg', foot: '' });
+  }
+  const parts = [];
+  if (kg != null) parts.push(fmtSign(kg, 'kg'));
+  parts.push(cur.ciDays + '/' + cur.n + ' days logged');
+  if (cur.protein != null) parts.push(Math.round(cur.protein) + ' g protein');
+  slides.push({ cls: 'st-coral', emoji: '✨', kicker: monthLabel(ym), big: persona ? persona.name : 'In one line', sub: parts.join(' · '),
+    foot: persona ? persona.why : '' });
+  return slides;
+}
+function monthWrappedCard(now) {
+  if (now.getDate() > 3) return '';
+  const ym = prevMonthKey(dateKey(now).slice(0, 7));
+  if (Store.state.meta.monthWrappedSeen === ym) return '';
+  const st = windowStats(monthKeys(ym));
+  if (st.ciDays < 5 && !st.nW) return '';
+  return '<div class="banner fadeup" style="background:var(--lav-soft);color:var(--lav-deep);display:flex;gap:10px;align-items:center;justify-content:space-between">' +
+    '<span><b>🗓️ ' + esc(monthLabel(ym).split(' ')[0]) + ' is wrapped.</b> ' + st.ciDays + ' check-in days' + (st.nW ? ' · ' + st.nW + ' weigh-ins' : '') + '</span>' +
+    '<button class="btn btn-primary btn-sm" style="flex:none" data-act="open-monthwrapped" data-ym="' + ym + '" data-seen="1">Watch</button></div>';
+}
+function openMonthWrappedPage() {
+  Pages.push({
+    title: 'Month Wrapped',
+    render(body) {
+      const months = monthsWithData();
+      if (!months.length) { body.innerHTML = '<div class="empty"><div class="big">🗓️</div>Log a few days and your first month recap appears here.</div>'; return; }
+      body.innerHTML = '<div class="footnote" style="margin:0 0 12px">A recap of each calendar month — built only from what you logged.</div><div class="list">' +
+        months.map(ym => {
+          const st = windowStats(monthKeys(ym));
+          const kg = (st.kgA && st.kgB && st.nW >= 2) ? st.kgB.kg - st.kgA.kg : null;
+          const cur = ym === dateKey(new Date()).slice(0, 7);
+          return '<button class="row" style="width:100%;text-align:left" data-act="open-monthwrapped" data-ym="' + ym + '"><div class="ichip lav" style="margin-right:2px">' + ic('sparkle', 16) + '</div>' +
+            '<div class="rmain"><div class="rtitle">' + esc(monthLabel(ym)) + (cur ? ' <span class="badge-day">so far</span>' : '') + '</div>' +
+            '<div class="rsub">' + st.ciDays + ' check-in day' + (st.ciDays === 1 ? '' : 's') + ' · ' + st.nW + ' weigh-in' + (st.nW === 1 ? '' : 's') + '</div></div>' +
+            '<div class="rside">' + (kg != null ? '<div class="rval delta ' + (kg < 0 ? 'down' : kg > 0 ? 'up' : 'flat') + '">' + fmtSign(kg, 'kg') + '</div>' : '') + '</div></button>';
+        }).join('') + '</div>';
+    }
+  });
 }
 function weekWrappedCard(now) {
   const dow = now.getDay();
@@ -4137,6 +4653,869 @@ function weekWrappedCard(now) {
   return '<div class="banner fadeup" style="background:var(--coral-soft);color:var(--coral-deep);display:flex;gap:10px;align-items:center;justify-content:space-between">' +
     '<span><b>🗓️ Your week is wrapped.</b> ' + st.ciDays + ' check-in day' + (st.ciDays === 1 ? '' : 's') + (st.nW ? ' · ' + st.nW + ' weigh-in' + (st.nW === 1 ? '' : 's') : '') + '</span>' +
     '<button class="btn btn-primary btn-sm" style="flex:none" data-act="open-weekwrapped" data-end="' + endKey + '" data-seen="1">Watch</button></div>';
+}
+
+/* ===================== Workouts: checklist-style gym sessions, equipment, programs ===================== */
+const REGIONS = [['legs', 'Legs'], ['glutes', 'Glutes'], ['chest', 'Chest'], ['back', 'Back'], ['shoulders', 'Shoulders'], ['arms', 'Arms'], ['core', 'Core'], ['cardio', 'Cardio'], ['other', 'Other']];
+const REGION_LABEL = {}; REGIONS.forEach(r => { REGION_LABEL[r[0]] = r[1]; });
+const UPPER_REGIONS = ['chest', 'back', 'shoulders', 'arms'], LOWER_REGIONS = ['legs', 'glutes'];
+const EQUIP_KINDS = [['strength', 'Weights', 'sets × reps × kg'], ['treadmill', 'Treadmill-style', 'incline · time · speed'], ['level', 'Level + time', 'bike, elliptical…'], ['check', 'Tick only', 'stretching, a reminder']];
+const PHASES = [['warm', 'Warm-up'], ['main', 'Weights'], ['cardio', 'Cardio (optional)'], ['cool', 'Cool-down']];
+/* the gym's machines (seeded into My equipment the first time Workouts opens) — [region, kind, name] */
+const EQUIPMENT_LIBRARY = [
+  ['legs', 'strength', 'Leg Press'], ['legs', 'strength', 'Inner Thigh (iç bacak)'], ['legs', 'strength', 'Outer Thigh (dış bacak)'],
+  ['chest', 'strength', 'Multi Press · Chest'], ['chest', 'strength', 'Multi Press · Incline'], ['shoulders', 'strength', 'Multi Press · Shoulder'],
+  ['chest', 'strength', 'Pec Fly'], ['shoulders', 'strength', 'Rear Delt'], ['back', 'strength', 'Seated Row (V-bar)'], ['back', 'strength', 'Lat Pulldown'],
+  ['chest', 'strength', 'Dumbbell Bench Press'],
+  ['cardio', 'treadmill', 'Treadmill'], ['cardio', 'level', 'Elliptical'], ['cardio', 'level', 'Air Bike'], ['cardio', 'level', 'Stationary Bike'],
+  ['other', 'check', 'Light stretching']
+];
+/* dumbbell moves and other common exercises — offered in the picker, added to My equipment when you tick them */
+const MOVE_LIBRARY = [
+  ['glutes', 'strength', 'Dumbbell RDL'], ['glutes', 'strength', 'Dumbbell Hip Thrust'], ['legs', 'strength', 'Goblet Squat'], ['legs', 'strength', 'Dumbbell Lunges'],
+  ['shoulders', 'strength', 'Dumbbell Shoulder Press'], ['shoulders', 'strength', 'Dumbbell Lateral Raise'], ['arms', 'strength', 'Dumbbell Curl'],
+  ['arms', 'strength', 'Dumbbell Triceps Extension'], ['back', 'strength', 'Dumbbell Row'], ['core', 'strength', 'Plank'], ['core', 'strength', 'Crunch']
+];
+/* ready-made programs, built only from the machines above. Items: phase, name, sets, reps, + optional kg / incline / min / speed / level */
+const tW = (name, sets, reps, kg) => ({ phase: 'main', name, sets, reps: String(reps), kg: kg == null ? null : kg });
+const tT = (phase, name, min, incline, speed) => ({ phase, name, sets: 1, reps: min ? min + ' min' : '', min: min || null, incline: incline == null ? null : incline, speed: speed == null ? null : speed });
+const tL = (phase, name, min, level) => ({ phase, name, sets: 1, reps: min + ' min', min, level: level == null ? null : level });
+const tC = (phase, name, reps) => ({ phase, name, sets: 1, reps: reps || '' });
+const PROGRAM_TEMPLATES = [
+  { id: 'fullbody2', name: 'Full Body · A / B', note: 'Two whole-body sessions to alternate, with the weights from your own notebook as the starting point.',
+    days: [
+      { name: 'Full Body A', items: [tT('warm', 'Treadmill', 7, 6, 5), tW('Dumbbell Hip Thrust', 2, 8, 7.5), tW('Dumbbell RDL', 3, 10, 6), tW('Multi Press · Shoulder', 3, 10, 15), tW('Outer Thigh (dış bacak)', 3, 15, 50), tW('Inner Thigh (iç bacak)', 2, 12, 32), tW('Seated Row (V-bar)', 3, 10, 25), tW('Lat Pulldown', 3, 10, 30), tW('Leg Press', 3, 12, 30), tT('cardio', 'Treadmill', 4, 6, 4), tC('cool', 'Light stretching', '3–5 min')] },
+      { name: 'Full Body B', items: [tL('warm', 'Stationary Bike', 3, 15), tT('warm', 'Treadmill', 5, 6, 5), tW('Inner Thigh (iç bacak)', 3, 8, 32), tW('Outer Thigh (dış bacak)', 3, 10, 50), tW('Seated Row (V-bar)', 3, 10, 25), tW('Lat Pulldown', 3, 12, 25), tW('Dumbbell RDL', 3, 8, 6), tW('Multi Press · Shoulder', 3, 10, 15), tW('Multi Press · Chest', 2, 8, 12), tW('Leg Press', 3, 12, 30), tT('cardio', 'Treadmill', 5), tC('cool', 'Light stretching', '3–5 min')] }
+    ] },
+  { id: 'lowerupper', name: 'Lower / Upper · 2 days', note: 'One lower-body day and one upper-body day on your machines. Pick the weights yourself — start light.',
+    days: [
+      { name: 'Lower', items: [tL('warm', 'Stationary Bike', 5), tW('Leg Press', 4, 12), tW('Outer Thigh (dış bacak)', 3, 12), tW('Inner Thigh (iç bacak)', 3, 12), tW('Dumbbell RDL', 3, 10), tW('Dumbbell Hip Thrust', 3, 10), tC('cool', 'Light stretching', '3–5 min')] },
+      { name: 'Upper', items: [tT('warm', 'Treadmill', 5), tW('Multi Press · Chest', 3, 10), tW('Multi Press · Incline', 3, 10), tW('Multi Press · Shoulder', 3, 10), tW('Pec Fly', 3, 12), tW('Lat Pulldown', 3, 10), tW('Seated Row (V-bar)', 3, 10), tW('Rear Delt', 3, 12), tC('cool', 'Light stretching', '3–5 min')] }
+    ] },
+  { id: 'starter', name: 'Starter circuit', note: 'Seven easy machines, two sets each. A friendly first month, or a lighter day.',
+    days: [
+      { name: 'Circuit', items: [tL('warm', 'Stationary Bike', 5), tW('Leg Press', 2, 12), tW('Multi Press · Chest', 2, 12), tW('Seated Row (V-bar)', 2, 12), tW('Multi Press · Shoulder', 2, 12), tW('Lat Pulldown', 2, 12), tW('Inner Thigh (iç bacak)', 2, 12), tW('Outer Thigh (dış bacak)', 2, 12), tT('cardio', 'Treadmill', 5), tC('cool', 'Light stretching', '3–5 min')] }
+    ] }
+];
+
+const fmtW = v => (v == null || v === '' || isNaN(+v)) ? '' : String(+(+v).toFixed(2)).replace('.', ',');
+function normName(n) { return String(n || '').trim().toLowerCase(); }
+function normKind(k) { return ['strength', 'treadmill', 'level', 'check'].indexOf(k) >= 0 ? k : (k === 'cardio' ? 'level' : 'strength'); }
+function isStrength(k) { return normKind(k) === 'strength'; }
+function eqKind(e) { return normKind(e.kind); }
+function eqRegion(e) { if (e.region && REGION_LABEL[e.region]) return e.region; const a = String(e.area || '').toLowerCase(); return REGION_LABEL[a] ? a : 'other'; }
+function equipmentByName(n) { return Store.state.equipment.find(e => normName(e.name) === normName(n)) || null; }
+function libInfo(n) {
+  const e = equipmentByName(n); if (e) return { region: eqRegion(e), kind: eqKind(e) };
+  const l = EQUIPMENT_LIBRARY.concat(MOVE_LIBRARY).find(x => normName(x[2]) === normName(n));
+  return l ? { region: l[0], kind: l[1] } : null;
+}
+function kindOfName(n) { const i = libInfo(n); return i ? i.kind : 'strength'; }
+function regionOfName(n) { const i = libInfo(n); return i ? i.region : 'other'; }
+function ensureEquipmentSeed() {
+  const S = Store.state; if (S.meta.equipSeeded) return;
+  S.meta.equipSeeded = true;
+  if (!S.equipment.length) EQUIPMENT_LIBRARY.forEach(l => S.equipment.push(stampNew({ name: l[2], region: l[0], kind: l[1], note: '' })));
+  Store.save();
+}
+function setVolume(s) { return (+s.kg || 0) * (+s.reps || 0); }
+function workoutVolume(w) { return (w.entries || []).reduce((a, e) => a + (isStrength(e.kind) ? e.sets.reduce((b, s) => b + setVolume(s), 0) : 0), 0); }
+function strengthSetCount(w) { return (w.entries || []).reduce((a, e) => a + (isStrength(e.kind) ? e.sets.length : 0), 0); }
+function est1RM(s) { return (+s.kg > 0 && +s.reps > 0) ? (+s.kg) * (1 + (+s.reps) / 30) : 0; }
+function fmtVolume(kg) { return kg >= 1000 ? fmtW(kg / 1000) + ' t' : Math.round(kg) + ' kg'; }
+/* which body areas a session worked, and a plain label for it */
+function workoutRegions(w) {
+  const r = {};
+  (w.entries || []).forEach(e => { if (!isStrength(e.kind)) return; const k = e.region || regionOfName(e.name); r[k] = (r[k] || 0) + e.sets.length; });
+  return r;
+}
+function workoutFocus(w) {
+  const r = workoutRegions(w);
+  const up = UPPER_REGIONS.reduce((a, k) => a + (r[k] || 0), 0), lo = LOWER_REGIONS.reduce((a, k) => a + (r[k] || 0), 0);
+  if (!up && !lo) return (w.entries || []).length ? (strengthSetCount(w) ? 'Core & other' : 'Cardio') : '';
+  const tot = up + lo;
+  if (up / tot >= 0.3 && lo / tot >= 0.3) return 'Full body';
+  return lo > up ? 'Lower body' : 'Upper body';
+}
+function focusDetail(w) {
+  const r = workoutRegions(w);
+  return Object.keys(r).filter(k => r[k] > 0 && k !== 'other').sort((a, b) => r[b] - r[a]).map(k => REGION_LABEL[k] + ' ' + r[k]).join(' · ');
+}
+function workoutTitle(w) { return w.dayName || w.programName || 'Workout'; }
+function exerciseHistory(name, beforeMs, excludeId) {
+  const out = [];
+  Store.state.workouts.forEach(w => {
+    if (excludeId && w.id === excludeId) return;
+    if (beforeMs != null && new Date(w.dateTime).getTime() >= beforeMs) return;
+    (w.entries || []).forEach(e => { if (normName(e.name) === normName(name) && e.sets.length) out.push({ w, e }); });
+  });
+  return out.sort((a, b) => new Date(b.w.dateTime) - new Date(a.w.dateTime));
+}
+function exerciseBest(hist) {
+  let kg = 0, e1 = 0, bestSet = null;
+  hist.forEach(h => { if (!isStrength(h.e.kind)) return; h.e.sets.forEach(s => { if ((+s.kg || 0) > kg) kg = +s.kg; const x = est1RM(s); if (x > e1) { e1 = x; bestSet = s; } }); });
+  return { kg, e1, bestSet };
+}
+function setsLabel(sets, kind) {
+  kind = normKind(kind);
+  const has = v => v != null && v !== '';
+  if (kind === 'check') return 'done';
+  if (kind === 'treadmill') return sets.map(s => [has(s.min) ? fmtW(s.min) + ' min' : '', has(s.incline) ? 'incline ' + fmtW(s.incline) : '', has(s.speed) ? fmtW(s.speed) + ' km/h' : ''].filter(Boolean).join(' · ')).join(' + ');
+  if (kind === 'level') return sets.map(s => [has(s.min) ? fmtW(s.min) + ' min' : '', has(s.level) ? 'level ' + fmtW(s.level) : '', has(s.km) ? fmtW(s.km) + ' km' : ''].filter(Boolean).join(' · ')).join(' + ');
+  return sets.map(s => (has(s.kg) && +s.kg !== 0 ? fmtW(s.kg) + '×' : '') + (has(s.reps) ? fmtW(s.reps) : '?')).join(' · ');
+}
+function plannedWorkoutDays() { const d = Store.state.settings.workoutDays; return Array.isArray(d) ? d : [1, 3, 5]; }
+function workoutDayKeys() { return [...new Set(Store.state.workouts.map(w => dateKey(w.dateTime)))]; }
+function workoutWeekStrip(now) {
+  const mon = new Date(now); mon.setHours(12, 0, 0, 0); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+  const done = new Set(workoutDayKeys()), plan = plannedWorkoutDays(), today = dateKey(now);
+  const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  return labels.map((l, i) => { const d = new Date(mon); d.setDate(d.getDate() + i); const k = dateKey(d); return { l, k, wd: d.getDay(), done: done.has(k), planned: plan.indexOf(d.getDay()) >= 0, today: k === today, past: k < today }; });
+}
+function workoutStripHtml(now) {
+  const days = workoutWeekStrip(now);
+  const nDone = days.filter(d => d.done).length, nPlan = plannedWorkoutDays().length;
+  return '<div class="wk-strip">' + days.map(d =>
+    '<div class="wk-day' + (d.done ? ' done' : '') + (d.planned ? ' plan' : '') + (d.today ? ' today' : '') + (d.past && d.planned && !d.done ? ' miss' : '') + '"><b>' + d.l + '</b><i>' + (d.done ? '✓' : '') + '</i></div>').join('') + '</div>' +
+    '<div class="footnote" style="margin:8px 0 0">' + nDone + ' workout day' + (nDone === 1 ? '' : 's') + ' this week' + (nPlan ? ' · plan: ' + nPlan + ' day' + (nPlan === 1 ? '' : 's') : '') + '</div>';
+}
+function workoutDashCard(now) {
+  const S = Store.state, draft = S.meta.workoutDraft;
+  if (!S.workouts.length && !S.programs.length && !draft) return '';
+  return '<div class="card fadeup"><div class="card-head"><span class="ichip mint">' + ic('sparkle', 16) + '</span><h3>Training</h3></div>' +
+    workoutStripHtml(now) +
+    '<div class="btnrow" style="margin-top:10px">' +
+    (draft ? '<button class="btn btn-primary btn-sm" style="flex:1" data-act="wk-resume">Resume workout</button>' : '<button class="btn btn-primary btn-sm" style="flex:1" data-act="wk-start">Start workout</button>') +
+    '<button class="btn btn-tonal btn-sm" data-act="open-workouts">Open</button></div></div>';
+}
+
+/* ---- the live session: a checklist draft that survives closing the app until you finish or discard it ---- */
+let wkSaveT = null;
+function newDraft(init) {
+  return Object.assign({ startedAt: new Date().toISOString(), dateKey: dateKey(new Date()), programId: null, programName: '', dayName: '', entries: [], note: '', editingId: null, editingDuration: null }, init || {});
+}
+function firstNum(v) { const m = String(v == null ? '' : v).match(/\d+([.,]\d+)?/); const n = m ? parseNum(m[0]) : null; return n == null ? '' : n; }
+function blankRow(kind) {
+  return kind === 'treadmill' ? { incline: '', min: '', speed: '', done: false } : kind === 'level' ? { level: '', min: '', done: false } : kind === 'check' ? { done: false } : { kg: '', reps: '', done: false };
+}
+function entryFromItem(it, phaseOverride) {
+  const name = it.name, kind = kindOfName(name);
+  const phase = phaseOverride || it.phase || (kind === 'strength' ? 'main' : kind === 'check' ? 'cool' : 'warm');
+  const hist = exerciseHistory(name)[0];
+  const n = kind === 'strength' ? Math.max(1, +it.sets || 3) : 1, rows = [];
+  const pick = (prev, k, d) => prev && prev[k] != null && prev[k] !== '' ? prev[k] : (d != null ? d : '');
+  for (let i = 0; i < n; i++) {
+    const prev = hist ? (hist.e.sets[i] || hist.e.sets[hist.e.sets.length - 1]) : null;
+    if (kind === 'strength') rows.push({ kg: pick(prev, 'kg', it.kg), reps: pick(prev, 'reps', firstNum(it.reps)), done: false });
+    else if (kind === 'treadmill') rows.push({ incline: pick(prev, 'incline', it.incline), min: pick(prev, 'min', it.min), speed: pick(prev, 'speed', it.speed), done: false });
+    else if (kind === 'level') rows.push({ level: pick(prev, 'level', it.level), min: pick(prev, 'min', it.min), done: false });
+    else rows.push({ done: false });
+  }
+  const eq = equipmentByName(name);
+  return { name, equipId: eq ? eq.id : null, kind, phase, region: regionOfName(name), target: { sets: n, reps: String(it.reps || '') }, note: '', sets: rows };
+}
+function draftFromWorkout(w) {
+  return newDraft({
+    startedAt: w.dateTime, dateKey: dateKey(w.dateTime), programId: w.programId || null, programName: w.programName || '', dayName: w.dayName || '', note: w.note || '', editingId: w.id, editingDuration: w.durationMin || null,
+    entries: (w.entries || []).map(e => ({ name: e.name, equipId: e.equipId || null, kind: normKind(e.kind || kindOfName(e.name)), phase: e.phase || 'main', region: e.region || regionOfName(e.name), target: { sets: e.sets.length, reps: '' }, note: e.note || '',
+      sets: e.sets.map(s => Object.assign({}, s, { done: true })) }))
+  });
+}
+function startWorkoutFromDay(programId, dayIdx) {
+  const p = Store.state.programs.find(x => x.id === programId); const day = p && p.days[dayIdx];
+  if (!day) return;
+  Store.state.meta.workoutDraft = newDraft({ programId: p.id, programName: p.name, dayName: day.name, entries: day.items.map(it => entryFromItem(it)) });
+  Store.save(); openWorkoutSession();
+}
+function startEmptyWorkout() { Store.state.meta.workoutDraft = newDraft(); Store.save(); openWorkoutSession(); }
+function openStartWorkoutSheet() {
+  const S = Store.state;
+  if (S.meta.workoutDraft) { openWorkoutSession(); return; }
+  let h = '';
+  S.programs.forEach(p => p.days.forEach((d, i) => {
+    const single = p.days.length === 1;
+    h += '<button class="row" style="width:100%;text-align:left" data-act="wk-start-day" data-p="' + p.id + '" data-d="' + i + '"><div class="rmain"><div class="rtitle">' + esc(single ? p.name : d.name) + '</div>' +
+      '<div class="rsub">' + (single ? '' : esc(p.name) + ' · ') + d.items.length + ' item' + (d.items.length === 1 ? '' : 's') + '</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>';
+  }));
+  h = (h ? '<div class="list">' + h + '</div>' : '<div class="footnote" style="margin:0 0 10px">No checklists yet — add a ready-made one from Workouts → Programs, or start an empty workout and add exercises as you go. A finished workout can be saved as a checklist.</div>') +
+    '<div class="sheet-actions"><button class="btn btn-tonal" data-act="wk-start-empty">Empty workout</button></div>';
+  Sheet.open({ title: 'Start a workout', html: h });
+}
+function wkRowHtml(e, ei, s, si) {
+  const f = (k, label, ph, mode) => '<label class="wk-f"><i>' + label + '</i><input class="field num wk-in" type="text" inputmode="' + (mode || 'decimal') + '" placeholder="' + ph + '" data-wk="' + k + '" data-e="' + ei + '" data-s="' + si + '" value="' + esc(fmtW(s[k])) + '"></label>';
+  const ck = '<button class="wk-ck' + (s.done ? ' on' : '') + '" data-act="wk-done" data-e="' + ei + '" data-s="' + si + '" aria-label="Done">' + ic('check', 16) + '</button>';
+  if (e.kind === 'treadmill') return '<div class="wk-set">' + f('incline', 'Incline', '–') + f('min', 'Minutes', '–') + f('speed', 'Speed km/h', '–') + ck + '</div>';
+  if (e.kind === 'level') return '<div class="wk-set">' + f('level', 'Level', '–') + f('min', 'Minutes', '–') + ck + '</div>';
+  return '<div class="wk-set" data-e="' + ei + '" data-s="' + si + '"><span class="wk-n">' + (si + 1) + '</span>' +
+    '<input class="field num wk-in" type="text" inputmode="decimal" placeholder="kg" data-wk="kg" data-e="' + ei + '" data-s="' + si + '" value="' + esc(fmtW(s.kg)) + '"><span class="wk-u">kg</span>' +
+    '<input class="field num wk-in" type="text" inputmode="numeric" placeholder="reps" data-wk="reps" data-e="' + ei + '" data-s="' + si + '" value="' + esc(fmtW(s.reps)) + '"><span class="wk-u">reps</span>' + ck +
+    '<button class="wk-del" data-act="wk-delset" data-e="' + ei + '" data-s="' + si + '" aria-label="Remove set">' + ic('x', 14) + '</button></div>';
+}
+function wkEntryHtml(e, ei, d) {
+  const x = '<button class="tbtn wk-x" data-act="wk-delex" data-e="' + ei + '" aria-label="Remove">' + ic('x', 16) + '</button>';
+  const target = e.target && e.target.reps ? ' <span style="color:var(--faint);font-weight:500">· ' + (e.kind === 'strength' ? 'aim ' + esc(e.target.sets + ' × ' + e.target.reps) : esc(e.target.reps)) + '</span>' : '';
+  if (e.kind === 'check') {
+    const s = e.sets[0] || (e.sets[0] = { done: false });
+    return '<div class="card wk-card wk-line"><button class="wk-ck' + (s.done ? ' on' : '') + '" data-act="wk-done" data-e="' + ei + '" data-s="0" aria-label="Done">' + ic('check', 16) + '</button><div class="rtitle" style="flex:1">' + esc(e.name) + target + '</div>' + x + '</div>';
+  }
+  const hist = exerciseHistory(e.name, null, d.editingId)[0];
+  const hint = hist ? 'Last time (' + DTF.md.format(new Date(hist.w.dateTime)) + '): ' + setsLabel(hist.e.sets, e.kind) : 'First time logging this one';
+  return '<div class="card wk-card"><div class="wk-head"><div class="rtitle">' + esc(e.name) + target + '</div>' + x + '</div>' +
+    '<div class="rsub" style="margin:0 0 8px">' + esc(hint) + '</div>' +
+    e.sets.map((s, si) => wkRowHtml(e, ei, s, si)).join('') +
+    (e.kind === 'strength' ? '<button class="btn btn-ghost btn-sm" style="margin-top:4px" data-act="wk-addset" data-e="' + ei + '">' + ic('plus', 14) + ' Add set</button>' : '') +
+    ((e.note || e.showNote) ? '<input class="field wk-note" type="text" placeholder="Note" data-wk="enote" data-e="' + ei + '" value="' + esc(e.note || '') + '">'
+      : '<button class="btn btn-ghost btn-sm wk-addnote" data-act="wk-note" data-e="' + ei + '">' + ic('plus', 13) + ' Note</button>') + '</div>';
+}
+function openWorkoutSession() {
+  if (!Store.state.meta.workoutDraft) return;
+  Pages.push({
+    title: 'Workout',
+    render(body) {
+      const d = Store.state.meta.workoutDraft;
+      if (!d) { body.innerHTML = '<div class="empty">This workout is closed.</div>'; return; }
+      let h = '<div class="card"><div class="kv" style="border:0"><span>' + (d.programName ? '<b>' + esc(workoutTitle(d)) + '</b>' : (d.editingId ? 'Editing a logged workout' : 'Empty workout')) + '</span></div>' +
+        '<div class="f-label" style="margin-top:6px">Date</div><input class="field" type="date" data-wk="date" value="' + esc(d.dateKey) + '" max="' + dateKey(new Date()) + '"></div>';
+      PHASES.forEach(ph => {
+        h += '<div class="sec-label">' + ph[1] + '</div>';
+        d.entries.forEach((e, ei) => { if ((e.phase || 'main') === ph[0]) h += wkEntryHtml(e, ei, d); });
+        h += '<button class="btn btn-tonal btn-sm" style="width:100%;margin-bottom:6px" data-act="wk-addex" data-ph="' + ph[0] + '">' + ic('plus', 14) + ' Add to ' + ph[1].toLowerCase().replace(' (optional)', '') + '</button>';
+      });
+      h += '<div class="card" style="margin-top:16px"><div class="f-label" style="margin-top:0">Workout note <span style="font-weight:400;color:var(--faint)">(optional)</span></div>' +
+        '<textarea class="field" rows="2" data-wk="note" placeholder="How did it feel?">' + esc(d.note || '') + '</textarea></div>' +
+        '<div class="btnrow"><button class="btn btn-primary" style="flex:1" data-act="wk-finish">' + (d.editingId ? 'Save changes' : 'Finish workout') + '</button></div>' +
+        '<button class="btn btn-ghost" style="width:100%;margin-top:6px" data-act="wk-discard">' + (d.editingId ? 'Cancel' : 'Discard workout') + '</button>' +
+        '<div class="footnote">Tick what you did — typing a number ticks it for you. Only ticked items are saved. Your numbers from last time are pre-filled, so you only change what moved.</div>';
+      body.innerHTML = h;
+    }
+  });
+}
+function workoutInput(t) {
+  const d = Store.state.meta.workoutDraft; if (!d) return;
+  const k = t.dataset.wk;
+  if (k === 'date') { if (t.value) d.dateKey = t.value; }
+  else if (k === 'note') d.note = t.value;
+  else if (k === 'enote') { const en = d.entries[+t.dataset.e]; if (en) en.note = t.value; }
+  else {
+    const en = d.entries[+t.dataset.e], s = en && en.sets[+t.dataset.s]; if (!s) return;
+    const v = parseNum(t.value); s[k] = v == null ? '' : v;
+    if (t.value !== '' && !s.done) { s.done = true; const row = t.closest('.wk-set'); const ck = row && row.querySelector('.wk-ck'); if (ck) ck.classList.add('on'); }
+  }
+  clearTimeout(wkSaveT); wkSaveT = setTimeout(() => Store.save(), 350);
+}
+function pickerRows(list) {
+  return list.map(x => '<button class="row" style="width:100%;text-align:left" data-pick="' + esc(x.name) + '"><div class="rmain"><div class="rtitle">' + esc(x.name) + '</div><div class="rsub">' + esc(REGION_LABEL[x.region] || '') + '</div></div></button>').join('');
+}
+function openExercisePicker(phase, onPick) {
+  ensureEquipmentSeed();
+  const pref = phase === 'main' ? ['strength'] : phase === 'cool' ? ['check'] : ['treadmill', 'level'];
+  const rank = x => pref.indexOf(x.kind) >= 0 ? 0 : 1;
+  const own = Store.state.equipment.map(e => ({ name: e.name, region: eqRegion(e), kind: eqKind(e) })).sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+  const ownNames = new Set(own.map(e => normName(e.name)));
+  const more = MOVE_LIBRARY.concat(EQUIPMENT_LIBRARY).filter(x => !ownNames.has(normName(x[2]))).map(x => ({ name: x[2], region: x[0], kind: x[1] })).sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+  Sheet.open({
+    title: 'Add exercise',
+    html: '<input class="field" id="ex-q" type="text" placeholder="Search, or type your own name…" autocomplete="off">' +
+      '<div id="ex-list" style="max-height:46vh;overflow:auto;margin-top:8px">' +
+      (own.length ? '<div class="sec-label">My equipment</div><div class="list">' + pickerRows(own) + '</div>' : '') +
+      (more.length ? '<div class="sec-label">More exercises</div><div class="list">' + pickerRows(more) + '</div>' : '') + '</div>' +
+      '<div class="sheet-actions"><button class="btn btn-tonal" id="ex-custom">Other: add “<span id="ex-custom-n">…</span>”</button></div>',
+    mount(el, close) {
+      const q = $('#ex-q', el), btn = $('#ex-custom', el);
+      const apply = () => {
+        const v = normName(q.value);
+        el.querySelectorAll('[data-pick]').forEach(b => { b.style.display = !v || normName(b.dataset.pick).indexOf(v) >= 0 ? '' : 'none'; });
+        $('#ex-custom-n', el).textContent = q.value.trim() || '…'; btn.style.display = v ? '' : 'none';
+      };
+      q.addEventListener('input', apply); apply();
+      el.addEventListener('click', e => { const b = e.target.closest('[data-pick]'); if (b) { close(); onPick(b.dataset.pick); } });
+      btn.addEventListener('click', () => {
+        const n = q.value.trim(); if (!n) return;
+        if (libInfo(n)) { close(); onPick((equipmentByName(n) || { name: n }).name); }
+        else openCustomExerciseSheet(n, onPick);
+      });
+    }
+  });
+}
+/* an exercise the app doesn't know yet: ask once what it works, then remember it in My equipment */
+function openCustomExerciseSheet(name, onPick) {
+  let kind = 'strength', region = 'other';
+  Sheet.open({
+    title: name,
+    sub: 'New to the app — tell it what this one is, once.',
+    html: '<div class="f-label" style="margin-top:0">What do you log?</div><div class="chips" id="cx-kind">' + EQUIP_KINDS.map(k => '<button class="chip' + (k[0] === kind ? ' on' : '') + '" data-v="' + k[0] + '">' + k[1] + '</button>').join('') + '</div>' +
+      '<div id="cx-reg"><div class="f-label">Which area does it work?</div><div class="chips" id="cx-region">' + REGIONS.filter(r => r[0] !== 'cardio').map(r => '<button class="chip' + (r[0] === region ? ' on' : '') + '" data-v="' + r[0] + '">' + r[1] + '</button>').join('') + '</div></div>' +
+      '<div class="sheet-actions"><button class="btn btn-primary" id="cx-save">Add</button></div>',
+    mount(el, close) {
+      const pick = (id, cb) => $(id, el).addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; cb(b.dataset.v); $(id, el).querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); });
+      pick('#cx-kind', v => { kind = v; $('#cx-reg', el).style.display = v === 'strength' ? '' : 'none'; });
+      pick('#cx-region', v => { region = v; });
+      $('#cx-save', el).addEventListener('click', () => {
+        const reg = kind === 'strength' ? region : (kind === 'check' ? 'other' : 'cardio');
+        Actions.saveEquipment({ id: null, name, region: reg, kind, note: '' });
+        close(); onPick(name);
+      });
+    }
+  });
+}
+async function finishWorkout() {
+  const d = Store.state.meta.workoutDraft; if (!d) return;
+  const clean = (kind, s) => {
+    const v = k => (s[k] === '' || s[k] == null) ? null : s[k];
+    return kind === 'treadmill' ? { incline: v('incline'), min: v('min'), speed: v('speed') } : kind === 'level' ? { level: v('level'), min: v('min') } : kind === 'check' ? {} : { kg: v('kg'), reps: v('reps') };
+  };
+  const entries = d.entries.map(e => {
+    const out = { name: e.name, equipId: e.equipId || null, kind: e.kind, phase: e.phase || 'main', region: e.region || regionOfName(e.name), sets: e.sets.filter(s => s.done).map(s => clean(e.kind, s)) };
+    if ((e.note || '').trim()) out.note = e.note.trim();
+    return out;
+  }).filter(e => e.sets.length);
+  if (!entries.length) { toast('Tick at least one item first'); return; }
+  const today = dateKey(new Date());
+  const dt = d.editingId ? new Date(d.startedAt) : (d.dateKey === today ? new Date(d.startedAt) : new Date(d.dateKey + 'T12:00:00'));
+  if (d.editingId && d.dateKey !== dateKey(d.startedAt)) dt.setTime(new Date(d.dateKey + 'T12:00:00').getTime());
+  const dur = d.editingId ? d.editingDuration : (d.dateKey === today ? Math.max(1, Math.min(360, Math.round((Date.now() - new Date(d.startedAt).getTime()) / 60000))) : null);
+  const prs = [];
+  entries.forEach(e => {
+    if (!isStrength(e.kind)) return;
+    const hist = exerciseHistory(e.name, dt.getTime(), d.editingId);
+    if (!hist.length) return;
+    const before = exerciseBest(hist), now = exerciseBest([{ e }]);
+    if (now.e1 > before.e1 + 0.01) prs.push({ name: e.name, set: now.bestSet });
+  });
+  const rec = { id: d.editingId || null, dateTime: dt.toISOString(), programId: d.programId || null, programName: d.programName || '', dayName: d.dayName || '', durationMin: dur, note: (d.note || '').trim(), entries };
+  Store.state.meta.workoutDraft = null;
+  const saved = Actions.saveWorkout(rec);
+  Pages.pop(false);
+  setTimeout(() => openWorkoutDetailSheet(saved.id, true), 340);
+  if (prs.length) Celebrate.show(prs.slice(0, 5).map(p => ({ emoji: '🏅', kicker: 'Personal record', title: p.name, sub: fmtW(p.set.kg) + ' kg × ' + p.set.reps })));
+}
+function programFromWorkout(w, name) {
+  const items = (w.entries || []).map(e => {
+    const kind = normKind(e.kind), s0 = e.sets[0] || {};
+    const it = { phase: e.phase || 'main', name: e.name, sets: kind === 'strength' ? e.sets.length : 1, reps: '' };
+    if (kind === 'strength') { it.reps = s0.reps != null ? String(s0.reps) : ''; it.kg = s0.kg != null ? s0.kg : null; }
+    else if (kind === 'treadmill') { it.min = s0.min != null ? s0.min : null; it.incline = s0.incline != null ? s0.incline : null; it.speed = s0.speed != null ? s0.speed : null; it.reps = it.min ? it.min + ' min' : ''; }
+    else if (kind === 'level') { it.min = s0.min != null ? s0.min : null; it.level = s0.level != null ? s0.level : null; it.reps = it.min ? it.min + ' min' : ''; }
+    return it;
+  });
+  const order = PHASES.map(p => p[0]);
+  items.sort((a, b) => order.indexOf(a.phase) - order.indexOf(b.phase));
+  return { name, note: 'Saved from your ' + DTF.mdy.format(new Date(w.dateTime)) + ' workout.', days: [{ id: uid(), name, items }] };
+}
+function openWorkoutDetailSheet(id, justFinished) {
+  const w = Store.state.workouts.find(x => x.id === id); if (!w) return;
+  const focus = workoutFocus(w), detail = focusDetail(w);
+  const byPhase = PHASES.map(ph => {
+    const es = (w.entries || []).filter(e => (e.phase || 'main') === ph[0]); if (!es.length) return '';
+    return '<div class="sec-label" style="margin-top:12px">' + ph[1].replace(' (optional)', '') + '</div>' + es.map(e => '<div class="kv" style="align-items:flex-start"><span>' + esc(e.name) + '</span><b style="text-align:right;max-width:60%">' + esc(setsLabel(e.sets, e.kind)) + (e.note ? '<br><span style="font-weight:500;color:var(--faint);font-size:12px">' + esc(e.note) + '</span>' : '') + '</b></div>').join('');
+  }).join('');
+  Sheet.open({
+    title: justFinished ? 'Saved' : DTF.mdy.format(new Date(w.dateTime)),
+    sub: esc(workoutTitle(w) + (w.durationMin ? ' · ' + w.durationMin + ' min' : '') + (workoutVolume(w) ? ' · ' + fmtVolume(workoutVolume(w)) : '')),
+    html: (focus ? '<div class="card" style="background:var(--mint-soft);color:var(--mint-deep);margin-bottom:6px"><div style="font-size:22px;font-weight:750">' + esc(focus) + '</div>' + (detail ? '<div style="font-size:13.5px;margin-top:3px">' + esc(detail) + ' sets</div>' : '') + '</div>' : '') +
+      byPhase + (w.note ? '<div class="footnote">' + esc(w.note) + '</div>' : '') +
+      '<div class="sheet-actions"><button class="btn btn-tonal" id="wkd-prog">Save as checklist</button><button class="btn btn-tonal" id="wkd-edit">' + ic('pencil', 16) + ' Edit</button><button class="btn btn-danger" id="wkd-del">' + ic('trash', 16) + ' Delete</button></div>',
+    mount(el, close) {
+      $('#wkd-prog', el).addEventListener('click', () => {
+        openTextSheet('Name this checklist', w.dayName || w.programName || 'My workout', name => { Actions.saveProgram(programFromWorkout(w, name)); toast('Saved to Programs'); });
+      });
+      $('#wkd-edit', el).addEventListener('click', () => {
+        if (Store.state.meta.workoutDraft) { toast('Finish or discard the workout in progress first'); return; }
+        close(); Store.state.meta.workoutDraft = draftFromWorkout(w); Store.save(); setTimeout(openWorkoutSession, 320);
+      });
+      $('#wkd-del', el).addEventListener('click', async () => {
+        if (await confirmDlg('Delete this workout?', DTF.mdy.format(new Date(w.dateTime)) + ' · ' + (w.entries || []).length + ' items', 'Delete', true)) { Actions.deleteWorkout(w.id); close(); toast('Deleted'); }
+      });
+    }
+  });
+}
+
+/* ---- Workouts hub ---- */
+function openWorkoutsPage() {
+  ensureEquipmentSeed();
+  Pages.push({
+    title: 'Workouts',
+    render(body) {
+      const S = Store.state, now = new Date(), draft = S.meta.workoutDraft;
+      let h = '';
+      if (draft) h += '<div class="banner" style="background:var(--coral-soft);color:var(--coral-deep)"><b>Workout in progress</b>' + (draft.programName ? ' — ' + esc(workoutTitle(draft)) : '') +
+        '<div class="btnrow" style="margin-top:8px"><button class="btn btn-primary btn-sm" style="flex:1" data-act="wk-resume">Resume</button><button class="btn btn-ghost btn-sm" data-act="wk-discard-hub">Discard</button></div></div>';
+      h += '<div class="card">' + workoutStripHtml(now) +
+        '<div class="f-label">Your training days</div><div class="chips" id="wk-plan">' +
+        [[1, 'Mon'], [2, 'Tue'], [3, 'Wed'], [4, 'Thu'], [5, 'Fri'], [6, 'Sat'], [0, 'Sun']].map(x => '<button class="chip' + (plannedWorkoutDays().indexOf(x[0]) >= 0 ? ' on' : '') + '" data-act="wk-plan-day" data-wd="' + x[0] + '">' + x[1] + '</button>').join('') + '</div></div>';
+      if (!draft) h += '<button class="btn btn-primary" style="width:100%;margin-bottom:10px" data-act="wk-start">Start workout</button>';
+      h += '<div class="list">' +
+        '<button class="row" style="width:100%;text-align:left" data-act="open-programs"><div class="rmain"><div class="rtitle">Programs & checklists</div><div class="rsub">' + S.programs.length + ' saved · ready-made ones to add</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>' +
+        '<button class="row" style="width:100%;text-align:left" data-act="open-equipment"><div class="rmain"><div class="rtitle">My equipment</div><div class="rsub">' + S.equipment.length + ' item' + (S.equipment.length === 1 ? '' : 's') + ' at your gym</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>' +
+        '<button class="row" style="width:100%;text-align:left" data-act="open-exprogress"><div class="rmain"><div class="rtitle">Exercise progress</div><div class="rsub">Best lifts and history per exercise</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button></div>';
+      const ws = S.workouts.slice().sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+      const last30 = ws.filter(w => Date.now() - new Date(w.dateTime).getTime() <= 30 * DAY);
+      if (ws.length) {
+        const mix = {}; last30.forEach(w => { const f = workoutFocus(w); if (f) mix[f] = (mix[f] || 0) + 1; });
+        const mixTxt = Object.keys(mix).sort((a, b) => mix[b] - mix[a]).map(k => k + ' ×' + mix[k]).join(' · ');
+        h += '<div class="sec-label">Last 30 days</div><div class="card"><div class="kv"><span>Workouts</span><b>' + last30.length + '</b></div>' +
+          (mixTxt ? '<div class="kv"><span>Focus</span><b style="text-align:right">' + esc(mixTxt) + '</b></div>' : '') +
+          '<div class="kv" style="border:0"><span>Total weight moved</span><b>' + fmtVolume(last30.reduce((a, w) => a + workoutVolume(w), 0)) + '</b></div></div>';
+        h += '<div class="sec-label">History</div><div class="list">' + ws.slice(0, 30).map(w => {
+          const f = workoutFocus(w), sc = strengthSetCount(w);
+          return '<button class="row" style="width:100%;text-align:left" data-act="wk-open" data-id="' + w.id + '"><div class="rmain"><div class="rtitle">' + esc(DTF.mdy.format(new Date(w.dateTime))) + (f ? ' <span class="badge-day">' + esc(f) + '</span>' : '') + '</div>' +
+            '<div class="rsub">' + esc((w.programName ? workoutTitle(w) + ' · ' : '') + (sc ? sc + ' sets' : (w.entries || []).length + ' items') + (w.durationMin ? ' · ' + w.durationMin + ' min' : '')) + '</div></div>' +
+            '<div class="rside"><div class="rval num">' + esc(workoutVolume(w) ? fmtVolume(workoutVolume(w)) : '') + '</div></div></button>';
+        }).join('') + '</div>';
+      } else h += '<div class="empty"><div class="big">🏋️</div>No workouts yet. Add a checklist from Programs and start one.</div>';
+      body.innerHTML = h;
+    }
+  });
+}
+function openExerciseProgressPage() {
+  Pages.push({
+    title: 'Exercise progress',
+    render(body) {
+      const names = {};
+      Store.state.workouts.forEach(w => (w.entries || []).forEach(e => { if (e.sets.length && normKind(e.kind) !== 'check') { const k = normName(e.name); const t = new Date(w.dateTime).getTime(); if (!names[k] || names[k].t < t) names[k] = { name: e.name, t, kind: normKind(e.kind) }; } }));
+      const list = Object.values(names).sort((a, b) => b.t - a.t);
+      if (!list.length) { body.innerHTML = '<div class="empty"><div class="big">📈</div>Log a workout and each exercise gets its own history here.</div>'; return; }
+      body.innerHTML = '<div class="list">' + list.map(x => {
+        const hist = exerciseHistory(x.name), b = exerciseBest(hist);
+        return '<button class="row" style="width:100%;text-align:left" data-act="ex-open" data-n="' + esc(x.name) + '"><div class="rmain"><div class="rtitle">' + esc(x.name) + '</div><div class="rsub">' + hist.length + ' session' + (hist.length === 1 ? '' : 's') + ' · last ' + esc(DTF.md.format(new Date(x.t))) + '</div></div>' +
+          '<div class="rside"><div class="rval num">' + (x.kind !== 'strength' ? '' : b.kg ? fmtW(b.kg) + ' kg' : '') + '</div></div></button>';
+      }).join('') + '</div>';
+    }
+  });
+}
+function openExerciseDetailPage(name) {
+  Pages.push({
+    title: name,
+    render(body) {
+      const hist = exerciseHistory(name); if (!hist.length) { body.innerHTML = '<div class="empty">No sessions yet.</div>'; return; }
+      const kind = normKind(hist[0].e.kind || kindOfName(name)), b = exerciseBest(hist);
+      let h = '';
+      if (kind === 'strength') h += '<div class="card"><div class="kv"><span>Heaviest weight</span><b>' + fmtW(b.kg) + ' kg</b></div>' +
+        (b.bestSet ? '<div class="kv"><span>Best set (estimated max)</span><b>' + fmtW(b.bestSet.kg) + ' kg × ' + b.bestSet.reps + '</b></div>' : '') +
+        '<div class="kv" style="border:0"><span>Sessions</span><b>' + hist.length + '</b></div></div>';
+      h += '<div class="list">' + hist.slice(0, 40).map(x => '<div class="row" style="display:block"><div class="rtitle">' + esc(DTF.mdy.format(new Date(x.w.dateTime))) + '</div><div class="rsub">' + esc(setsLabel(x.e.sets, kind)) + '</div></div>').join('') + '</div>';
+      body.innerHTML = h;
+    }
+  });
+}
+
+/* ---- Equipment ---- */
+function openEquipmentPage() {
+  ensureEquipmentSeed();
+  Pages.push({
+    title: 'My equipment',
+    right: '<button class="tbtn" data-act="eq-add-custom" style="width:36px;height:36px">' + ic('plus', 18) + '</button>',
+    render(body) {
+      const S = Store.state;
+      let h = '<div class="footnote" style="margin:0 0 12px">What your gym has. Exercises are picked from here — and anything new you type while logging lands here too.</div>' +
+        '<button class="btn btn-tonal" style="width:100%;margin-bottom:12px" data-act="eq-add-common">Add from the common list</button>';
+      if (!S.equipment.length) h += '<div class="empty"><div class="big">🏋️</div>Nothing here yet. Add from the common list, or add your own.</div>';
+      REGIONS.forEach(r => {
+        const items = S.equipment.filter(e => eqRegion(e) === r[0]).sort((a, b) => a.name.localeCompare(b.name));
+        if (!items.length) return;
+        h += '<div class="sec-label">' + r[1] + '</div><div class="list">' + items.map(e => '<button class="row" style="width:100%;text-align:left" data-act="eq-edit" data-id="' + e.id + '"><div class="rmain"><div class="rtitle">' + esc(e.name) + '</div>' +
+          '<div class="rsub">' + esc((EQUIP_KINDS.find(k => k[0] === eqKind(e)) || ['', 'Weights'])[1] + (e.note ? ' · ' + e.note : '')) + '</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>').join('') + '</div>';
+      });
+      body.innerHTML = h;
+    }
+  });
+}
+function openEquipmentCommonSheet() {
+  const have = new Set(Store.state.equipment.map(e => normName(e.name)));
+  const sel = new Set();
+  let h = '';
+  REGIONS.forEach(r => {
+    const items = MOVE_LIBRARY.concat(EQUIPMENT_LIBRARY).filter(x => x[0] === r[0] && !have.has(normName(x[2])));
+    if (!items.length) return;
+    h += '<div class="sec-label">' + r[1] + '</div><div class="chips">' + items.map(x => '<button class="chip" data-n="' + esc(x[2]) + '">' + esc(x[2]) + '</button>').join('') + '</div>';
+  });
+  if (!h) h = '<div class="footnote">Everything on the common list is already in your equipment.</div>';
+  Sheet.open({
+    title: 'Common list',
+    html: '<div style="max-height:56vh;overflow:auto">' + h + '</div><div class="sheet-actions"><button class="btn btn-primary" id="eqc-add">Add selected</button></div>',
+    mount(el, close) {
+      el.addEventListener('click', e => { const b = e.target.closest('.chip[data-n]'); if (!b) return; const n = b.dataset.n; if (sel.has(n)) { sel.delete(n); b.classList.remove('on'); } else { sel.add(n); b.classList.add('on'); } $('#eqc-add', el).textContent = sel.size ? 'Add ' + sel.size + ' selected' : 'Add selected'; });
+      $('#eqc-add', el).addEventListener('click', () => {
+        if (!sel.size) return toast('Tap the ones you want');
+        sel.forEach(n => { const l = MOVE_LIBRARY.concat(EQUIPMENT_LIBRARY).find(x => x[2] === n); if (l && !equipmentByName(n)) Store.state.equipment.push(stampNew({ name: n, region: l[0], kind: l[1], note: '' })); });
+        Store.save(); App.refresh(); close(); toast(sel.size + ' added');
+      });
+    }
+  });
+}
+function openEquipmentSheet(existing) {
+  let region = existing ? eqRegion(existing) : 'chest', kind = existing ? eqKind(existing) : 'strength';
+  Sheet.open({
+    title: existing ? 'Edit equipment' : 'Add equipment',
+    html: '<div class="f-label">Name</div><input class="field" id="eq-name" type="text" value="' + esc(existing ? existing.name : '') + '" placeholder="e.g. Cable crossover">' +
+      '<div class="f-label">What do you log?</div><div class="chips" id="eq-kind">' + EQUIP_KINDS.map(k => '<button class="chip' + (k[0] === kind ? ' on' : '') + '" data-v="' + k[0] + '">' + k[1] + '</button>').join('') + '</div>' +
+      '<div id="eq-reg"' + (kind === 'strength' ? '' : ' style="display:none"') + '><div class="f-label">Area it works</div><div class="chips" id="eq-area">' + REGIONS.filter(r => r[0] !== 'cardio').map(r => '<button class="chip' + (r[0] === region ? ' on' : '') + '" data-v="' + r[0] + '">' + r[1] + '</button>').join('') + '</div></div>' +
+      '<div class="f-label">Note <span style="font-weight:400;color:var(--faint)">(optional — seat setting, plate size…)</span></div><input class="field" id="eq-note" type="text" value="' + esc(existing ? existing.note || '' : '') + '">' +
+      '<div class="sheet-actions">' + (existing ? '<button class="btn btn-danger" id="eq-del">' + ic('trash', 17) + '</button>' : '') + '<button class="btn btn-primary" id="eq-save" style="flex:1">' + (existing ? 'Save changes' : 'Add') + '</button></div>',
+    mount(el, close) {
+      const pick = (id, cb) => $(id, el).addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; cb(b.dataset.v); $(id, el).querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); });
+      pick('#eq-area', v => { region = v; }); pick('#eq-kind', v => { kind = v; $('#eq-reg', el).style.display = v === 'strength' ? '' : 'none'; });
+      $('#eq-save', el).addEventListener('click', () => {
+        const name = $('#eq-name', el).value.trim(); if (!name) return toast('Give it a name');
+        const dup = Store.state.equipment.find(e => normName(e.name) === normName(name) && (!existing || e.id !== existing.id));
+        if (dup) return toast('You already have “' + dup.name + '”');
+        const reg = kind === 'strength' ? region : (kind === 'check' ? 'other' : 'cardio');
+        Actions.saveEquipment({ id: existing ? existing.id : null, name, region: reg, kind, note: $('#eq-note', el).value.trim() });
+        close(); toast(existing ? 'Updated' : 'Added');
+      });
+      if (existing) $('#eq-del', el).addEventListener('click', async () => {
+        if (await confirmDlg('Remove ' + existing.name + '?', 'Past workouts keep their history.', 'Remove', true)) { Actions.deleteEquipment(existing.id); close(); toast('Removed'); }
+      });
+    }
+  });
+}
+
+/* ---- Programs ---- */
+function programFromTemplate(t) { return { name: t.name, note: t.note, days: t.days.map(d => ({ id: uid(), name: d.name, items: d.items.map(i => Object.assign({}, i, { reps: String(i.reps == null ? '' : i.reps) })) })) }; }
+function itemSummary(it) {
+  const k = kindOfName(it.name);
+  if (k === 'strength') return it.sets + ' × ' + (it.reps || '—') + (it.kg != null && it.kg !== '' ? ' · ' + fmtW(it.kg) + ' kg' : '');
+  if (k === 'treadmill') return [it.min ? fmtW(it.min) + ' min' : '', it.incline != null && it.incline !== '' ? 'incl ' + fmtW(it.incline) : '', it.speed != null && it.speed !== '' ? fmtW(it.speed) + ' km/h' : ''].filter(Boolean).join(' · ');
+  if (k === 'level') return [it.min ? fmtW(it.min) + ' min' : '', it.level != null && it.level !== '' ? 'level ' + fmtW(it.level) : ''].filter(Boolean).join(' · ');
+  return it.reps || '';
+}
+function openProgramsPage() {
+  Pages.push({
+    title: 'Programs',
+    right: '<button class="tbtn" data-act="pr-new" style="width:36px;height:36px">' + ic('plus', 18) + '</button>',
+    render(body) {
+      const S = Store.state;
+      let h = '<button class="btn btn-tonal" style="width:100%;margin-bottom:12px" data-act="pr-ready">Add a ready-made program</button>';
+      if (!S.programs.length) h += '<div class="empty"><div class="big">📋</div>No checklists yet. Add a ready-made one, build your own, or finish a workout and save it as a checklist.</div>';
+      else h += '<div class="list">' + S.programs.map(p => '<button class="row" style="width:100%;text-align:left" data-act="pr-open" data-id="' + p.id + '"><div class="rmain"><div class="rtitle">' + esc(p.name) + '</div>' +
+        '<div class="rsub">' + p.days.length + ' day' + (p.days.length === 1 ? '' : 's') + ' · ' + p.days.reduce((a, d) => a + d.items.length, 0) + ' items</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>').join('') + '</div>';
+      body.innerHTML = h;
+    }
+  });
+}
+function openReadyProgramsSheet() {
+  Sheet.open({
+    title: 'Ready-made programs',
+    sub: 'Tap one to add a copy you can edit. Built from your gym’s machines.',
+    html: '<div style="max-height:58vh;overflow:auto"><div class="list">' + PROGRAM_TEMPLATES.map(t => '<button class="row" style="width:100%;text-align:left" data-tpl="' + t.id + '"><div class="rmain"><div class="rtitle">' + esc(t.name) + '</div>' +
+      '<div class="rsub" style="white-space:normal">' + esc(t.note) + '</div><div class="rsub">' + t.days.map(d => esc(d.name) + ' (' + d.items.length + ')').join(' · ') + '</div></div></button>').join('') + '</div></div>',
+    mount(el, close) {
+      el.addEventListener('click', e => {
+        const b = e.target.closest('[data-tpl]'); if (!b) return;
+        const t = PROGRAM_TEMPLATES.find(x => x.id === b.dataset.tpl); if (!t) return;
+        const rec = Actions.saveProgram(programFromTemplate(t));
+        close(); toast('Added “' + t.name + '”');
+        setTimeout(() => openProgramEditor(rec.id), 320);
+      });
+    }
+  });
+}
+function openProgramNameSheet(existing, onDone) {
+  Sheet.open({
+    title: existing ? 'Rename program' : 'New program',
+    html: '<div class="f-label">Name</div><input class="field" id="pn-name" type="text" value="' + esc(existing ? existing.name : '') + '" placeholder="e.g. My leg day">' +
+      '<div class="sheet-actions"><button class="btn btn-primary" id="pn-save">' + (existing ? 'Save' : 'Create') + '</button></div>',
+    mount(el, close) {
+      $('#pn-save', el).addEventListener('click', () => {
+        const name = $('#pn-name', el).value.trim(); if (!name) return toast('Give it a name');
+        if (existing) { existing.name = name; Actions.saveProgram(existing); close(); }
+        else { const rec = Actions.saveProgram({ name, note: '', days: [{ id: uid(), name, items: [] }] }); close(); setTimeout(() => openProgramEditor(rec.id), 320); }
+      });
+    }
+  });
+}
+function openProgramEditor(id) {
+  Pages.push({
+    title: 'Program',
+    render(body) {
+      const p = Store.state.programs.find(x => x.id === id);
+      if (!p) { body.innerHTML = '<div class="empty">This program was removed.</div>'; return; }
+      let h = '<div class="card"><div class="kv" style="border:0"><span><b>' + esc(p.name) + '</b></span><button class="btn btn-ghost btn-sm" data-act="pr-rename" data-id="' + p.id + '">' + ic('pencil', 14) + ' Rename</button></div>' +
+        (p.note ? '<div class="footnote" style="margin:0">' + esc(p.note) + '</div>' : '') + '</div>';
+      h += p.days.map((d, di) => '<div class="card"><div class="wk-head"><div class="rtitle">' + esc(d.name) + '</div><div style="display:flex;gap:2px">' +
+        '<button class="tbtn wk-x" data-act="pr-renameday" data-id="' + p.id + '" data-d="' + di + '" aria-label="Rename day">' + ic('pencil', 15) + '</button>' +
+        '<button class="tbtn wk-x" data-act="pr-delday" data-id="' + p.id + '" data-d="' + di + '" aria-label="Delete day">' + ic('trash', 15) + '</button></div></div>' +
+        (d.items.length ? PHASES.map(ph => {
+          const its = d.items.map((it, ii) => ({ it, ii })).filter(x => (x.it.phase || 'main') === ph[0]); if (!its.length) return '';
+          return '<div class="sec-label" style="margin:10px 2px 6px">' + ph[1] + '</div><div class="list" style="margin-bottom:6px">' + its.map(x => '<button class="row" style="width:100%;text-align:left" data-act="pr-editex" data-id="' + p.id + '" data-d="' + di + '" data-i="' + x.ii + '"><div class="rmain"><div class="rtitle">' + esc(x.it.name) + '</div></div><div class="rside"><div class="rval num" style="font-size:13.5px">' + esc(itemSummary(x.it)) + '</div></div></button>').join('') + '</div>';
+        }).join('') : '<div class="footnote" style="margin:0 0 8px">Nothing here yet.</div>') +
+        '<div class="btnrow" style="margin-top:8px"><button class="btn btn-tonal btn-sm" style="flex:1" data-act="pr-addex" data-id="' + p.id + '" data-d="' + di + '">' + ic('plus', 14) + ' Add item</button>' +
+        '<button class="btn btn-primary btn-sm" style="flex:1" data-act="wk-start-day" data-p="' + p.id + '" data-d="' + di + '">Start this day</button></div></div>').join('');
+      h += '<button class="btn btn-tonal" style="width:100%;margin-bottom:10px" data-act="pr-addday" data-id="' + p.id + '">' + ic('plus', 16) + ' Add a day</button>' +
+        '<button class="btn btn-ghost" style="width:100%;color:var(--err,#b3261e)" data-act="pr-delete" data-id="' + p.id + '">Delete program</button>';
+      body.innerHTML = h;
+    }
+  });
+}
+function openProgramItemSheet(pid, di, ii) {
+  const p = Store.state.programs.find(x => x.id === pid), it = p && p.days[di] && p.days[di].items[ii]; if (!it) return;
+  const k = kindOfName(it.name); let phase = it.phase || 'main';
+  const fld = (id, label, val, mode) => '<div class="f-label">' + label + '</div><input class="field num" id="' + id + '" type="text" inputmode="' + (mode || 'decimal') + '" value="' + esc(val == null ? '' : (typeof val === 'number' ? fmtW(val) : val)) + '">';
+  const fields = k === 'strength' ? fld('pi-sets', 'Sets', it.sets, 'numeric') + fld('pi-reps', 'Reps (e.g. 10, 8–12, 30 s)', it.reps, 'text') + fld('pi-kg', 'Weight kg (optional — last time’s weight wins once you have history)', it.kg)
+    : k === 'treadmill' ? fld('pi-min', 'Minutes', it.min) + fld('pi-incline', 'Incline', it.incline) + fld('pi-speed', 'Speed km/h', it.speed)
+    : k === 'level' ? fld('pi-min', 'Minutes', it.min) + fld('pi-level', 'Level', it.level)
+    : fld('pi-reps', 'Target (e.g. 3–5 min)', it.reps, 'text');
+  Sheet.open({
+    title: it.name,
+    html: fields + '<div class="f-label">Section</div><div class="chips" id="pi-phase">' + PHASES.map(x => '<button class="chip' + (x[0] === phase ? ' on' : '') + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
+      '<div class="sheet-actions"><button class="btn btn-danger" id="pi-del">' + ic('trash', 17) + '</button><button class="btn btn-primary" id="pi-save" style="flex:1">Save</button></div>',
+    mount(el, close) {
+      $('#pi-phase', el).addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; phase = b.dataset.v; $('#pi-phase', el).querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); });
+      const num = id => { const e = $('#' + id, el); if (!e) return undefined; const v = parseNum(e.value); return v == null ? null : v; };
+      $('#pi-save', el).addEventListener('click', () => {
+        it.phase = phase;
+        if (k === 'strength') { it.sets = Math.max(1, Math.min(12, Math.round(num('pi-sets') || 3))); it.reps = $('#pi-reps', el).value.trim(); it.kg = num('pi-kg'); }
+        else if (k === 'treadmill') { it.min = num('pi-min'); it.incline = num('pi-incline'); it.speed = num('pi-speed'); it.reps = it.min ? it.min + ' min' : ''; }
+        else if (k === 'level') { it.min = num('pi-min'); it.level = num('pi-level'); it.reps = it.min ? it.min + ' min' : ''; }
+        else it.reps = $('#pi-reps', el).value.trim();
+        Actions.saveProgram(p); close();
+      });
+      $('#pi-del', el).addEventListener('click', () => { p.days[di].items.splice(ii, 1); Actions.saveProgram(p); close(); });
+    }
+  });
+}
+
+function trainingDays(st) { return new Set((st.workouts || []).map(w => dateKey(w.dateTime))).size; }
+function workoutBlurb(st) {
+  const ws = st.workouts || [], sets = ws.reduce((a, w) => a + strengthSetCount(w), 0);
+  const vol = ws.reduce((a, w) => a + workoutVolume(w), 0);
+  return 'Trained on ' + trainingDays(st) + ' days — ' + sets + ' sets' + (vol > 0 ? ', ' + fmtVolume(vol) + ' moved' : '') + '.';
+}
+function trainingSlide(st, prevDays, prevLabel) {
+  const ws = st.workouts || []; if (!ws.length) return null;
+  const days = trainingDays(st), lines = [];
+  const sets = ws.reduce((a, w) => a + strengthSetCount(w), 0), vol = ws.reduce((a, w) => a + workoutVolume(w), 0);
+  if (sets) lines.push('Sets <b>' + sets + '</b>');
+  if (vol > 0) lines.push('Weight moved <b>' + fmtVolume(vol) + '</b>');
+  let heavy = null;
+  ws.forEach(w => (w.entries || []).forEach(e => { if (!isStrength(e.kind)) return; e.sets.forEach(s => { if (+s.kg > 0 && (!heavy || +s.kg > heavy.kg)) heavy = { kg: +s.kg, reps: s.reps, name: e.name }; }); }));
+  if (heavy) lines.push('Heaviest <b>' + fmtW(heavy.kg) + ' kg</b> · ' + esc(heavy.name));
+  const mix = {}; ws.forEach(w => { const f = workoutFocus(w); if (f) mix[f] = (mix[f] || 0) + 1; });
+  const mixTxt = Object.keys(mix).sort((a, b) => mix[b] - mix[a]).map(k => k + ' ×' + mix[k]).join(' · ');
+  if (mixTxt) lines.push('Focus <b>' + esc(mixTxt) + '</b>');
+  const mins = ws.map(w => w.durationMin).filter(v => v);
+  if (mins.length) lines.push('Typical session <b>' + Math.round(mins.reduce((a, b) => a + b, 0) / mins.length) + ' min</b>');
+  return { cls: 'st-mint', emoji: '🏋️', kicker: 'Training', big: days + (days === 1 ? ' workout day' : ' workout days'), lines: lines.slice(0, 5),
+    foot: prevDays != null ? (prevLabel[0].toUpperCase() + prevLabel.slice(1) + ': ' + prevDays + ' workout day' + (prevDays === 1 ? '' : 's') + '.') : '' };
+}
+function afterSheet(fn) { if (Sheet.current) { Sheet.current.close(); setTimeout(fn, 330); } else fn(); }
+function openTextSheet(title, value, cb) {
+  Sheet.open({
+    title, html: '<input class="field" id="tx-v" type="text" value="' + esc(value || '') + '"><div class="sheet-actions"><button class="btn btn-primary" id="tx-ok">Save</button></div>',
+    mount(el, close) { $('#tx-ok', el).addEventListener('click', () => { const v = $('#tx-v', el).value.trim(); if (!v) return toast('Cannot be empty'); close(); cb(v); }); }
+  });
+}
+
+/* -------- Records: personal bests, all derived from logs -------- */
+function bestRun(keys) {
+  const ks = [...new Set(keys)].sort();
+  let best = { len: 0, endK: null }, run = 0, prev = null;
+  ks.forEach(k => {
+    run = (prev && Math.round((new Date(k + 'T12:00:00') - new Date(prev + 'T12:00:00')) / DAY) === 1) ? run + 1 : 1; prev = k;
+    if (run > best.len) best = { len: run, endK: k };
+  });
+  return best;
+}
+function currentDayStreak(keys) {
+  const set = new Set(keys); let d = new Date(); d.setHours(12, 0, 0, 0);
+  if (!set.has(dateKey(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (set.has(dateKey(d)) && n < 1000) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function recordsList() {
+  const S = Store.state, out = [];
+  const daily = dailyWeightSeries(), injs = injectionsSorted(false);
+  const target = +S.settings.proteinTarget || 0;
+  const fk = k => DTF.mdy.format(new Date(k + 'T12:00:00'));
+  const add = (e, label, value, k, extra) => out.push({ e, label, value, k: k || null, when: k ? fk(k) : '', extra: extra || '' });
+  const sw = startWeight(), cur = daily.length ? daily[daily.length - 1] : null;
+  if (sw != null && cur && sw - cur.kg > 0) add('🪜', 'Total down', fmtKg(sw - cur.kg) + ' kg', cur.k, 'from ' + fmtKg(sw) + ' to ' + fmtKg(cur.kg));
+  if (daily.length) { const lo = daily.reduce((b, x) => x.kg < b.kg ? x : b); add('⚖️', 'Lowest weight', fmtKg(lo.kg) + ' kg', lo.k); }
+  let best = null;
+  for (let i = 0; i < daily.length; i++) for (let j = i + 1; j < daily.length; j++) {
+    const span = (new Date(daily[j].k + 'T12:00:00') - new Date(daily[i].k + 'T12:00:00')) / DAY;
+    if (span >= 5 && span <= 9) { const d = daily[j].kg - daily[i].kg; if (!best || d < best.d) best = { d, a: daily[i], b: daily[j], span }; }
+  }
+  if (best && best.d < -0.2) add('📉', 'Steepest week', fmtSign(best.d, 'kg'), best.b.k, DTF.md.format(new Date(best.a.k + 'T12:00:00')) + ' → ' + DTF.md.format(new Date(best.b.k + 'T12:00:00')));
+  const prot = S.checkIns.filter(c => c.proteinG != null);
+  if (prot.length) { const b = prot.reduce((m, c) => +c.proteinG > +m.proteinG ? c : m); add('🥚', 'Best protein day', Math.round(b.proteinG) + ' g', b.dateKey); }
+  const ci = bestRun(S.checkIns.map(c => c.dateKey));
+  if (ci.len >= 2) add('📝', 'Longest check-in run', ci.len + ' days', ci.endK, 'ending');
+  const cis = currentDayStreak(S.checkIns.map(c => c.dateKey));
+  if (cis >= 2 && cis < ci.len) out.push({ e: '🔥', label: 'Current run', value: cis + ' days', k: null, when: 'still going', extra: '' });
+  if (target > 0) {
+    const ps = bestRun(prot.filter(c => +c.proteinG >= target).map(c => c.dateKey));
+    if (ps.len >= 2) add('💪', 'Longest protein-target run', ps.len + ' days', ps.endK, 'ending');
+  }
+  const wk = maxWeekStreak(injs);
+  if (wk >= 2) add('🤝', 'Longest shot streak', wk + ' weeks', null);
+  if (S.workouts.length) {
+    const wdays = workoutDayKeys().sort();
+    add('🏋️', 'Workout days', wdays.length + ' day' + (wdays.length === 1 ? '' : 's'), wdays[wdays.length - 1], 'latest');
+    const wws = maxWeekStreakKeys(wdays);
+    if (wws >= 2) add('🔁', 'Longest training-week run', wws + ' weeks', null);
+    let heavy = null, big = null;
+    S.workouts.forEach(w => {
+      (w.entries || []).forEach(e => { if (!isStrength(e.kind)) return; e.sets.forEach(st => { if (+st.kg > 0 && (!heavy || +st.kg > heavy.kg)) heavy = { kg: +st.kg, reps: st.reps, name: e.name, k: dateKey(w.dateTime) }; }); });
+      const v = workoutVolume(w); if (v > 0 && (!big || v > big.v)) big = { v, k: dateKey(w.dateTime) };
+    });
+    if (heavy) add('🧱', 'Heaviest lift', fmtW(heavy.kg) + ' kg', heavy.k, heavy.name + (heavy.reps ? ' × ' + heavy.reps : ''));
+    if (big) add('🚛', 'Biggest session', fmtVolume(big.v), big.k, 'total weight moved');
+  }
+  const sl = S.checkIns.filter(c => c.sleepHours != null);
+  if (sl.length) { const b = sl.reduce((m, c) => +c.sleepHours > +m.sleepHours ? c : m); add('🛏️', 'Longest sleep', fmtHM(b.sleepHours) + ' h', b.dateKey); }
+  const en = S.checkIns.filter(c => c.energy != null && +c.energy >= 5);
+  if (en.length) add('⚡', 'Top-energy days', en.length + ' day' + (en.length === 1 ? '' : 's') + ' at 5/5', en[en.length - 1].dateKey, 'latest');
+  if (injs.length) {
+    const hi = injs.reduce((m, i) => +i.doseMg > +m.doseMg ? i : m);
+    add('🚀', 'Highest dose', fmtMg(+hi.doseMg) + ' mg', dateKey(hi.dateTime));
+  }
+  const start = trackingStartKey();
+  if (start) {
+    const days = [start].concat(S.symptoms.map(x => dateKey(x.dateTime))).concat([dateKey(new Date())]).sort();
+    let g = { len: 0, endK: null };
+    for (let i = 1; i < days.length; i++) {
+      const gap = Math.round((new Date(days[i] + 'T12:00:00') - new Date(days[i - 1] + 'T12:00:00')) / DAY) - (i === days.length - 1 ? 0 : 1);
+      if (gap > g.len) g = { len: gap, endK: days[i] };
+    }
+    if (g.len >= 7 && S.symptoms.length) add('🌤️', 'Longest symptom-free stretch', g.len + ' days', g.endK, g.endK === dateKey(new Date()) ? 'and counting' : 'ended');
+  }
+  const ms = S.measurements.slice().sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+  if (ms.length >= 2) {
+    let bestM = null;
+    MEAS_FIELDS.forEach(f => { const a = ms[0][f[0]], b = ms[ms.length - 1][f[0]]; if (a != null && b != null && (!bestM || (b - a) < bestM.d)) bestM = { d: b - a, label: f[1] }; });
+    if (bestM && bestM.d < 0) add('📏', 'Biggest tape change', fmtSign(bestM.d, 'cm', fmtCm), dateKey(ms[ms.length - 1].dateTime), bestM.label + ', first session → latest');
+  }
+  return out;
+}
+function openRecordsPage() {
+  Pages.push({
+    title: 'Records',
+    render(body) {
+      const rs = recordsList();
+      if (!rs.length) { body.innerHTML = '<div class="empty"><div class="big">🏆</div>Log a few days and your personal bests appear here.</div>'; return; }
+      const cut = dateKey(new Date(Date.now() - 7 * DAY));
+      body.innerHTML = '<div class="footnote" style="margin:0 0 12px">Your personal bests, straight from what you logged. A “new” tag means it was set in the last 7 days.</div><div class="list">' +
+        rs.map(r => '<div class="row"><div class="ichip mint" style="margin-right:2px;font-size:18px">' + r.e + '</div><div class="rmain"><div class="rtitle">' + esc(r.label) +
+          (r.k && r.k >= cut ? ' <span class="badge-day">new</span>' : '') + '</div><div class="rsub">' + esc([r.extra, r.when].filter(Boolean).join(' · ')) + '</div></div>' +
+          '<div class="rside"><div class="rval num">' + esc(r.value) + '</div></div></div>').join('') + '</div>';
+    }
+  });
+}
+
+/* -------- Heatmap: one square per day, week by week -------- */
+let heatMetric = 'checkin';
+function heatLevel(metric, day) {
+  const S = Store.state, c = S.checkIns.find(x => x.dateKey === day);
+  const target = +S.settings.proteinTarget || 0;
+  if (metric === 'checkin') return !c ? 0 : (c.nothingToReport && !checkInHasData(c)) ? 2 : 4;
+  if (metric === 'protein') { if (!c || c.proteinG == null) return 0; if (target > 0) { const r = c.proteinG / target; return r >= 1 ? 4 : r >= .8 ? 3 : r >= .5 ? 2 : 1; } return c.proteinG >= 100 ? 4 : c.proteinG >= 70 ? 3 : c.proteinG >= 40 ? 2 : 1; }
+  if (metric === 'energy') return (!c || c.energy == null) ? 0 : Math.max(1, Math.min(4, Math.round(c.energy * 0.8)));
+  if (metric === 'sleep') { if (!c || c.sleepHours == null) return 0; const h = +c.sleepHours; return h >= 8 ? 4 : h >= 7 ? 3 : h >= 6 ? 2 : 1; }
+  if (metric === 'weight') return dailyWeightSeries().some(d => d.k === day) ? 4 : 0;
+  if (metric === 'workout') { const ws = S.workouts.filter(w => dateKey(w.dateTime) === day); if (!ws.length) return 0; const sets = ws.reduce((a, w) => a + strengthSetCount(w), 0); return sets >= 18 ? 4 : sets >= 12 ? 3 : sets >= 6 ? 2 : 1; }
+  return 0;
+}
+function heatDetail(metric, day) {
+  const c = Store.state.checkIns.find(x => x.dateKey === day);
+  const wk = dailyWeightSeries().find(d => d.k === day);
+  const bits = [];
+  if (wk) bits.push(fmtKg(wk.kg) + ' kg');
+  if (c) {
+    if (c.proteinG != null) bits.push(Math.round(c.proteinG) + ' g protein');
+    if (c.energy != null) bits.push('energy ' + c.energy + '/5');
+    if (c.appetite != null) bits.push('appetite ' + c.appetite + '/5');
+    if (c.sleepHours != null) bits.push(fmtHM(c.sleepHours) + ' sleep');
+    if (c.nothingToReport && !checkInHasData(c)) bits.push('nothing to report');
+  }
+  Store.state.workouts.filter(w => dateKey(w.dateTime) === day).forEach(w => bits.push('workout: ' + [workoutTitle(w) === 'Workout' ? 'session' : workoutTitle(w), workoutFocus(w), strengthSetCount(w) + ' sets'].filter(Boolean).join(', ')));
+  if (Store.state.injections.some(i => dateKey(i.dateTime) === day)) bits.push('shot day');
+  return DTF.mdy.format(new Date(day + 'T12:00:00')) + ' — ' + (bits.length ? bits.join(' · ') : 'nothing logged');
+}
+function openHeatmapPage() {
+  Pages.push({
+    title: 'Heatmap',
+    render(body) {
+      const start = trackingStartKey();
+      if (!start) { body.innerHTML = '<div class="empty"><div class="big">🟩</div>Log a few days and the map fills in.</div>'; return; }
+      const today = new Date(); today.setHours(12, 0, 0, 0);
+      const first = new Date(start + 'T12:00:00');
+      const mondayOf = d => { const x = new Date(d); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+      const cols = [];
+      for (let w = mondayOf(first); w <= today; w.setDate(w.getDate() + 7)) {
+        const col = [];
+        for (let i = 0; i < 7; i++) { const d = new Date(w); d.setDate(d.getDate() + i); col.push(d); }
+        cols.push(col);
+      }
+      const shots = new Set(Store.state.injections.map(i => dateKey(i.dateTime)));
+      const tabs = [['checkin', 'Check-ins'], ['protein', 'Protein'], ['energy', 'Energy'], ['sleep', 'Sleep'], ['weight', 'Weigh-ins'], ['workout', 'Workouts']];
+      let h = '<div class="bingo-tabs" style="overflow-x:auto">' + tabs.map(t => '<button class="bingo-tab' + (heatMetric === t[0] ? ' on' : '') + '" style="flex:none;padding:8px 12px" data-act="heat-metric" data-m="' + t[0] + '">' + t[1] + '</button>').join('') + '</div>';
+      h += '<div class="heat-wrap"><div class="heat-days"><i>Mon</i><i></i><i>Wed</i><i></i><i>Fri</i><i></i><i>Sun</i></div><div class="heat-scroll"><div class="heat-grid">' +
+        cols.map(col => '<div class="heat-col">' + col.map(d => {
+          const k = dateKey(d);
+          if (d > today || k < start) return '<b class="hc off"></b>';
+          return '<button class="hc l' + heatLevel(heatMetric, k) + (shots.has(k) ? ' shot' : '') + '" data-act="heat-day" data-k="' + k + '" aria-label="' + esc(k) + '"></button>';
+        }).join('') + '</div>').join('') + '</div></div></div>';
+      h += '<div class="heat-legend"><span>less</span><i class="hc l0"></i><i class="hc l1"></i><i class="hc l2"></i><i class="hc l3"></i><i class="hc l4"></i><span>more</span><span style="margin-left:auto"><i class="hc shot" style="display:inline-block;vertical-align:-3px"></i> shot day</span></div>';
+      h += '<div class="card" id="heat-detail" style="margin-top:12px"><div class="footnote" style="margin:0">Tap a square to see that day.</div></div>';
+      body.innerHTML = h;
+      const sc = body.querySelector('.heat-scroll'); if (sc) sc.scrollLeft = sc.scrollWidth;
+    }
+  });
+}
+
+/* -------- Cycle × how you feel -------- */
+function cyclePatternBuckets() {
+  const S = Store.state;
+  const cycles = S.cycles.filter(c => c.startDate).slice().sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  if (cycles.length < 2) return [];
+  const defs = [['period', 'Period days'], ['early', 'After the period → day 14'], ['late', 'Day 15 → next period']];
+  const acc = {}; defs.forEach(d => { acc[d[0]] = { key: d[0], label: d[1], n: 0, a: [], e: [], p: [], s: [] }; });
+  S.checkIns.forEach(c => {
+    const t = new Date(c.dateKey + 'T12:00:00').getTime();
+    let idx = -1; cycles.forEach((cy, i) => { if (dateKey(cy.startDate) <= c.dateKey) idx = i; });
+    if (idx < 0) return;
+    const cy = cycles[idx], next = cycles[idx + 1];
+    const dayN = Math.round((t - new Date(dateKey(cy.startDate) + 'T12:00:00').getTime()) / DAY) + 1;
+    if (!next && dayN > 40) return;                       /* too long since the last logged start to say anything */
+    const endDay = cy.endDate ? Math.round((new Date(dateKey(cy.endDate) + 'T12:00:00').getTime() - new Date(dateKey(cy.startDate) + 'T12:00:00').getTime()) / DAY) + 1 : 5;
+    const b = acc[dayN <= endDay ? 'period' : dayN <= 14 ? 'early' : 'late'];
+    b.n++;
+    if (c.appetite != null) b.a.push(+c.appetite);
+    if (c.energy != null) b.e.push(+c.energy);
+    if (c.proteinG != null) b.p.push(+c.proteinG);
+    if (c.sleepHours != null) b.s.push(+c.sleepHours);
+  });
+  const avg = a => a.length >= 3 ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  return defs.map(d => { const b = acc[d[0]]; return { key: b.key, label: b.label, n: b.n, appetite: avg(b.a), energy: avg(b.e), protein: avg(b.p), sleep: avg(b.s) }; }).filter(b => b.n >= 3);
+}
+
+/* -------- Today's expectation: what this day-after-shot has looked like for you before -------- */
+function expectationCard(now) {
+  const S = Store.state;
+  const li = lastInjectionBefore(S.injections, now.getTime());
+  if (!li) return '';
+  const day = daysBetween(new Date(li.dateTime), now) + 1;
+  if (day < 1 || day > 8) return '';
+  const tgt = +S.settings.proteinTarget || 0;
+  const n1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
+  const stat = f => {
+    const all = S.checkIns.filter(c => c[f] != null);
+    const mine = all.filter(c => dayAfterInjection(S.injections, c.dateKey + 'T12:00:00') === day);
+    if (mine.length < 3 || all.length < 12) return null;
+    const avg = a => a.reduce((x, y) => x + (+y[f]), 0) / a.length;
+    return { n: mine.length, mine: avg(mine), all: avg(all) };
+  };
+  const ap = stat('appetite'), en = stat('energy'), pr = stat('proteinG');
+  const parts = [];
+  if (ap && Math.abs(ap.mine - ap.all) >= 0.4) parts.push('appetite ' + n1(ap.mine) + '/5 <span style="opacity:.65">(usually ' + n1(ap.all) + ')</span>');
+  if (en && Math.abs(en.mine - en.all) >= 0.4) parts.push('energy ' + n1(en.mine) + '/5 <span style="opacity:.65">(usually ' + n1(en.all) + ')</span>');
+  if (pr && Math.abs(pr.mine - pr.all) >= 8) parts.push('protein ' + Math.round(pr.mine) + ' g <span style="opacity:.65">(usually ' + Math.round(pr.all) + ')</span>');
+  if (!parts.length) return '';
+  const n = Math.max(ap ? ap.n : 0, en ? en.n : 0, pr ? pr.n : 0);
+  const tip = (pr && tgt > 0 && pr.mine < tgt - 8) ? ' Protein tends to dip around now — worth lining up one easy protein-rich meal.' : '';
+  return '<div class="banner fadeup" style="background:var(--lav-soft);color:var(--lav-deep)">🔮 <b>Day ' + day + ' after your shot.</b> Across your ' + n + ' earlier day-' + day + 's: ' + parts.join(', ') + '.' + tip + '</div>';
 }
 
 /* -------- Badges: tiered, all derived from logs -------- */
@@ -4164,6 +5543,7 @@ function badgeDefs() {
     { id: 'listener', e: '🫶', name: 'Body Listener', how: 'Symptoms logged', tiers: [5, 15, 40], v: S.symptoms.length, unit: 'entries' },
     { id: 'tape', e: '📏', name: 'Tape Master', how: 'Measurement sessions logged', tiers: [3, 8, 20], v: S.measurements.length, unit: 'sessions' },
     { id: 'keeper', e: '🧪', name: 'Vial Keeper', how: 'Vials logged', tiers: [2, 5, 10], v: S.vials.length, unit: 'vials' },
+    { id: 'iron', e: '🏋️', name: 'Iron Regular', how: 'Days you trained', tiers: [5, 20, 50], v: workoutDayKeys().length, unit: 'workout days' },
     { id: 'comeback', e: '🔁', name: 'Comeback Kid', how: 'Times you came back to check-ins after a week away', tiers: [1, 3, 5], v: comebacks, unit: 'comebacks' }
   ].map(b => {
     const tier = b.tiers.filter(t => b.v >= t).length;
@@ -4328,6 +5708,25 @@ const Celebrate = {
   },
   close() { if (this.el) { this.el.remove(); this.el = null; } }
 };
+function eggItems() {
+  const S = Store.state, out = [], now = new Date();
+  const sw = startWeight(), first = injectionsSorted(false)[0];
+  const add = (key, emoji, title, sub) => out.push({ key: 'egg:' + key, emoji, kicker: 'Little surprise', title, sub });
+  dailyWeightSeries().forEach(d => {
+    const t = Math.round(d.kg * 10);
+    if (t % 50 === 0 && t >= 400 && (sw == null || d.kg < sw)) add('round:' + t, '🎯', 'Exactly ' + fmtKg(d.kg) + ' kg', 'A perfectly round number on the scale.');
+    const str = String(t); if (str.length === 3 && str[0] === str[1] && str[1] === str[2]) add('rep:' + t, '🍀', fmtKg(d.kg) + ' kg', 'Three of a kind.');
+  });
+  [100, 200, 300].forEach(n => { if (S.checkIns.length >= n) add('ci:' + n, '📖', n + ' check-ins', 'That’s a long time of paying attention.'); });
+  if (first) {
+    const days = Math.floor((now.getTime() - new Date(first.dateTime).getTime()) / DAY);
+    [100, 200, 365].forEach(n => { if (days >= n) add('day:' + n, '🗓️', n === 365 ? 'One whole year' : 'Day ' + n, n === 365 ? 'Since your first shot. Look at that.' : 'Counting from your first shot.'); });
+  }
+  [25, 52].forEach(n => { if (S.injections.length >= n) add('shot:' + n, '💉', n + ' shots logged', n === 52 ? 'That’s a year of weeks.' : 'Quietly adding up.'); });
+  const bm = +S.settings.birthMonth;
+  if (bm && now.getMonth() + 1 === bm) add('bday:' + now.getFullYear(), '🎂', 'Birthday month', 'Whatever you log this month is allowed to be a little extra.');
+  return out;
+}
 function achievementItems() {
   const items = [];
   bingoSquares(1).forEach(q => { if (q.done) items.push({ key: 'sq:' + q.id, emoji: q.e, kicker: 'Bingo square', title: q.t, sub: q.how }); });
@@ -4338,6 +5737,7 @@ function achievementItems() {
   badgeDefs().forEach(b => { for (let t = 1; t <= b.tier; t++) items.push({ key: 'bd:' + b.id + ':' + t, emoji: b.e, kicker: 'Badge unlocked', title: b.name + ' · ' + TIER_NAMES[t], sub: b.how }); });
   const road = goalRoad();
   if (road.stops) road.stops.forEach(x => { if (x.reached) items.push({ key: 'rd:' + x.key, emoji: x.isGoal ? '🏁' : '🛣️', kicker: x.isGoal ? 'Goal reached' : 'Road stop reached', title: fmtKg(x.kg) + ' kg', sub: x.isGoal ? 'You made it to the end of the road.' : 'Next stop is waiting.', note: x.note }); });
+  eggItems().forEach(x => items.push(x));
   return items;
 }
 /* the first run only records what you already have (no flood of old achievements) */
@@ -4346,8 +5746,12 @@ function achievementsCheck() {
     const items = achievementItems();
     const keys = items.map(i => i.key);
     let seen = Store.state.meta.achSeen;
-    if (!Array.isArray(seen)) { Store.state.meta.achSeen = keys; Store.state.meta.bingo2Init = true; Store.save(); return; }
+    if (!Array.isArray(seen)) { Store.state.meta.achSeen = keys; Store.state.meta.bingo2Init = true; Store.state.meta.eggInit = true; Store.save(); return; }
     /* Card 2 appears later: squares it already satisfies are recorded quietly, the card itself is celebrated once */
+    if (!Store.state.meta.eggInit) {
+      seen = seen.concat(items.filter(i => i.key.indexOf('egg:') === 0).map(i => i.key));
+      Store.state.meta.achSeen = seen; Store.state.meta.eggInit = true; Store.save();
+    }
     if (!Store.state.meta.bingo2Init && bingoCard2Unlocked()) {
       seen = seen.concat(items.filter(i => i.key.indexOf('sq2:') === 0).map(i => i.key));
       Store.state.meta.achSeen = seen; Store.state.meta.bingo2Init = true; Store.save();
@@ -4405,6 +5809,17 @@ function openMyPatternPage() {
       if (ap.length) {
         h += '<div class="card">' + ap.map(b => '<div class="kv"><span>Day ' + b.day + ' <span style="color:var(--faint)">(n=' + b.n + ')</span></span><b>' + b.avg.toFixed(1) + ' / 5</b></div>').join('') + '</div>';
       } else h += '<div class="card"><div class="footnote" style="margin:0">Not enough data yet — needs at least 2 check-ins with appetite logged on the same day-since-injection.</div></div>';
+
+      const cyc = cyclePatternBuckets();
+      h += '<div class="sec-label">By cycle phase</div>';
+      if (cyc.length >= 2) {
+        const f1 = v => String(Math.round(v * 10) / 10).replace('.', ',');
+        h += '<div class="list">' + cyc.map(b => '<div class="row" style="display:block"><div class="rtitle">' + esc(b.label) + ' <span style="color:var(--faint);font-weight:400">(' + b.n + ' check-ins)</span></div>' +
+          (b.appetite != null ? '<div class="kv" style="border:0;padding:2px 0"><span>Appetite</span><b>' + f1(b.appetite) + ' / 5</b></div>' : '') +
+          (b.energy != null ? '<div class="kv" style="border:0;padding:2px 0"><span>Energy</span><b>' + f1(b.energy) + ' / 5</b></div>' : '') +
+          (b.protein != null ? '<div class="kv" style="border:0;padding:2px 0"><span>Protein</span><b>' + Math.round(b.protein) + ' g</b></div>' : '') +
+          (b.sleep != null ? '<div class="kv" style="border:0;padding:2px 0"><span>Sleep</span><b>' + fmtHM(b.sleep) + ' h</b></div>' : '') + '</div>').join('') + '</div>';
+      } else h += '<div class="card"><div class="footnote" style="margin:0">Not enough data yet — needs at least two logged periods and a few check-ins in two different phases.</div></div>';
 
       const ci7 = checkInAverages(7);
       h += '<div class="sec-label">Last 7 days</div><div class="card">' +
@@ -4831,7 +6246,8 @@ const CSV_SETS = [
   ['csv-dp', 'Dose plan', () => Store.state.dosePlans.length],
   ['csv-vial', 'Vials', () => Store.state.vials.length],
   ['csv-sp', 'Expenses', () => Store.state.spends.length],
-  ['csv-cyc', 'Period log', () => Store.state.cycles.length]
+  ['csv-cyc', 'Period log', () => Store.state.cycles.length],
+  ['csv-wk', 'Workouts', () => Store.state.workouts.length]
 ];
 function doExportCsv() {
   Sheet.open({
@@ -4878,6 +6294,11 @@ function doExportCsv() {
           rows = [['date', 'amount', 'note']].concat(
             Store.state.spends.slice().sort((a, b) => new Date(a.date) - new Date(b.date))
               .map(s => [s.date, s.amount, s.note || '']));
+        } else if (k === 'csv-wk') {
+          name = 'workouts';
+          rows = [['date', 'program', 'day', 'section', 'area', 'exercise', 'set', 'kg', 'reps', 'minutes', 'incline', 'speed_kmh', 'level', 'note']];
+          Store.state.workouts.slice().sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)).forEach(w => (w.entries || []).forEach(e => e.sets.forEach((st, i) =>
+            rows.push([dateKey(w.dateTime), w.programName || '', w.dayName || '', e.phase || 'main', e.region || '', e.name, i + 1, st.kg != null ? st.kg : '', st.reps != null ? st.reps : '', st.min != null ? st.min : '', st.incline != null ? st.incline : '', st.speed != null ? st.speed : '', st.level != null ? st.level : '', i === 0 ? (e.note || '') : '']))));
         } else {
           name = 'period-log';
           rows = [['startDate', 'endDate', 'lengthDays']].concat(
@@ -4894,7 +6315,7 @@ function doExportCsv() {
 function looksLikeBackup(d) {
   return d && typeof d === 'object' && (Array.isArray(d.injections) || Array.isArray(d.weights) || d.settings);
 }
-const RESTORE_COUNT_KEYS = ['injections', 'weights', 'symptoms', 'measurements', 'checkIns', 'dosePlans', 'vials', 'spends', 'cycles'];
+const RESTORE_COUNT_KEYS = ['injections', 'weights', 'symptoms', 'measurements', 'checkIns', 'dosePlans', 'vials', 'spends', 'cycles', 'equipment', 'programs', 'workouts'];
 async function doRestore(file) {
   let text;
   try { text = await file.text(); } catch (e) { return toast('Could not read file'); }
@@ -4909,7 +6330,7 @@ async function doRestore(file) {
   const counts = RESTORE_COUNT_KEYS.map(k => Array.isArray(data[k]) ? data[k].length : (k === 'vials' && Array.isArray(data.pens) ? data.pens.length : 0));
   const nPhotos = Array.isArray(data.photos) ? data.photos.length : 0;
   const summary = 'Injections ' + counts[0] + ', weights ' + counts[1] + ', symptoms ' + counts[2] + ', measurements ' + counts[3] +
-    ', check-ins ' + counts[4] + ', dose plan ' + counts[5] + ', vials ' + counts[6] + ', expenses ' + counts[7] + ', period log ' + counts[8] +
+    ', check-ins ' + counts[4] + ', dose plan ' + counts[5] + ', vials ' + counts[6] + ', expenses ' + counts[7] + ', period log ' + counts[8] + ', workouts ' + counts[11] +
     (nPhotos ? ', ' + nPhotos + ' legacy photo(s)' : '') + '. Current data on this device will be replaced.';
   const ok = await confirmDlg('Restore this backup?', summary, 'Restore', true);
   if (!ok) return;
@@ -5027,7 +6448,7 @@ function mergeRecordCollection(localArr, remoteArr, tombstones, type) {
   });
   return out;
 }
-const DRIVE_RECORD_TYPES = { injections: 'injection', weights: 'weight', symptoms: 'symptom', measurements: 'measurement', checkIns: 'checkIn', dosePlans: 'dosePlan', vials: 'vial', spends: 'spend', cycles: 'cycle' };
+const DRIVE_RECORD_TYPES = { injections: 'injection', weights: 'weight', symptoms: 'symptom', measurements: 'measurement', checkIns: 'checkIn', dosePlans: 'dosePlan', vials: 'vial', spends: 'spend', cycles: 'cycle', equipment: 'equipment', programs: 'program', workouts: 'workout' };
 function mergeDriveState(localState, remoteData) {
   const merged = JSON.parse(JSON.stringify(localState));
   if (!remoteData || typeof remoteData !== 'object') return merged;
@@ -5206,6 +6627,98 @@ const Drive = {
 
 /* ---------------- global event delegation ---------------- */
 const Handlers = {
+  'open-workouts': () => openWorkoutsPage(),
+  'open-programs': () => openProgramsPage(),
+  'open-equipment': () => openEquipmentPage(),
+  'open-exprogress': () => openExerciseProgressPage(),
+  'ex-open': el => openExerciseDetailPage(el.dataset.n),
+  'wk-start': () => openStartWorkoutSheet(),
+  'wk-resume': () => openWorkoutSession(),
+  'wk-start-empty': () => afterSheet(startEmptyWorkout),
+  'wk-start-day': el => {
+    if (Store.state.meta.workoutDraft) { afterSheet(openWorkoutSession); toast('Finish or discard the workout in progress first'); return; }
+    const p = el.dataset.p, d = +el.dataset.d; afterSheet(() => startWorkoutFromDay(p, d));
+  },
+  'wk-open': el => openWorkoutDetailSheet(el.dataset.id),
+  'wk-plan-day': el => {
+    const wd = +el.dataset.wd, cur = plannedWorkoutDays().slice(), i = cur.indexOf(wd);
+    if (i >= 0) cur.splice(i, 1); else cur.push(wd);
+    Actions.patchSettings({ workoutDays: cur });
+  },
+  'wk-addex': el => {
+    const ph = el.dataset.ph || 'main';
+    openExercisePicker(ph, name => {
+      const d = Store.state.meta.workoutDraft; if (!d) return;
+      d.entries.push(entryFromItem({ name, sets: 3 }, ph)); Store.save(); Pages.render();
+    });
+  },
+  'wk-delex': async el => {
+    const d = Store.state.meta.workoutDraft, e = d && d.entries[+el.dataset.e]; if (!e) return;
+    if (e.sets.some(s => s.done) && !(await confirmDlg('Remove ' + e.name + '?', 'Its logged sets in this workout go with it.', 'Remove', true))) return;
+    d.entries.splice(+el.dataset.e, 1); Store.save(); Pages.render();
+  },
+  'wk-addset': el => {
+    const d = Store.state.meta.workoutDraft, e = d && d.entries[+el.dataset.e]; if (!e) return;
+    const last = e.sets[e.sets.length - 1];
+    e.sets.push(last ? Object.assign({}, last, { done: false }) : blankRow(e.kind));
+    Store.save(); Pages.render();
+  },
+  'wk-delset': el => {
+    const d = Store.state.meta.workoutDraft, e = d && d.entries[+el.dataset.e]; if (!e) return;
+    if (e.sets.length <= 1) { toast('Use the ✕ at the top to remove the exercise'); return; }
+    e.sets.splice(+el.dataset.s, 1); Store.save(); Pages.render();
+  },
+  'wk-note': el => {
+    const d = Store.state.meta.workoutDraft, e = d && d.entries[+el.dataset.e]; if (!e) return;
+    e.showNote = true; Store.save(); Pages.render();
+    const inp = document.querySelector('.page:last-child [data-wk="enote"][data-e="' + el.dataset.e + '"]'); if (inp) inp.focus();
+  },
+  'wk-done': el => {
+    const d = Store.state.meta.workoutDraft, e = d && d.entries[+el.dataset.e], s = e && e.sets[+el.dataset.s]; if (!s) return;
+    s.done = !s.done; el.classList.toggle('on', s.done); Store.save();
+  },
+  'wk-finish': () => finishWorkout(),
+  'wk-discard': async () => {
+    const d = Store.state.meta.workoutDraft; if (!d) return;
+    if (!d.editingId && !(await confirmDlg('Discard this workout?', 'Nothing from it will be saved.', 'Discard', true))) return;
+    Store.state.meta.workoutDraft = null; Store.save(); Pages.pop(false); App.refresh();
+  },
+  'wk-discard-hub': async () => {
+    if (!(await confirmDlg('Discard the workout in progress?', 'Nothing from it will be saved.', 'Discard', true))) return;
+    Store.state.meta.workoutDraft = null; Store.save(); App.refresh();
+  },
+  'eq-add-custom': () => openEquipmentSheet(null),
+  'eq-add-common': () => openEquipmentCommonSheet(),
+  'eq-edit': el => openEquipmentSheet(Store.state.equipment.find(e => e.id === el.dataset.id)),
+  'pr-new': () => openProgramNameSheet(null),
+  'pr-ready': () => openReadyProgramsSheet(),
+  'pr-open': el => openProgramEditor(el.dataset.id),
+  'pr-rename': el => { const p = Store.state.programs.find(x => x.id === el.dataset.id); if (p) openProgramNameSheet(p); },
+  'pr-renameday': el => {
+    const p = Store.state.programs.find(x => x.id === el.dataset.id), day = p && p.days[+el.dataset.d]; if (!day) return;
+    openTextSheet('Rename day', day.name, v => { day.name = v; Actions.saveProgram(p); });
+  },
+  'pr-delday': async el => {
+    const p = Store.state.programs.find(x => x.id === el.dataset.id), day = p && p.days[+el.dataset.d]; if (!day) return;
+    if (p.days.length <= 1) { toast('A program needs at least one day'); return; }
+    if (!(await confirmDlg('Delete ' + day.name + '?', day.items.length + ' exercise' + (day.items.length === 1 ? '' : 's') + ' in it.', 'Delete', true))) return;
+    p.days.splice(+el.dataset.d, 1); Actions.saveProgram(p);
+  },
+  'pr-addday': el => { const p = Store.state.programs.find(x => x.id === el.dataset.id); if (!p) return; p.days.push({ id: uid(), name: 'Day ' + (p.days.length + 1), items: [] }); Actions.saveProgram(p); },
+  'pr-addex': el => {
+    const pid = el.dataset.id, di = +el.dataset.d;
+    openExercisePicker('main', name => {
+      const p = Store.state.programs.find(x => x.id === pid); if (!p || !p.days[di]) return;
+      const k = kindOfName(name);
+      p.days[di].items.push({ phase: k === 'strength' ? 'main' : k === 'check' ? 'cool' : 'warm', name, sets: k === 'strength' ? 3 : 1, reps: '' }); Actions.saveProgram(p);
+    });
+  },
+  'pr-editex': el => openProgramItemSheet(el.dataset.id, +el.dataset.d, +el.dataset.i),
+  'pr-delete': async el => {
+    const p = Store.state.programs.find(x => x.id === el.dataset.id); if (!p) return;
+    if (!(await confirmDlg('Delete ' + p.name + '?', 'Workouts you already logged stay.', 'Delete', true))) return;
+    Actions.deleteProgram(p.id); Pages.pop(false);
+  },
   'open-cal': () => openCalendarPage(),
   'open-settings': () => openSettingsPage(),
   'open-med': () => openMedicationPage(),
@@ -5225,7 +6738,19 @@ const Handlers = {
     if (el.dataset.seen) { Store.state.meta.weekWrappedSeen = end; Store.save(); App.refresh(); }
     Story.openSlides(slides, -1);
   },
+  'open-monthwrapped-list': () => openMonthWrappedPage(),
+  'open-monthwrapped': el => {
+    const ym = el.dataset.ym || dateKey(new Date()).slice(0, 7);
+    const slides = monthWrappedSlides(ym);
+    if (el.dataset.seen) { Store.state.meta.monthWrappedSeen = ym; Store.save(); App.refresh(); }
+    Story.openSlides(slides, -1);
+  },
+  'logo-tap': () => logoTap(),
   'open-badges': () => openBadgesPage(),
+  'open-records': () => openRecordsPage(),
+  'open-heatmap': () => openHeatmapPage(),
+  'heat-metric': el => { heatMetric = el.dataset.m; Pages.render(); },
+  'heat-day': el => { const d = el.closest('.page').querySelector('#heat-detail'); if (d) d.innerHTML = '<div style="font-weight:650">' + esc(heatDetail(heatMetric, el.dataset.k)) + '</div>'; },
   'open-road': () => openRoadPage(),
   'road-note': el => openRoadNoteSheet(el.dataset.key),
   'open-thennow': () => openThenNowPage(),
@@ -5237,6 +6762,7 @@ const Handlers = {
       buttons: [{ label: 'OK', key: 'ok', style: 'btn-primary' }] });
   },
   'open-story': el => Story.open(+el.dataset.idx),
+  'story-share': () => Story.share(),
   'story-next': () => Story.next(),
   'story-prev': () => Story.prev(),
   'story-close': () => Story.close(),
@@ -5384,6 +6910,7 @@ const Handlers = {
   }
 
 };
+document.addEventListener('input', e => { const t = e.target; if (t && t.dataset && t.dataset.wk) workoutInput(t); });
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]');
   if (!el) return;
