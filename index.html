@@ -269,6 +269,21 @@ input[type="datetime-local"].field,input[type="time"].field{min-height:49px}
 .compare .cinfo{text-align:center;font-size:12.5px;color:var(--muted);margin-top:7px;line-height:1.5}
 .compare .cinfo b{display:block;color:var(--text);font-size:14px}
 .photoview img{width:100%;border-radius:18px;background:var(--surface2)}
+.phpair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phv{position:relative;overflow:hidden;border-radius:15px;background:var(--surface2);aspect-ratio:3/4;touch-action:none;user-select:none;-webkit-user-select:none}
+.phlayer{position:absolute;inset:0}
+.phz{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
+.phz img{width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.phhandle{position:absolute;top:0;bottom:0;width:30px;margin-left:-15px;cursor:ew-resize;touch-action:none;z-index:3}
+.phhandle::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.phhandle::after{content:"";position:absolute;left:3px;top:50%;margin-top:-12px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.phtag{position:absolute;top:8px;font-size:11px;font-weight:700;color:#fff;background:rgba(30,20,15,.5);padding:3px 8px;border-radius:999px;z-index:2;pointer-events:none}
+.phempty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-size:12.5px;color:var(--faint);padding:10px;line-height:1.5}
+.phfull{position:fixed;inset:0;z-index:60;background:#111;display:flex;flex-direction:column;padding:12px;gap:10px;overflow:auto;color:#fff}
+.phrow{display:grid;grid-template-columns:62px repeat(3,1fr);gap:8px;align-items:center}
+.phslot{aspect-ratio:3/4;border-radius:13px;background:var(--surface2);overflow:hidden;position:relative;display:grid;place-items:center;color:var(--faint);font-size:11px;padding:0}
+.phslot img{width:100%;height:100%;object-fit:cover}
+
 
 /* ---------- pages ---------- */
 .page{
@@ -596,6 +611,15 @@ function parseNum(v) {
   const n = parseFloat(v);
   return isNaN(n) ? null : n;
 }
+/* strict field read: '' → null (left blank), clean number → number, anything else
+   ("1400kcal", "abc", "1,2,3") → NaN so the caller can refuse instead of guessing */
+function parseNumStrict(v) {
+  const s = String(v == null ? '' : v).trim();
+  if (!s) return null;
+  if (!/^-?[\d.,\s]+$/.test(s) || !/\d/.test(s)) return NaN;
+  const n = parseNum(s);
+  return n == null ? NaN : n;
+}
 const DTF = {
   wd: new Intl.DateTimeFormat('en', { weekday: 'short' }),
   wdl: new Intl.DateTimeFormat('en', { weekday: 'long' }),
@@ -803,7 +827,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.37.3';
+const APP_VERSION = '1.40.0';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -1216,10 +1240,13 @@ function goalProjection() {
   const cw = currentWeight();
   if (!set.goalKg || !cw) return null;
   const goal = +set.goalKg, remaining = cw.kg - goal;
-  const tr = weightTrend(28) || weightTrend(56);
+  /* a date from two weigh-ins a few days apart is noise: need ≥4 weigh-ins spread over ≥14 days */
+  const enough = t => t && t.n >= 4 && t.spanDays >= 14;
+  const t28 = weightTrend(28), t56 = weightTrend(56);
+  const tr = enough(t28) ? t28 : enough(t56) ? t56 : null;
   const out = { goal, remaining, perWeek: tr ? tr.perWeek : null, reached: Math.abs(remaining) < 0.1 };
   if (out.reached) { out.status = 'reached'; return out; }
-  if (!tr || tr.n < 2) { out.status = 'nodata'; return out; }
+  if (!tr) { out.status = 'nodata'; return out; }
   const losing = tr.perWeek < -0.02, gaining = tr.perWeek > 0.02;
   const needToLose = remaining > 0;
   if (Math.abs(tr.perWeek) < 0.02) out.status = 'flat';
@@ -1647,18 +1674,25 @@ function headsUpFlags(now) {
   });
 
   const ci = Store.state.checkIns.slice().sort((a, b) => a.dateKey.localeCompare(b.dateKey));
-  let run = 0, runEndDate = null;
+  /* latest run of low-energy check-ins on calendar-consecutive days; flag only if it is ≥3 days
+     long and ended within the last 7 days. triggerDate = the run's last day, so a later run
+     re-raises a dismissed flag. */
+  const dayBefore = k => dateKey(new Date(new Date(k + 'T12:00:00').getTime() - DAY));
+  let run = 0, runEnd = null, last = null;
   for (const c of ci) {
-    if (c.energy != null && c.energy <= 2) { run++; runEndDate = c.dateKey; } else { run = 0; runEndDate = null; }
-    if (run >= 3) {
-      out.push({
-        id: 'low-energy',
-        text: 'Your check-ins show low energy on 3 consecutive logged days. Consider mentioning it to your doctor.',
-        textTR: 'Check-in kayıtlarınızda art arda 3 günde düşük enerji görünüyor. Doktorunuza bahsetmeyi düşünebilirsiniz.',
-        triggerDate: runEndDate
-      });
-      break;
-    }
+    if (c.energy != null && c.energy <= 2) {
+      run = (runEnd && dayBefore(c.dateKey) === runEnd) ? run + 1 : 1;
+      runEnd = c.dateKey;
+      if (run >= 3) last = { len: run, end: runEnd };
+    } else { run = 0; runEnd = null; }
+  }
+  if (last && last.end >= dateKey(new Date(now.getTime() - 7 * DAY))) {
+    out.push({
+      id: 'low-energy',
+      text: 'Your check-ins show low energy on ' + last.len + ' days in a row. Consider mentioning it to your doctor.',
+      textTR: 'Check-in kayıtlarınızda art arda ' + last.len + ' günde düşük enerji görünüyor. Doktorunuza bahsetmeyi düşünebilirsiniz.',
+      triggerDate: last.end
+    });
   }
   const dismissed = Store.state.meta.dismissedFlags || {};
   return out.filter(f => {
@@ -1747,7 +1781,8 @@ function vialReorderInfo(now) {
   let mgPerDay = null;
   if (recent.length >= 2) {
     const spanDays = daysBetween(new Date(recent[0].dateTime), new Date(recent[recent.length - 1].dateTime));
-    const totalMg = recent.reduce((a, i) => a + (+i.doseMg || 0), 0);
+    /* n doses bound n−1 intervals: the last dose hasn't been "consumed" over this span yet */
+    const totalMg = recent.slice(0, -1).reduce((a, i) => a + (+i.doseMg || 0), 0);
     if (spanDays > 0) mgPerDay = totalMg / spanDays;
   }
   const mgLeft = Math.round(vials.reduce((a, v) => a + v.mgLeft, 0) * 100) / 100;
@@ -3463,6 +3498,12 @@ function openCheckInSheet(existingOrDateKey) {
       $('#ci-save', el).addEventListener('click', async () => {
         const dk = $('#ci-date', el).value;
         if (!dk) return toast('Set a date');
+        /* validate numbers first so a bad entry never discards an existing check-in */
+        const sleepRaw = $('#ci-sleep', el).value.trim(), sleep = parseHM(sleepRaw);
+        const protein = parseNumStrict($('#ci-protein', el).value), kcal = parseNumStrict($('#ci-kcal', el).value);
+        if (sleepRaw && (sleep == null || sleep > 24)) return toast('Sleep looks like 7:30 (hours:minutes)');
+        if (Number.isNaN(protein) || (protein != null && (protein < 0 || protein > 500))) return toast('Protein: enter grams, 0–500');
+        if (Number.isNaN(kcal) || (kcal != null && (kcal < 0 || kcal > 10000))) return toast('Calories: enter a number, 0–10,000');
         /* never silently create two check-ins for one date: if this date (new or edited-to)
            already holds a different check-in, ask before replacing it */
         const collision = Store.state.checkIns.find(c => c.dateKey === dk && (!existing || c.id !== existing.id));
@@ -3471,8 +3512,6 @@ function openCheckInSheet(existingOrDateKey) {
           if (!ok) return;
           Actions.deleteCheckIn(collision.id);
         }
-        const sleepRaw = $('#ci-sleep', el).value.trim(), sleep = parseHM(sleepRaw), protein = parseNum($('#ci-protein', el).value), kcal = parseNum($('#ci-kcal', el).value);
-        if (sleepRaw && (sleep == null || sleep > 24)) return toast('Sleep looks like 7:30 (hours:minutes)');
         Actions.saveCheckIn({ id: existing ? existing.id : null, dateKey: dk, appetite, gi, energy, sleepHours: sleep, proteinG: protein, kcal, note: $('#ci-note', el).value.trim(), nothingToReport: false });
         close(); toast(existing ? 'Check-in updated' : 'Check-in logged');
       });
@@ -3753,6 +3792,10 @@ function openToolsPage() {
     title: 'Tools',
     render(body) {
       const rows = [
+        ['open-bodystudio', 'compare', 'lav', 'Body Studio', 'Recomposition and private progress photos'],
+        ['open-forecast', 'sparkle', 'peach', 'Forecast Lab', 'Energy-balance simulation, scenarios, predicted vs. actual'],
+        ['open-explore', 'sparkle', 'mint', 'Explore Your Data', 'Questions your records can answer'],
+        ['open-lab', 'compare', 'teal', 'Insights Lab', 'Compare variables, lags and periods'],
         ['open-dosejourney', 'syringe', 'coral', 'Dose Journey', 'Dose history, future plan & budget'],
         ['open-workouts', 'sparkle', 'mint', 'Workouts', 'Gym days, sets & weights, programs, equipment'],
         ['open-dosestory', 'sparkle', 'pink', 'Dose Story', 'A swipeable recap of each dose period'],
@@ -5894,6 +5937,1219 @@ function openWhatChangedPage() {
   });
 }
 
+/* ================= Insights Lab + Explore Your Data =================
+   One analysis engine, two ways in: the Lab (you pick variables) and Explore (Tempo suggests
+   questions the records can actually answer). Everything is computed on-device from your own
+   logs. Missing days are never counted as zero; small samples are labelled, not dressed up. */
+const LAB_COLORS = ['var(--coral)', 'var(--teal)', 'var(--lav-deep)'];
+function labAddDays(k, n) { return dateKey(new Date(new Date(k + 'T12:00:00').getTime() + n * DAY)); }
+function labMean(a) { return a.length ? a.reduce((x, y) => x + y, 0) / a.length : null; }
+function labFmt(v, dec) { if (v == null || !isFinite(v)) return '—'; const p = Math.pow(10, dec == null ? 1 : dec); return String(Math.round(v * p) / p).replace('.', ','); }
+function labPearson(xs, ys) {
+  const n = xs.length; if (n < 3) return null;
+  const mx = labMean(xs), my = labMean(ys);
+  let sxx = 0, syy = 0, sxy = 0;
+  for (let i = 0; i < n; i++) { const dx = xs[i] - mx, dy = ys[i] - my; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; }
+  if (sxx === 0 || syy === 0) return null;
+  return sxy / Math.sqrt(sxx * syy);
+}
+function labRanks(a) {
+  const idx = a.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]), r = new Array(a.length);
+  for (let i = 0; i < idx.length;) {
+    let j = i; while (j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j++;
+    const rank = (i + j) / 2 + 1; for (let k = i; k <= j; k++) r[idx[k][1]] = rank; i = j + 1;
+  }
+  return r;
+}
+function labSpearman(xs, ys) { return labPearson(labRanks(xs), labRanks(ys)); }
+/* 95% interval for r (Fisher z); only offered from n = 10 */
+function labCI(r, n) { if (r == null || n < 10 || Math.abs(r) >= 0.999) return null; const z = Math.atanh(r), se = 1 / Math.sqrt(n - 3); return [Math.tanh(z - 1.96 * se), Math.tanh(z + 1.96 * se)]; }
+function labStrength(r) { const a = Math.abs(r); return a < 0.2 ? 'little to no' : a < 0.4 ? 'a weak' : a < 0.6 ? 'a moderate' : 'a strong'; }
+
+/* ---- variables ---- */
+const LAB_VARS = [
+  { id: 'weight', label: 'Weight', unit: 'kg', kind: 'daily', agg: 'mean', dec: 1 },
+  { id: 'weightDev', label: 'Weight vs. nearby weigh-ins', unit: 'kg', kind: 'event', agg: 'mean', dec: 1, hint: 'each weigh-in minus the average of weigh-ins within 3 days either side (needs 2 neighbours)' },
+  { id: 'sleep', label: 'Sleep', unit: 'h', kind: 'daily', agg: 'mean', dec: 1 },
+  { id: 'energy', label: 'Energy', unit: '/5', kind: 'daily', agg: 'mean', dec: 1 },
+  { id: 'appetite', label: 'Appetite', unit: '/5', kind: 'daily', agg: 'mean', dec: 1 },
+  { id: 'protein', label: 'Protein', unit: 'g', kind: 'daily', agg: 'mean', dec: 0 },
+  { id: 'kcal', label: 'Calories', unit: 'kcal', kind: 'daily', agg: 'mean', dec: 0 },
+  { id: 'symptom', label: 'Symptom severity', unit: '/5', kind: 'event', agg: 'max', dec: 1, hint: 'worst symptom logged that day; days without an entry are left out, not counted as none' },
+  { id: 'workoutDay', label: 'Workout day', unit: '', kind: 'daily', agg: 'sum7', dec: 0, weekLabel: 'Workout days / week', hint: 'counted from your first logged session onward (1 = trained, 0 = no session logged)' },
+  { id: 'workoutSets', label: 'Strength sets', unit: 'sets', kind: 'event', agg: 'sum', dec: 0 },
+  { id: 'workoutVol', label: 'Training volume', unit: 'kg', kind: 'event', agg: 'sum', dec: 0 },
+  { id: 'dose', label: 'Dose', unit: 'mg', kind: 'event', agg: 'mean', dec: 2 }
+].concat(MEAS_FIELDS.map(f => ({ id: 'm:' + f[0], label: f[1] + ' (measured)', unit: 'cm', kind: 'event', agg: 'mean', dec: 1, field: f[0] })));
+function labVar(id) { return LAB_VARS.find(v => v.id === id) || null; }
+function labVarName(id, gran) { const v = labVar(id); if (!v) return ''; return gran === 'week' && v.weekLabel ? v.weekLabel : v.label; }
+
+function labDaily(id) {
+  const S = Store.state, m = new Map();
+  const put = (k, v) => { if (v != null && isFinite(v)) m.set(k, v); };
+  if (id === 'weight') dailyWeightSeries().forEach(d => put(d.k, d.kg));
+  else if (id === 'weightDev') {
+    const ds = dailyWeightSeries();
+    ds.forEach(d => { const nb = ds.filter(o => o !== d && Math.abs(o.t - d.t) <= 3 * DAY); if (nb.length >= 2) put(d.k, d.kg - labMean(nb.map(o => o.kg))); });
+  } else if (id === 'sleep' || id === 'energy' || id === 'appetite' || id === 'protein' || id === 'kcal') {
+    const f = { sleep: 'sleepHours', energy: 'energy', appetite: 'appetite', protein: 'proteinG', kcal: 'kcal' }[id];
+    S.checkIns.forEach(c => { const v = c[f]; if (v == null || v === '' || !isFinite(+v)) return; if ((id === 'energy' || id === 'appetite') || +v > 0) put(c.dateKey, +v); });
+  } else if (id === 'symptom') {
+    S.symptoms.forEach(s => { const k = dateKey(s.dateTime); put(k, Math.max(m.get(k) || 0, +s.severity || 0)); });
+  } else if (id === 'workoutDay') {
+    if (S.workouts.length) {
+      const days = new Set(S.workouts.map(w => dateKey(w.dateTime))), first = [...days].sort()[0], today = dateKey(new Date());
+      for (let k = first; k <= today; k = labAddDays(k, 1)) put(k, days.has(k) ? 1 : 0);
+    }
+  } else if (id === 'workoutSets' || id === 'workoutVol') {
+    S.workouts.forEach(w => { const k = dateKey(w.dateTime); const v = id === 'workoutSets' ? strengthSetCount(w) : workoutVolume(w); if (v > 0) put(k, (m.get(k) || 0) + v); });
+  } else if (id === 'dose') {
+    S.injections.forEach(i => { const k = dateKey(i.dateTime); put(k, (m.get(k) || 0) + (+i.doseMg || 0)); });
+  } else if (id.indexOf('m:') === 0) {
+    const f = id.slice(2);
+    S.measurements.slice().sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)).forEach(x => { if (+x[f] > 0) put(dateKey(x.dateTime), +x[f]); });
+  }
+  return m;
+}
+function labWeekly(daily, agg) {
+  const wk = new Map();
+  daily.forEach((v, k) => { const wi = weekIndex(new Date(k + 'T12:00:00')); if (!wk.has(wi)) wk.set(wi, []); wk.get(wi).push(v); });
+  const out = new Map();
+  wk.forEach((arr, wi) => {
+    let v;
+    if (agg === 'sum7') { if (arr.length < 7) return; v = arr.reduce((a, b) => a + b, 0); }
+    else if (agg === 'sum') v = arr.reduce((a, b) => a + b, 0);
+    else if (agg === 'max') v = Math.max.apply(null, arr);
+    else v = labMean(arr);
+    out.set(dateKey(new Date(WEEK_ANCHOR + wi * 7 * DAY + 12 * 3600000)), v);
+  });
+  return out;
+}
+function labMapAll(id, gran) { const v = labVar(id); const d = labDaily(id); return gran === 'week' ? labWeekly(d, v ? v.agg : 'mean') : d; }
+function labRangeKeys(r) {
+  const today = dateKey(new Date());
+  if (r.preset === 'custom' && r.from && r.to && r.from <= r.to) return { from: r.from, to: r.to };
+  if (r.preset === 'all') return { from: trackingStartKey() || today, to: today };
+  const n = r.preset === '30' ? 30 : r.preset === '14' ? 14 : 90;
+  return { from: labAddDays(today, -(n - 1)), to: today };
+}
+function labInRange(map, from, to) { const out = []; map.forEach((v, k) => { if (k >= from && k <= to) out.push({ k, v }); }); out.sort((a, b) => a.k < b.k ? -1 : 1); return out; }
+function labSlots(gran, from, to) { const d = daysBetween(new Date(from + 'T12:00:00'), new Date(to + 'T12:00:00')) + 1; return gran === 'week' ? Math.max(1, Math.ceil(d / 7)) : d; }
+function labCoverage(id, gran, range) {
+  const pts = labInRange(labMapAll(id, gran), range.from, range.to);
+  return { id, n: pts.length, slots: labSlots(gran, range.from, range.to), pts };
+}
+function labPairs(aId, bId, gran, lag, range) {
+  const A = labInRange(labMapAll(aId, gran), range.from, range.to), B = labMapAll(bId, gran);
+  const pairs = [];
+  A.forEach(p => { const tk = labAddDays(p.k, gran === 'week' ? 7 * lag : lag); if (B.has(tk)) pairs.push({ k: p.k, tk, x: p.v, y: B.get(tk) }); });
+  return pairs;
+}
+function labPairStats(pairs) {
+  const n = pairs.length, xs = pairs.map(p => p.x), ys = pairs.map(p => p.y);
+  if (n < 8) return { n, enough: false };
+  const r = labPearson(xs, ys);
+  if (r == null) return { n, enough: true, flat: true };
+  return { n, enough: true, r, rho: labSpearman(xs, ys), ci: labCI(r, n) };
+}
+
+/* ---- groupers ---- */
+const LAB_GROUPS = [['injDay', 'Injection day'], ['cycle', 'Cycle phase'], ['weekday', 'Weekday']];
+function labGrouper(gid) {
+  const S = Store.state;
+  if (gid === 'injDay') return k => { const d = dayAfterInjection(S.injections, k + 'T12:00:00'); return d == null || d > 10 ? null : { o: d, label: 'Day ' + d }; };
+  if (gid === 'weekday') { const nm = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; return k => { const o = (new Date(k + 'T12:00:00').getDay() + 6) % 7; return { o, label: nm[o] }; }; }
+  const cycles = S.cycles.filter(c => c.startDate).slice().sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  if (cycles.length < 2) return () => null;
+  const defs = { period: [0, 'Period days'], early: [1, 'After period → day 14'], late: [2, 'Day 15 → next period'] };
+  return k => {
+    const t = new Date(k + 'T12:00:00').getTime();
+    let idx = -1; cycles.forEach((cy, i) => { if (dateKey(cy.startDate) <= k) idx = i; });
+    if (idx < 0) return null;
+    const cy = cycles[idx], next = cycles[idx + 1];
+    const dayN = Math.round((t - new Date(dateKey(cy.startDate) + 'T12:00:00').getTime()) / DAY) + 1;
+    if (!next && dayN > 40) return null;
+    const endDay = cy.endDate ? Math.round((new Date(dateKey(cy.endDate) + 'T12:00:00').getTime() - new Date(dateKey(cy.startDate) + 'T12:00:00').getTime()) / DAY) + 1 : 5;
+    const key = dayN <= endDay ? 'period' : dayN <= 14 ? 'early' : 'late';
+    return { o: defs[key][0], label: defs[key][1] };
+  };
+}
+function labGroups(varId, gid, range, minN) {
+  const g = labGrouper(gid), pts = labInRange(labDaily(varId), range.from, range.to), acc = new Map();
+  pts.forEach(p => { const gr = g(p.k); if (!gr) return; if (!acc.has(gr.o)) acc.set(gr.o, { o: gr.o, label: gr.label, vals: [], keys: [] }); const e = acc.get(gr.o); e.vals.push(p.v); e.keys.push(p.k); });
+  return [...acc.values()].sort((a, b) => a.o - b.o).map(e => ({ o: e.o, label: e.label, n: e.vals.length, mean: labMean(e.vals), keys: e.keys, vals: e.vals })).filter(e => e.n >= (minN || 1));
+}
+
+/* ---- charts ---- */
+function labAxisDates(from, to) { return [from, to].map(k => DTF.md.format(new Date(k + 'T12:00:00'))); }
+function labTimeSVG(series, gran, range) {
+  const w = 336, h = 190, p = { l: 12, r: 12, t: 12, b: 26 };
+  const t0 = new Date(range.from + 'T12:00:00').getTime(), t1 = new Date(range.to + 'T12:00:00').getTime() || t0 + DAY;
+  const X = t => p.l + (t - t0) / ((t1 - t0) || 1) * (w - p.l - p.r), Y = u => h - p.b - u * (h - p.t - p.b);
+  const gap = (gran === 'week' ? 15 : 5) * DAY;
+  let o = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="height:auto">';
+  [0, .5, 1].forEach(u => { o += '<line x1="' + p.l + '" x2="' + (w - p.r) + '" y1="' + Y(u).toFixed(1) + '" y2="' + Y(u).toFixed(1) + '" stroke="var(--line)" stroke-dasharray="1 4"/>'; });
+  series.forEach((s, si) => {
+    if (!s.pts.length) return;
+    const vs = s.pts.map(q => q.v), mn = Math.min.apply(null, vs), mx = Math.max.apply(null, vs), rg = (mx - mn) || 1;
+    let d = '', prev = null;
+    s.pts.forEach(q => {
+      const t = new Date(q.k + 'T12:00:00').getTime(), u = mx === mn ? .5 : (q.v - mn) / rg;
+      d += (prev != null && t - prev <= gap ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(u).toFixed(1); prev = t;
+    });
+    o += '<path d="' + d + '" fill="none" stroke="' + LAB_COLORS[si] + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    s.pts.forEach(q => { const t = new Date(q.k + 'T12:00:00').getTime(), u = mx === mn ? .5 : (q.v - mn) / rg; o += '<circle cx="' + X(t).toFixed(1) + '" cy="' + Y(u).toFixed(1) + '" r="2.6" fill="var(--surface)" stroke="' + LAB_COLORS[si] + '" stroke-width="1.7"/>'; });
+  });
+  const dl = labAxisDates(range.from, range.to);
+  o += '<text x="' + p.l + '" y="' + (h - 8) + '" font-size="10" fill="var(--faint)">' + esc(dl[0]) + '</text><text x="' + (w - p.r) + '" y="' + (h - 8) + '" font-size="10" fill="var(--faint)" text-anchor="end">' + esc(dl[1]) + '</text>';
+  return o + '</svg>';
+}
+function labScatterSVG(pairs, thirdMap, color) {
+  const w = 336, h = 220, p = { l: 40, r: 14, t: 12, b: 28 };
+  const xs = pairs.map(q => q.x), ys = pairs.map(q => q.y);
+  let x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+  if (x0 === x1) { x0 -= 1; x1 += 1; } if (y0 === y1) { y0 -= 1; y1 += 1; }
+  const px = (x1 - x0) * .08, py = (y1 - y0) * .1; x0 -= px; x1 += px; y0 -= py; y1 += py;
+  const X = v => p.l + (v - x0) / (x1 - x0) * (w - p.l - p.r), Y = v => h - p.b - (v - y0) / (y1 - y0) * (h - p.t - p.b);
+  let tv = null;
+  if (thirdMap) { const vals = pairs.map(q => thirdMap.get(q.k)).filter(v => v != null).sort((a, b) => a - b); if (vals.length >= 3) tv = [vals[Math.floor(vals.length / 3)], vals[Math.floor(vals.length * 2 / 3)]]; }
+  let o = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="height:auto">';
+  [0, 1].forEach(u => { const yy = (h - p.b - u * (h - p.t - p.b)).toFixed(1); o += '<line x1="' + p.l + '" x2="' + (w - p.r) + '" y1="' + yy + '" y2="' + yy + '" stroke="var(--line)" stroke-dasharray="1 4"/><text x="' + (p.l - 6) + '" y="' + yy + '" font-size="10" fill="var(--faint)" text-anchor="end" dominant-baseline="middle">' + labFmt(y0 + (y1 - y0) * u, 1) + '</text>'; });
+  [0, 1].forEach(u => { o += '<text x="' + (p.l + u * (w - p.l - p.r)).toFixed(1) + '" y="' + (h - 8) + '" font-size="10" fill="var(--faint)" text-anchor="' + (u ? 'end' : 'start') + '">' + labFmt(x0 + (x1 - x0) * u, 1) + '</text>'; });
+  if (pairs.length >= 8) {
+    const mx = labMean(xs), my = labMean(ys); let sxx = 0, sxy = 0; pairs.forEach(q => { sxx += (q.x - mx) * (q.x - mx); sxy += (q.x - mx) * (q.y - my); });
+    if (sxx > 0) { const b = sxy / sxx, a = my - b * mx; o += '<line x1="' + X(x0).toFixed(1) + '" y1="' + Y(a + b * x0).toFixed(1) + '" x2="' + X(x1).toFixed(1) + '" y2="' + Y(a + b * x1).toFixed(1) + '" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="5 4"/>'; }
+  }
+  pairs.forEach(q => {
+    let op = .85; const tvv = thirdMap ? thirdMap.get(q.k) : null;
+    if (tv && tvv != null) op = tvv <= tv[0] ? .3 : tvv <= tv[1] ? .6 : 1; else if (tv) op = .12;
+    o += '<circle cx="' + X(q.x).toFixed(1) + '" cy="' + Y(q.y).toFixed(1) + '" r="4" fill="' + (color || 'var(--coral)') + '" fill-opacity="' + op + '"/>';
+  });
+  return o + '</svg>';
+}
+function labGroupSVG(groups, dec, color) {
+  const w = 336, h = 180, p = { l: 12, r: 12, t: 20, b: 34 };
+  const means = groups.map(g => g.mean), lo = Math.min(0, Math.min.apply(null, means)), hi = Math.max(0, Math.max.apply(null, means)), rg = (hi - lo) || 1;
+  const Y = v => p.t + (hi - v) / rg * (h - p.t - p.b), bw = Math.min(40, (w - p.l - p.r) / groups.length - 8);
+  let o = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="height:auto"><line x1="' + p.l + '" x2="' + (w - p.r) + '" y1="' + Y(0).toFixed(1) + '" y2="' + Y(0).toFixed(1) + '" stroke="var(--line)"/>';
+  groups.forEach((g, i) => {
+    const cx = p.l + (i + .5) * (w - p.l - p.r) / groups.length, y = Y(g.mean), y0 = Y(0), thin = g.n < 3;
+    o += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(y, y0).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1.5, Math.abs(y0 - y)).toFixed(1) + '" rx="5" fill="' + (color || 'var(--teal)') + '" fill-opacity="' + (thin ? .28 : .85) + '"/>';
+    o += '<text x="' + cx.toFixed(1) + '" y="' + (Math.min(y, y0) - 5).toFixed(1) + '" font-size="10.5" font-weight="700" fill="var(--text)" text-anchor="middle">' + labFmt(g.mean, dec) + '</text>';
+    o += '<text x="' + cx.toFixed(1) + '" y="' + (h - 17) + '" font-size="10" fill="var(--muted)" text-anchor="middle">' + esc(g.label.length > 10 ? g.label.replace(/ .*/, '') : g.label) + '</text>';
+    o += '<text x="' + cx.toFixed(1) + '" y="' + (h - 5) + '" font-size="9.5" fill="var(--faint)" text-anchor="middle">n=' + g.n + '</text>';
+  });
+  return o + '</svg>';
+}
+function labHBarsSVG(items, unit, dec) {
+  const w = 336, rowH = 30, h = items.length * rowH + 8, lw = 96, rw = 70;
+  const mx = Math.max.apply(null, items.map(i => Math.abs(i.value))) || 1, mid = lw + (w - lw - rw) / 2, half = (w - lw - rw) / 2 - 4;
+  let o = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="height:auto"><line x1="' + mid + '" x2="' + mid + '" y1="2" y2="' + (h - 2) + '" stroke="var(--line)"/>';
+  items.forEach((it, i) => {
+    const y = 6 + i * rowH, len = Math.abs(it.value) / mx * half, x = it.value < 0 ? mid - len : mid;
+    o += '<text x="' + (lw - 8) + '" y="' + (y + 11) + '" font-size="11.5" fill="var(--text)" text-anchor="end" dominant-baseline="middle">' + esc(it.label) + '</text>';
+    o += '<rect x="' + x.toFixed(1) + '" y="' + (y + 2) + '" width="' + Math.max(2, len).toFixed(1) + '" height="18" rx="5" fill="' + (it.color || 'var(--teal)') + '" fill-opacity=".85"/>';
+    o += '<text x="' + (w - 4) + '" y="' + (y + 11) + '" font-size="11" font-weight="700" fill="var(--text)" text-anchor="end" dominant-baseline="middle">' + esc(it.text != null ? it.text : (it.value > 0 ? '+' : '') + labFmt(it.value, dec) + (unit || '')) + '</text>';
+  });
+  return o + '</svg>';
+}
+
+/* ---- the Lab ---- */
+let labState = null;
+function labInit() {
+  if (!labState) labState = { tab: 'lab', a: 'sleep', b: 'energy', c: '', mode: 'rel', gran: 'day', lag: 0, group: 'injDay', range: { preset: '90', from: '', to: '' } };
+  return labState;
+}
+function labSaved() { const m = Store.state.meta; if (!Array.isArray(m.labSaved)) m.labSaved = []; return m.labSaved; }
+function labCfgOf(s) { return { a: s.a, b: s.b, c: s.c, mode: s.mode, gran: s.gran, lag: s.lag, group: s.group, range: Object.assign({}, s.range) }; }
+function labObsCount(cfg) {
+  const r = labRangeKeys(cfg.range);
+  if (cfg.mode === 'rel') return labPairs(cfg.a, cfg.b, cfg.gran, cfg.lag, r).length;
+  if (cfg.mode === 'group') return labGroups(cfg.a, cfg.group, r, 1).reduce((a, g) => a + g.n, 0);
+  return labCoverage(cfg.a, cfg.gran, r).n;
+}
+function labCoverLine(id, gran, range) {
+  const v = labVar(id), c = labCoverage(id, gran, range), name = labVarName(id, gran);
+  if (v.kind === 'daily') {
+    const unit = gran === 'week' ? 'weeks' : 'days', pct = c.slots ? Math.round(100 * (1 - c.n / c.slots)) : 0;
+    return esc(name) + ': ' + c.n + ' of ' + c.slots + ' ' + unit + ' have a value' + (c.n ? ' (' + Math.max(0, pct) + '% missing)' : '');
+  }
+  return esc(name) + ': ' + c.n + (c.n === 1 ? ' entry' : ' entries') + ' in this period' + (v.hint ? ' <span style="color:var(--faint)">— ' + esc(v.hint) + '</span>' : '');
+}
+function labStatsHTML(a, b, st, gran, lag) {
+  const na = labVarName(a, gran), nb = labVarName(b, gran);
+  const lagTxt = lag ? ' (' + nb + ' measured ' + lag + (gran === 'week' ? ' week' : ' day') + (lag > 1 ? 's' : '') + ' later)' : '';
+  let h = '<div class="kv"><span>Overlapping observations</span><b>' + st.n + '</b></div>';
+  if (!st.enough) return h + '<div class="footnote" style="margin:6px 0 0">Only ' + st.n + ' ' + (gran === 'week' ? 'week' : 'day') + (st.n === 1 ? '' : 's') + ' have both values' + lagTxt + '. That is too few for a statement about how ' + esc(na) + ' and ' + esc(nb) + ' relate — what can be seen is plotted above (needs about 8).</div>';
+  if (st.flat) return h + '<div class="footnote" style="margin:6px 0 0">One of the two barely varies in this period, so no relationship can be measured.</div>';
+  const dir = st.r > 0 ? 'positive' : 'negative';
+  h += '<div class="kv"><span>Correlation (r)</span><b>' + labFmt(st.r, 2) + '</b></div>';
+  if (st.ci) h += '<div class="kv"><span>95% range for r</span><b>' + labFmt(st.ci[0], 2) + ' to ' + labFmt(st.ci[1], 2) + '</b></div>';
+  h += '<div class="kv" style="border:0"><span>Rank correlation</span><b>' + labFmt(st.rho, 2) + '</b></div>';
+  h += '<div class="footnote" style="margin:6px 0 0">In these records: ' + labStrength(st.r) + (Math.abs(st.r) < 0.2 ? ' linear relationship' : ' ' + dir + ' association') + ' between ' + esc(na) + ' and ' + esc(nb) + lagTxt + '. ' +
+    (st.ci && st.ci[0] < 0 && st.ci[1] > 0 ? 'The range includes zero, so this could be chance. ' : '') + 'This describes what was logged — it does not show that one causes the other.</div>';
+  return h;
+}
+function labTrendCaveat(ids) { return ids.some(id => id === 'weight' || id.indexOf('m:') === 0) ? '<div class="footnote">Weight and body measurements drift over time, so an association with them can simply reflect that drift.</div>' : ''; }
+
+function labRecordsSheet(rows, title) {
+  Sheet.open({
+    title: title || 'Records behind this',
+    sub: rows.length > 80 ? 'Showing the latest 80 of ' + rows.length : '',
+    html: '<div class="list" style="max-height:60vh;overflow:auto">' + (rows.slice(-80).reverse().map(r =>
+      '<div class="row"' + (r.checkInId ? ' data-act="edit-checkin" data-id="' + r.checkInId + '" style="cursor:pointer"' : '') + '><div class="rmain"><div class="rtitle">' + esc(r.title) + '</div>' + (r.sub ? '<div class="rsub">' + esc(r.sub) + '</div>' : '') + '</div></div>').join('') || '<div class="empty">Nothing to list.</div>') + '</div>'
+  });
+}
+function labPairRows(pairs, a, b, gran) {
+  const S = Store.state, ids = { sleep: 1, energy: 1, appetite: 1, protein: 1, kcal: 1 };
+  const fmtV = (id, v) => { const vv = labVar(id); return labFmt(v, vv.dec) + (vv.unit ? ' ' + vv.unit : ''); };
+  return pairs.map(q => {
+    const ci = (ids[a] || ids[b]) ? S.checkIns.find(c => c.dateKey === q.k) : null;
+    return { title: DTF.md.format(new Date(q.k + 'T12:00:00')) + (q.tk !== q.k ? ' → ' + DTF.md.format(new Date(q.tk + 'T12:00:00')) : '') + (gran === 'week' ? ' (week of)' : ''), sub: labVarName(a, gran) + ' ' + fmtV(a, q.x) + ' · ' + labVarName(b, gran) + ' ' + fmtV(b, q.y), checkInId: ci ? ci.id : null };
+  });
+}
+
+function labConfigHTML(s) {
+  const range = labRangeKeys(s.range);
+  const counts = {}; LAB_VARS.forEach(v => { counts[v.id] = labCoverage(v.id, s.gran, range).n; });
+  const opt = (sel, none) => (none ? '<option value="">— none —</option>' : '') + LAB_VARS.map(v => {
+    const n = counts[v.id];
+    return '<option value="' + v.id + '"' + (sel === v.id ? ' selected' : '') + '>' + esc(labVarName(v.id, s.gran)) + ' · ' + n + '</option>';
+  }).join('');
+  const chip = (act, val, cur, label) => '<button class="chip' + (cur === val ? ' on' : '') + '" data-lab="' + act + '" data-v="' + val + '">' + label + '</button>';
+  const lagOpts = s.gran === 'week' ? [[0, 'Same week'], [1, '+1 week'], [2, '+2 weeks']] : [[0, 'Same day'], [1, '+1 day'], [2, '+2 days'], [3, '+3 days'], [7, '+7 days']];
+  return '<div class="card">' +
+    '<div class="f-label" style="margin-top:0">Variables <span style="text-transform:none;letter-spacing:0;font-weight:400">(number = entries in period)</span></div>' +
+    '<select class="field" id="lab-a">' + opt(s.a) + '</select>' +
+    '<select class="field" id="lab-b" style="margin-top:8px">' + opt(s.b) + '</select>' +
+    '<select class="field" id="lab-c" style="margin-top:8px">' + opt(s.c, true) + '</select>' +
+    '<div class="f-label">View</div><div class="chips">' + chip('mode', 'time', s.mode, 'Over time') + chip('mode', 'rel', s.mode, 'Relationship') + chip('mode', 'group', s.mode, 'By group') + '</div>' +
+    '<div class="f-label">Period</div><div class="chips">' + chip('preset', '30', s.range.preset, '30 days') + chip('preset', '90', s.range.preset, '90 days') + chip('preset', 'all', s.range.preset, 'All') + chip('preset', 'custom', s.range.preset, 'Custom') + '</div>' +
+    (s.range.preset === 'custom' ? '<div class="f-2col" style="margin-top:8px"><input class="field" type="date" id="lab-from" value="' + esc(s.range.from) + '"><input class="field" type="date" id="lab-to" value="' + esc(s.range.to) + '"></div>' : '') +
+    (s.mode !== 'group' ? '<div class="f-label">Resolution</div><div class="chips">' + chip('gran', 'day', s.gran, 'Daily') + chip('gran', 'week', s.gran, 'Weekly') + '</div>' : '') +
+    (s.mode === 'rel' ? '<div class="f-label">Second variable measured…</div><select class="field" id="lab-lag">' + lagOpts.map(o => '<option value="' + o[0] + '"' + (+s.lag === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') + '</select>' : '') +
+    (s.mode === 'group' ? '<div class="f-label">Group by</div><div class="chips">' + LAB_GROUPS.map(g => chip('group', g[0], s.group, g[1])).join('') + '</div>' : '') +
+    '</div>';
+}
+function labResultHTML(s, hooks) {
+  const range = labRangeKeys(s.range), ids = [s.a, s.b, s.c].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
+  let h = '<div class="sec-label">' + esc(DTF.md.format(new Date(range.from + 'T12:00:00'))) + ' → ' + esc(DTF.md.format(new Date(range.to + 'T12:00:00'))) + '</div><div class="card">';
+  const covers = '<div class="footnote" style="margin:10px 0 0">' + ids.map(id => labCoverLine(id, s.mode === 'group' ? 'day' : s.gran, range)).join('<br>') + '</div>';
+  if (s.range.preset === 'custom' && !(s.range.from && s.range.to && s.range.from <= s.range.to)) return h + '<div class="footnote" style="margin:0">Pick a start and end date.</div></div>';
+  if (s.mode === 'time') {
+    const series = ids.map(id => labCoverage(id, s.gran, range)), any = series.some(c => c.n);
+    if (!any) return h + '<div class="empty">None of these have records in this period.</div></div>';
+    h += labTimeSVG(series.map(c => ({ pts: c.pts })), s.gran, range);
+    h += '<div style="display:flex;flex-direction:column;gap:5px;margin-top:6px">' + series.map((c, i) => {
+      const v = labVar(c.id), vs = c.pts.map(q => q.v);
+      return '<div style="font-size:13px;display:flex;gap:8px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:' + LAB_COLORS[i] + ';flex:none"></span><span style="flex:1">' + esc(labVarName(c.id, s.gran)) + '</span><span style="color:var(--muted)">' + (vs.length ? labFmt(Math.min.apply(null, vs), v.dec) + '–' + labFmt(Math.max.apply(null, vs), v.dec) + (v.unit ? ' ' + v.unit : '') : 'no data') + '</span></div>';
+    }).join('') + '</div><div class="footnote" style="margin:8px 0 0">Each line is scaled to its own range so shapes can be compared; gaps are left as gaps, nothing is filled in.</div>' + covers + '</div>';
+    if (ids.length >= 2) {
+      const pairsAB = labPairs(ids[0], ids[1], s.gran, 0, range);
+      h += '<div class="sec-label">' + esc(labVarName(ids[0], s.gran)) + ' &amp; ' + esc(labVarName(ids[1], s.gran)) + ', same ' + (s.gran === 'week' ? 'week' : 'day') + '</div><div class="card">' + labStatsHTML(ids[0], ids[1], labPairStats(pairsAB), s.gran, 0) + '</div>';
+    }
+    return h + labTrendCaveat(ids);
+  }
+  if (s.mode === 'rel') {
+    if (s.a === s.b) return h + '<div class="footnote" style="margin:0">Choose two different variables.</div></div>';
+    const pairs = labPairs(s.a, s.b, s.gran, +s.lag, range);
+    if (!pairs.length) return h + '<div class="empty">No ' + (s.gran === 'week' ? 'weeks' : 'days') + ' in this period have both values' + (s.lag ? ' at that lag' : '') + '.</div>' + covers + '</div>';
+    const third = s.c && s.c !== s.a && s.c !== s.b ? labMapAll(s.c, s.gran) : null;
+    h += '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:2px"><span>↑ ' + esc(labVarName(s.b, s.gran)) + '</span><span>' + esc(labVarName(s.a, s.gran)) + ' →</span></div>' + labScatterSVG(pairs, third, 'var(--coral)') +
+      '<div class="footnote" style="margin:6px 0 0">' + (pairs.length >= 8 ? 'Dashed line: straight-line fit, for orientation only. ' : '') + (third ? 'Dot darkness shows ' + esc(labVarName(s.c, s.gran)) + ' (lighter = lower; faint = no value). ' : '') + '</div>' + covers + '</div>';
+    h += '<div class="sec-label">What the records show</div><div class="card">' + labStatsHTML(s.a, s.b, labPairStats(pairs), s.gran, +s.lag) + '</div>' + labTrendCaveat([s.a, s.b]);
+    hooks.pairs = pairs; return h;
+  }
+  /* by group */
+  const gname = (LAB_GROUPS.find(g => g[0] === s.group) || [])[1];
+  let total = 0;
+  ids.forEach((id, i) => {
+    const groups = labGroups(id, s.group, range, 1);
+    if (i) h += '<div class="divider"></div>';
+    h += '<div class="rtitle" style="margin-bottom:4px">' + esc(labVarName(id, 'day')) + ' by ' + esc(gname.toLowerCase()) + '</div>';
+    if (groups.length < 2) h += '<div class="footnote" style="margin:0 0 4px">Entries fall into fewer than two ' + esc(gname.toLowerCase()) + ' groups in this period' + (s.group === 'cycle' ? ' (needs at least two logged periods)' : '') + ', so there is nothing to compare yet.</div>';
+    else { h += labGroupSVG(groups, labVar(id).dec, LAB_COLORS[i]); total += groups.reduce((a, g) => a + g.n, 0); }
+  });
+  h += '<div class="footnote" style="margin:8px 0 0">Bars are averages of what was logged on those days; faded bars have fewer than 3 entries. A group with no bar has no entries — not a zero.</div>' + covers + '</div>';
+  hooks.groupTotal = total; return h;
+}
+function labRender(body) {
+  const s = labInit(), hooks = {};
+  let h = '<div class="chips" style="margin-bottom:12px">' +
+    '<button class="chip' + (s.tab === 'explore' ? ' on' : '') + '" data-lab="tab" data-v="explore">Explore</button>' +
+    '<button class="chip' + (s.tab === 'lab' ? ' on' : '') + '" data-lab="tab" data-v="lab">Lab</button></div>';
+  if (s.tab === 'explore') { h += labExploreHTML(); body.innerHTML = h; labBindTabs(body); labBindExplore(body); return; }
+  h += labConfigHTML(s) + labResultHTML(s, hooks);
+  const saved = labSaved();
+  const canSave = s.mode !== 'time' ? true : true;
+  h += '<div class="card" style="display:flex;gap:8px">' +
+    (hooks.pairs && hooks.pairs.length ? '<button class="btn btn-tonal" id="lab-rec" style="flex:1">See the ' + hooks.pairs.length + ' pairs</button>' : '') +
+    (canSave ? '<button class="btn btn-tonal" id="lab-save" style="flex:1">Save this comparison</button>' : '') + '</div>';
+  if (saved.length) {
+    h += '<div class="sec-label">Saved comparisons</div><div class="list">' + saved.map(q => {
+      const now = labObsCount(q.cfg), d = now - q.n;
+      return '<div class="row"><button style="flex:1;text-align:left" data-lab="load" data-id="' + q.id + '"><div class="rtitle">' + esc(q.name) + '</div><div class="rsub">' + esc(labVarName(q.cfg.a, q.cfg.gran) + (q.cfg.mode !== 'group' && q.cfg.b ? ' · ' + labVarName(q.cfg.b, q.cfg.gran) : '')) + ' · ' + now + ' observations' + (d > 0 ? ' (+' + d + ' since saved)' : '') + '</div></button>' +
+        '<button class="mini-add" data-lab="del" data-id="' + q.id + '" aria-label="Delete">' + ic('trash', 15) + '</button></div>';
+    }).join('') + '</div>';
+  }
+  h += '<div class="footnote">Patterns come from your own logs only. Unlogged days are missing, not zero.</div>';
+  body.innerHTML = h;
+  labBindTabs(body);
+  const sel = (id, key) => { const el = $(id, body); if (el) el.addEventListener('change', () => { s[key] = key === 'lag' ? +el.value : el.value; Pages.render(); }); };
+  sel('#lab-a', 'a'); sel('#lab-b', 'b'); sel('#lab-c', 'c'); sel('#lab-lag', 'lag');
+  const df = $('#lab-from', body), dt = $('#lab-to', body);
+  if (df) df.addEventListener('change', () => { s.range.from = df.value; Pages.render(); });
+  if (dt) dt.addEventListener('change', () => { s.range.to = dt.value; Pages.render(); });
+  body.querySelectorAll('[data-lab]').forEach(el => el.addEventListener('click', () => {
+    const act = el.dataset.lab, v = el.dataset.v;
+    if (act === 'mode') { s.mode = v; if (v === 'time' && s.gran == null) s.gran = 'day'; }
+    else if (act === 'preset') { s.range.preset = v; if (v === 'custom' && !s.range.from) { const r = labRangeKeys({ preset: '30' }); s.range.from = r.from; s.range.to = r.to; } }
+    else if (act === 'gran') { s.gran = v; s.lag = 0; }
+    else if (act === 'group') s.group = v;
+    else if (act === 'load') { const q = labSaved().find(x => x.id === el.dataset.id); if (q) Object.assign(s, JSON.parse(JSON.stringify(q.cfg)), { tab: 'lab' }); }
+    else if (act === 'del') { const m = Store.state.meta; m.labSaved = labSaved().filter(x => x.id !== el.dataset.id); Store.save(); }
+    else return;
+    Pages.render();
+  }));
+  const rec = $('#lab-rec', body);
+  if (rec) rec.addEventListener('click', () => labRecordsSheet(labPairRows(hooks.pairs, s.a, s.b, s.gran), 'The ' + hooks.pairs.length + ' pairs'));
+  const sv = $('#lab-save', body);
+  if (sv) sv.addEventListener('click', () => {
+    const dflt = labVarName(s.a, s.gran) + (s.mode !== 'group' && s.b ? ' & ' + labVarName(s.b, s.gran) : '');
+    openTextSheet('Name this comparison', dflt, name => { labSaved().push({ id: uid(), name, cfg: labCfgOf(s), n: labObsCount(s), savedAt: nowISO() }); Store.save(); toast('Saved'); Pages.render(); });
+  });
+}
+function labBindTabs(body) {
+  body.querySelectorAll('[data-lab="tab"]').forEach(el => el.addEventListener('click', () => { labInit().tab = el.dataset.v; Pages.render(); }));
+}
+
+/* ---- Explore Your Data: questions the records can answer ---- */
+function labCoverageNote(from, to, n, what) { return 'Based on ' + n + ' ' + what + ', ' + DTF.md.format(new Date(from + 'T12:00:00')) + ' → ' + DTF.md.format(new Date(to + 'T12:00:00')) + '.'; }
+function labGroupAnswer(varId, gid, title, lead) {
+  return { id: varId + '-by-' + gid, title, ranged: true, def: '90', build(preset) {
+    const range = labRangeKeys({ preset }), v = labVar(varId), groups = labGroups(varId, gid, range, 2);
+    if (groups.length < 3) return null;
+    const hi = groups.reduce((a, g) => g.mean > a.mean ? g : a), lo = groups.reduce((a, g) => g.mean < a.mean ? g : a), n = groups.reduce((a, g) => a + g.n, 0);
+    const spread = hi.mean - lo.mean;
+    const text = spread < (v.unit === '/5' ? 0.3 : 0.05 * Math.abs(hi.mean || 1))
+      ? 'Your ' + v.label.toLowerCase() + ' stays within ' + labFmt(spread, v.dec) + ' ' + v.unit + ' across the groups — no clear difference in these records.'
+      : lead + ' was highest on ' + hi.label + ' (avg ' + labFmt(hi.mean, v.dec) + ' ' + v.unit + ', n=' + hi.n + ') and lowest on ' + lo.label + ' (' + labFmt(lo.mean, v.dec) + ' ' + v.unit + ', n=' + lo.n + ').';
+    return { n, range, chart: labGroupSVG(groups, v.dec, 'var(--teal)'), text: text + ' Groups with fewer than 2 entries are left out.', note: labCoverageNote(range.from, range.to, n, 'entries'),
+      rows: groups.reduce((a, g) => a.concat(g.keys.map((k, i) => ({ title: DTF.md.format(new Date(k + 'T12:00:00')) + ' · ' + g.label, sub: v.label + ' ' + labFmt(g.vals[i], v.dec) + ' ' + v.unit, checkInId: (Store.state.checkIns.find(c => c.dateKey === k) || {}).id || null }))), []),
+      lab: { a: varId, b: '', c: '', mode: 'group', gran: 'day', lag: 0, group: gid } };
+  } };
+}
+function labRelAnswer(a, b, title, gran, minN) {
+  return { id: a + '-vs-' + b + (gran === 'week' ? '-wk' : ''), title, ranged: true, def: 'all', build(preset) {
+    const range = labRangeKeys({ preset }), pairs = labPairs(a, b, gran || 'day', 0, range), st = labPairStats(pairs);
+    if (pairs.length < (minN || 8)) return null;
+    const va = labVar(a), vb = labVar(b);
+    return { n: pairs.length, range, chart: labScatterSVG(pairs, null, 'var(--coral)'), axes: [labVarName(a, gran), labVarName(b, gran)], statsHtml: labStatsHTML(a, b, st, gran || 'day', 0),
+      text: st.enough && !st.flat ? (Math.abs(st.r) < 0.2 ? 'No clear relationship between ' + va.label.toLowerCase() + ' and ' + vb.label.toLowerCase() + ' in these records (r = ' + labFmt(st.r, 2) + ').' : 'Days with more ' + va.label.toLowerCase() + ' tend to go with ' + (st.r > 0 ? 'higher' : 'lower') + ' ' + vb.label.toLowerCase() + ' (r = ' + labFmt(st.r, 2) + ', ' + labStrength(st.r).replace('a ', '') + ').') : 'Too little variation to measure a relationship.',
+      note: labCoverageNote(range.from, range.to, pairs.length, (gran === 'week' ? 'weeks' : 'days') + ' with both values'), rows: labPairRows(pairs, a, b, gran || 'day'),
+      lab: { a, b, c: '', mode: 'rel', gran: gran || 'day', lag: 0, group: 'injDay' } };
+  } };
+}
+const LAB_ANSWERS = [
+  { id: 'progress', title: 'How has my weight moved lately?', ranged: true, def: '30', build(preset) {
+    const range = labRangeKeys({ preset }), pts = labCoverage('weight', 'day', range).pts;
+    if (pts.length < 3 || daysBetween(new Date(pts[0].k + 'T12:00:00'), new Date(pts[pts.length - 1].k + 'T12:00:00')) < 7) return null;
+    const f = pts[0], l = pts[pts.length - 1], delta = l.v - f.v, span = daysBetween(new Date(f.k + 'T12:00:00'), new Date(l.k + 'T12:00:00'));
+    return { n: pts.length, range, chart: lineChart({ series: [{ color: 'var(--coral)', dots: true, pts: pts.map(q => ({ x: new Date(q.k + 'T12:00:00').getTime(), y: q.v })) }], yFmt: v => labFmt(v, 1) }),
+      text: 'From ' + labFmt(f.v, 1) + ' kg (' + DTF.md.format(new Date(f.k + 'T12:00:00')) + ') to ' + labFmt(l.v, 1) + ' kg (' + DTF.md.format(new Date(l.k + 'T12:00:00')) + '): ' + fmtSign(delta, 'kg') + ' over ' + span + ' days' + (span >= 14 ? ', about ' + fmtSign(delta / span * 7, 'kg') + ' per week.' : '.'),
+      note: labCoverageNote(f.k, l.k, pts.length, 'weigh-ins'), rows: pts.map(q => ({ title: DTF.md.format(new Date(q.k + 'T12:00:00')), sub: labFmt(q.v, 1) + ' kg' })), lab: { a: 'weight', b: '', c: '', mode: 'time', gran: 'day', lag: 0, group: 'injDay' } };
+  } },
+  labGroupAnswer('energy', 'injDay', 'Does my energy change across the injection cycle?', 'Energy'),
+  labGroupAnswer('appetite', 'injDay', 'Does my appetite change across the injection cycle?', 'Appetite'),
+  labGroupAnswer('sleep', 'injDay', 'Does my sleep change across the injection cycle?', 'Sleep'),
+  labGroupAnswer('symptom', 'injDay', 'When in the cycle do I log symptoms?', 'Symptom severity'),
+  labGroupAnswer('weightDev', 'cycle', 'Does my weight run higher or lower in some cycle phases?', 'Weight relative to nearby weigh-ins'),
+  labRelAnswer('sleep', 'energy', 'How do my sleep and energy go together?'),
+  labRelAnswer('protein', 'energy', 'Does higher protein go with higher energy?'),
+  labRelAnswer('workoutDay', 'energy', 'Do weeks with more workouts feel different?', 'week', 5),
+  { id: 'measure-change', title: 'Which measurements have changed the most?', ranged: true, def: 'all', build(preset) {
+    const range = labRangeKeys({ preset }), ms = Store.state.measurements.filter(m => { const k = dateKey(m.dateTime); return k >= range.from && k <= range.to; }).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+    if (ms.length < 2) return null;
+    const items = [];
+    MEAS_FIELDS.forEach(f => { const vs = ms.filter(m => +m[f[0]] > 0); if (vs.length >= 2) items.push({ label: f[1], value: +vs[vs.length - 1][f[0]] - +vs[0][f[0]], from: dateKey(vs[0].dateTime), to: dateKey(vs[vs.length - 1].dateTime) }); });
+    if (!items.length) return null;
+    items.sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+    const top = items[0], f = dateKey(ms[0].dateTime), l = dateKey(ms[ms.length - 1].dateTime);
+    return { n: ms.length, range, chart: labHBarsSVG(items.map(i => ({ label: i.label, value: i.value, color: i.value < 0 ? 'var(--teal)' : 'var(--peach-deep)' })), ' cm', 1),
+      text: 'Largest change: ' + top.label.toLowerCase() + ', ' + (top.value > 0 ? '+' : '') + labFmt(top.value, 1) + ' cm between ' + DTF.md.format(new Date(top.from + 'T12:00:00')) + ' and ' + DTF.md.format(new Date(top.to + 'T12:00:00')) + '. Each bar is first to latest measurement in this period; a site measured only once is not shown.',
+      note: labCoverageNote(f, l, ms.length, 'measurement sets'), rows: ms.map(m => ({ title: DTF.md.format(new Date(m.dateTime)), sub: MEAS_FIELDS.filter(x => +m[x[0]] > 0).map(x => x[1] + ' ' + labFmt(+m[x[0]], 1)).join(' · ') })), lab: { a: 'm:waist', b: 'weight', c: '', mode: 'time', gran: 'day', lag: 0, group: 'injDay' } };
+  } },
+  { id: 'weight-waist', title: 'Do my weight and waist tell the same story?', ranged: true, def: 'all', build(preset) {
+    const range = labRangeKeys({ preset }), wm = labCoverage('m:waist', 'day', range).pts, wd = dailyWeightSeries();
+    if (wm.length < 2) return null;
+    const near = k => { const t = new Date(k + 'T12:00:00').getTime(); let best = null; wd.forEach(d => { const dd = Math.abs(d.t - t); if (dd <= 3 * DAY && (!best || dd < best.dd)) best = { dd, kg: d.kg }; }); return best ? best.kg : null; };
+    const a = wm[0], b = wm[wm.length - 1], w1 = near(a.k), w2 = near(b.k);
+    if (w1 == null || w2 == null) return null;
+    const dw = w2 - w1, dc = b.v - a.v, pw = dw / w1 * 100, pc = dc / a.v * 100, same = (dw < 0) === (dc < 0);
+    const seg = (x, u) => (x > 0 ? '+' : '') + labFmt(x, 1) + u;
+    return { n: 2, range, chart: labHBarsSVG([{ label: 'Weight', value: pw, text: seg(dw, ' kg') + ' · ' + seg(pw, '%'), color: 'var(--coral)' }, { label: 'Waist', value: pc, text: seg(dc, ' cm') + ' · ' + seg(pc, '%'), color: 'var(--teal)' }], '%', 1),
+      text: 'Between ' + DTF.md.format(new Date(a.k + 'T12:00:00')) + ' and ' + DTF.md.format(new Date(b.k + 'T12:00:00')) + ', weight changed ' + seg(pw, '%') + ' and waist ' + seg(pc, '%') + ' — ' + (same ? 'both moved the same way' : 'they moved in different directions') + (same && Math.abs(Math.abs(pc) - Math.abs(pw)) >= 2 ? ', and the waist changed ' + (Math.abs(pc) > Math.abs(pw) ? 'more' : 'less') + ' in proportion' : '') + '. Two measurement dates only, so this is a comparison, not a trend. Weights are the nearest weigh-ins within 3 days.',
+      note: labCoverageNote(a.k, b.k, 2, 'waist measurements'), rows: [{ title: DTF.md.format(new Date(a.k + 'T12:00:00')), sub: 'Waist ' + labFmt(a.v, 1) + ' cm · weight ' + labFmt(w1, 1) + ' kg' }, { title: DTF.md.format(new Date(b.k + 'T12:00:00')), sub: 'Waist ' + labFmt(b.v, 1) + ' cm · weight ' + labFmt(w2, 1) + ' kg' }], lab: { a: 'm:waist', b: 'weight', c: '', mode: 'time', gran: 'day', lag: 0, group: 'injDay' } };
+  } },
+  { id: 'month-compare', title: 'What changed between two months?', ranged: false, months: true, build(opts) {
+    const S = Store.state, yms = [...new Set(S.weights.map(w => dateKey(w.dateTime).slice(0, 7)))].sort();
+    if (yms.length < 2) return null;
+    const m2 = opts && opts.m2 && yms.indexOf(opts.m2) >= 0 ? opts.m2 : yms[yms.length - 1], m1 = opts && opts.m1 && yms.indexOf(opts.m1) >= 0 ? opts.m1 : yms[Math.max(0, yms.indexOf(m2) - 1)];
+    if (m1 === m2) return null;
+    const stat = ym => {
+      const keys = monthKeys(ym), set = new Set(keys), avg = id => { const v = [...labDaily(id)].filter(e => set.has(e[0])).map(e => e[1]); return v.length >= 3 ? { v: labMean(v), n: v.length } : null; };
+      return { ym, kg: windowStats(keys).kgDelta, sleep: avg('sleep'), energy: avg('energy'), protein: avg('protein'), kcal: avg('kcal'), wdays: new Set(S.workouts.map(w => dateKey(w.dateTime)).filter(k => set.has(k))).size, ci: S.checkIns.filter(c => set.has(c.dateKey)).length };
+    };
+    const A = stat(m1), B = stat(m2);
+    const row = (label, a, b, dec, unit) => '<div class="kv"><span>' + label + '</span><b>' + (a == null ? '—' : labFmt(a.v != null ? a.v : a, dec) + (unit || '')) + ' → ' + (b == null ? '—' : labFmt(b.v != null ? b.v : b, dec) + (unit || '')) + '</b></div>';
+    const html = '<div class="kv" style="font-weight:700"><span></span><b>' + esc(monthLabel(m1)) + ' → ' + esc(monthLabel(m2)) + '</b></div>' +
+      '<div class="kv"><span>Weight change in month</span><b>' + (A.kg == null ? '—' : fmtSign(A.kg, 'kg')) + ' → ' + (B.kg == null ? '—' : fmtSign(B.kg, 'kg')) + '</b></div>' +
+      row('Avg sleep', A.sleep, B.sleep, 1, ' h') + row('Avg energy', A.energy, B.energy, 1, ' /5') + row('Avg protein', A.protein, B.protein, 0, ' g') + row('Avg calories', A.kcal, B.kcal, 0, ' kcal') +
+      '<div class="kv"><span>Workout days</span><b>' + A.wdays + ' → ' + B.wdays + '</b></div><div class="kv" style="border:0"><span>Check-ins logged</span><b>' + A.ci + ' → ' + B.ci + '</b></div>';
+    return { n: A.ci + B.ci, range: { from: monthKeys(m1)[0], to: monthKeys(m2).slice(-1)[0] }, html, yms, m1, m2,
+      text: 'Averages need at least 3 logged days in a month to show; “—” means not enough entries, not zero. Workouts were only logged from late October.', note: 'Compares what was logged in each calendar month.', rows: [], lab: { a: 'weight', b: '', c: '', mode: 'time', gran: 'week', lag: 0, group: 'injDay' } };
+  } }
+];
+function labExploreHTML() {
+  const ready = [], waiting = [];
+  LAB_ANSWERS.forEach(q => { let r = null; try { r = q.build(q.ranged ? 'all' : {}); } catch (e) { r = null; } (r ? ready : waiting).push({ q, r }); });
+  let h = '<div class="footnote" style="margin:0 0 10px">Questions your records can answer right now. Each one shows which entries it rests on and can be opened in the Lab.</div>';
+  h += '<div class="list">' + ready.map(x => '<button class="row" style="width:100%;text-align:left" data-explore="' + x.q.id + '"><div class="ichip mint" style="margin-right:2px">' + ic('sparkle', 16) + '</div><div class="rmain"><div class="rtitle">' + esc(x.q.title) + '</div><div class="rsub">' + (x.r.n ? x.r.n + ' records' : '') + '</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>').join('') + '</div>';
+  if (!ready.length) h += '<div class="card"><div class="empty">Nothing to ask yet — log a few weeks of check-ins and weigh-ins.</div></div>';
+  if (waiting.length) h += '<div class="sec-label">Needs more data</div><div class="card">' + waiting.map(x => '<div class="kv" style="color:var(--muted)"><span>' + esc(x.q.title) + '</span></div>').join('') + '<div class="footnote" style="margin:6px 0 0">These appear once there are enough entries — Tempo does not guess in the meantime.</div></div>';
+  return h;
+}
+function labBindExplore(body) {
+  body.querySelectorAll('[data-explore]').forEach(el => el.addEventListener('click', () => openAnswerPage(el.dataset.explore)));
+}
+function openAnswerPage(id) {
+  const q = LAB_ANSWERS.find(x => x.id === id); if (!q) return;
+  let preset = q.def || 'all', m1 = null, m2 = null;
+  Pages.push({
+    title: 'Explore', render(body) {
+      const r = q.build(q.ranged ? preset : { m1, m2 });
+      let h = '<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:8px">' + esc(q.title) + '</div>';
+      if (q.ranged) h += '<div class="chips" style="margin-bottom:8px">' + [['30', '30 days'], ['90', '90 days'], ['all', 'All']].map(c => '<button class="chip' + (preset === c[0] ? ' on' : '') + '" data-p="' + c[0] + '">' + c[1] + '</button>').join('') + '</div>';
+      if (q.months && r) h += '<div class="f-2col" style="margin-bottom:8px"><select class="field" id="mc1">' + r.yms.map(y => '<option value="' + y + '"' + (y === r.m1 ? ' selected' : '') + '>' + esc(monthLabel(y)) + '</option>').join('') + '</select><select class="field" id="mc2">' + r.yms.map(y => '<option value="' + y + '"' + (y === r.m2 ? ' selected' : '') + '>' + esc(monthLabel(y)) + '</option>').join('') + '</select></div>';
+      if (!r) h += '<div class="footnote" style="margin:0">Not enough records in this period to answer that without guessing. Try a longer period' + (q.months ? ', or two different months' : '') + '.</div></div>';
+      else {
+        h += (r.html ? r.html : (r.axes ? '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>↑ ' + esc(r.axes[1]) + '</span><span>' + esc(r.axes[0]) + ' →</span></div>' : '') + r.chart);
+        h += '<div style="margin-top:10px;font-size:14.5px;line-height:1.5">' + esc(r.text) + '</div><div class="footnote" style="margin:8px 0 0">' + esc(r.note) + ' This describes what was logged, not why.</div></div>';
+        if (r.statsHtml) h += '<div class="sec-label">The numbers</div><div class="card">' + r.statsHtml + '</div>';
+        h += '<div class="card" style="display:flex;gap:8px">' + (r.rows && r.rows.length ? '<button class="btn btn-tonal" id="ans-rec" style="flex:1">Which records?</button>' : '') + '<button class="btn btn-tonal" id="ans-lab" style="flex:1">Open in Lab</button></div>';
+      }
+      body.innerHTML = h;
+      body.querySelectorAll('[data-p]').forEach(el => el.addEventListener('click', () => { preset = el.dataset.p; Pages.render(); }));
+      const c1 = $('#mc1', body), c2 = $('#mc2', body);
+      if (c1) c1.addEventListener('change', () => { m1 = c1.value; m2 = c2.value; Pages.render(); });
+      if (c2) c2.addEventListener('change', () => { m1 = c1.value; m2 = c2.value; Pages.render(); });
+      const rec = $('#ans-rec', body); if (rec && r) rec.addEventListener('click', () => labRecordsSheet(r.rows, 'Records behind this'));
+      const lb = $('#ans-lab', body);
+      if (lb && r) lb.addEventListener('click', () => { const s = labInit(); Object.assign(s, r.lab, { tab: 'lab', range: q.ranged ? { preset, from: '', to: '' } : { preset: 'all', from: '', to: '' } }); Pages.pop(); Pages.render(); });
+    }
+  });
+}
+function openInsightsPage(tab) {
+  const s = labInit(); if (tab) s.tab = tab;
+  Pages.push({ title: 'Insights', render(body) { labRender(body); } });
+}
+
+/* ================= Body Studio: Recomposition + Progress Photos 2.0 =================
+   Photos live ONLY in this device's IndexedDB. They are never part of the JSON backup, Drive sync,
+   Wrapped, the dashboard or any game; leaving the device requires an explicit export.
+   Recomposition only shows what was actually recorded (tape, scale, workouts) — it never
+   claims fat or muscle change, because neither is measured. */
+
+/* ---- photo storage ---- */
+const PhotoStore = {
+  db: null, ok: false,
+  open() {
+    return new Promise(res => {
+      if (this.db) return res(true);
+      if (typeof indexedDB === 'undefined') return res(false);
+      let req; try { req = indexedDB.open('tempo_body_photos', 1); } catch (e) { return res(false); }
+      req.onupgradeneeded = e => { const db = e.target.result; if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'id' }); if (!db.objectStoreNames.contains('full')) db.createObjectStore('full', { keyPath: 'id' }); };
+      req.onsuccess = e => { this.db = e.target.result; this.ok = true; res(true); };
+      req.onerror = () => res(false); req.onblocked = () => res(false);
+    });
+  },
+  run(stores, mode, fn) {
+    return new Promise((res, rej) => {
+      if (!this.db) return rej(new Error('Photo storage unavailable'));
+      const t = this.db.transaction(stores, mode); let out;
+      try { out = fn(t); } catch (e) { return rej(e); }
+      t.oncomplete = () => res(out && 'result' in out ? out.result : out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('aborted'));
+    });
+  },
+  all() { return this.db ? this.run('meta', 'readonly', t => t.objectStore('meta').getAll()).then(r => r || []) : Promise.resolve([]); },
+  full(id) { return this.run('full', 'readonly', t => t.objectStore('full').get(id)).then(r => r ? r.blob : null); },
+  put(meta, blob) { return this.run(['meta', 'full'], 'readwrite', t => { t.objectStore('meta').put(meta); if (blob) t.objectStore('full').put({ id: meta.id, blob }); }); },
+  setMeta(meta) { return this.run('meta', 'readwrite', t => { t.objectStore('meta').put(meta); }); },
+  remove(id) { return this.run(['meta', 'full'], 'readwrite', t => { t.objectStore('meta').delete(id); t.objectStore('full').delete(id); }); },
+  clear() { return this.run(['meta', 'full'], 'readwrite', t => { t.objectStore('meta').clear(); t.objectStore('full').clear(); }); }
+};
+const PH_ANGLES = [['front', 'Front'], ['side', 'Side'], ['back', 'Back']];
+let phMetas = [], phRevealed = false, phUrls = new Map();
+const phCmp = { a: null, b: null, angle: 'front', mode: 'side', z: { s: 1, x: 0, y: 0 }, al: { x: 0, y: 0, s: 1 }, split: 50, op: 50, nums: false };
+function phTag(id, kind) { return id + ':' + kind; }
+function phUrlSync(id, kind) { return phUrls.get(phTag(id, kind)) || null; }
+async function phUrl(id, kind) {
+  const key = phTag(id, kind); if (phUrls.has(key)) return phUrls.get(key);
+  let blob = null;
+  if (kind === 'thumb') { const m = phMetas.find(x => x.id === id); blob = m && m.thumb; } else blob = await PhotoStore.full(id);
+  if (!blob) return null;
+  const u = URL.createObjectURL(blob); phUrls.set(key, u); return u;
+}
+function phRevokeAll() { phUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) {} }); phUrls = new Map(); }
+async function phReload() { await PhotoStore.open(); phMetas = await PhotoStore.all(); phMetas.sort((a, b) => a.dateKey < b.dateKey ? -1 : a.dateKey > b.dateKey ? 1 : (a.addedAt || '') < (b.addedAt || '') ? -1 : 1); }
+function phDates() { return [...new Set(phMetas.map(m => m.dateKey))].sort(); }
+function phFind(dk, angle) { return phMetas.find(m => m.dateKey === dk && m.angle === angle) || null; }
+function phDefaults() {
+  const ds = phDates().filter(d => phFind(d, phCmp.angle));
+  if (!phCmp.a || phDates().indexOf(phCmp.a) < 0) phCmp.a = ds[0] || phDates()[0] || null;
+  if (!phCmp.b || phDates().indexOf(phCmp.b) < 0) phCmp.b = ds.length > 1 ? ds[ds.length - 1] : (phDates().length > 1 ? phDates()[phDates().length - 1] : null);
+}
+function phCanvasBlob(c, q) { return new Promise(res => c.toBlob(b => res(b), 'image/jpeg', q)); }
+async function phProcess(file) {
+  let src = null, w, h, cleanup = () => {};
+  try { if (window.createImageBitmap) src = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) { src = null; }
+  if (!src) {
+    const u = URL.createObjectURL(file), img = new Image();
+    await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('Could not read that image')); img.src = u; });
+    src = img; cleanup = () => URL.revokeObjectURL(u);
+  }
+  w = src.naturalWidth || src.width; h = src.naturalHeight || src.height;
+  const draw = max => { const sc = Math.min(1, max / Math.max(w, h)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w * sc)); c.height = Math.max(1, Math.round(h * sc)); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c; };
+  const big = draw(1600), small = draw(360);
+  const full = await phCanvasBlob(big, 0.86), thumb = await phCanvasBlob(small, 0.8);
+  cleanup(); if (src.close) try { src.close(); } catch (e) {}
+  return { full, thumb, w: big.width, h: big.height };
+}
+function phNearest(dk) {
+  const t = new Date(dk + 'T12:00:00').getTime(), out = {};
+  let bw = null; dailyWeightSeries().forEach(d => { const dd = Math.abs(d.t - t); if (dd <= 3 * DAY && (!bw || dd < bw.dd)) bw = { dd, kg: d.kg }; });
+  out.kg = bw ? bw.kg : null;
+  let bm = null; Store.state.measurements.forEach(m => { const dd = Math.abs(new Date(dateKey(m.dateTime) + 'T12:00:00').getTime() - t); if (dd <= 7 * DAY && (!bm || dd < bm.dd)) bm = { dd, m }; });
+  out.m = bm ? bm.m : null;
+  return out;
+}
+
+/* ---- the comparison viewer (shared by the page and full screen) ---- */
+function phZoomCss(z) { return 'translate(' + z.x + 'px,' + z.y + 'px) scale(' + z.s + ')'; }
+function phAlignCss(a) { return 'translate(' + a.x + 'px,' + a.y + 'px) scale(' + a.s + ')'; }
+function phCompareHTML(full) {
+  const A = phFind(phCmp.a, phCmp.angle), B = phFind(phCmp.b, phCmp.angle), c = phCmp;
+  const dName = k => k ? DTF.md.format(new Date(k + 'T12:00:00')) + ', ' + k.slice(0, 4) : '—';
+  const box = (m, which, extra) => m ? '<div class="phlayer' + (which ? ' ' + which : '') + '"' + (extra || '') + '><div class="phz" style="transform:' + phZoomCss(c.z) + '"><img alt="" data-ph="' + m.id + '" data-kind="full"' + (which === 'after' || which === 'single-after' ? ' style="transform:' + phAlignCss(c.al) + '"' : '') + '></div></div>' : '';
+  const empty = (k, who) => '<div class="phempty">No ' + c.angle + ' photo<br>on ' + esc(dName(k)) + '</div>';
+  let h = '';
+  if (c.mode === 'side') {
+    h += '<div class="phpair">' + [[A, c.a, 'Before', ''], [B, c.b, 'After', 'single-after']].map(p =>
+      '<div><div class="phv" data-phv>' + (p[0] ? box(p[0], p[3]) : empty(p[1])) + '<span class="phtag" style="left:8px">' + p[2] + '</span></div></div>').join('') + '</div>';
+  } else {
+    h += '<div class="phv" data-phv style="max-width:' + (full ? '62vh' : '100%') + ';margin:0 auto">' + (A ? box(A, 'before') : '') + (B ? box(B, 'after', c.mode === 'slider' ? ' style="clip-path:inset(0 0 0 ' + c.split + '%)"' : ' style="opacity:' + c.op / 100 + '"') : '') +
+      (!A || !B ? empty(!A ? c.a : c.b) : '') +
+      (c.mode === 'slider' && A && B ? '<div class="phhandle" data-phhandle style="left:' + c.split + '%"></div>' : '') +
+      '<span class="phtag" style="left:8px">Before</span><span class="phtag" style="right:8px">After</span></div>';
+  }
+  if (c.mode === 'overlay') h += '<div style="margin-top:10px;display:flex;align-items:center;gap:10px;font-size:13px"><span>Before</span><input type="range" min="0" max="100" value="' + c.op + '" data-phop style="flex:1"><span>After</span></div>';
+  return h;
+}
+function phBindViewer(root) {
+  const c = phCmp;
+  const apply = () => {
+    root.querySelectorAll('.phz').forEach(z => { z.style.transform = phZoomCss(c.z); });
+    root.querySelectorAll('.phlayer.after img, .phlayer.single-after img').forEach(i => { i.style.transform = phAlignCss(c.al); });
+  };
+  const pts = new Map(); let last = null;
+  root.querySelectorAll('[data-phv]').forEach(v => {
+    v.addEventListener('pointerdown', e => { if (e.target.closest('[data-phhandle]')) return; pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); try { v.setPointerCapture(e.pointerId); } catch (x) {} last = null; });
+    v.addEventListener('pointermove', e => {
+      if (!pts.has(e.pointerId)) return;
+      const prev = pts.get(e.pointerId), cur = { x: e.clientX, y: e.clientY };
+      if (pts.size === 1) { c.z.x += cur.x - prev.x; c.z.y += cur.y - prev.y; }
+      else if (pts.size === 2) {
+        const ids = [...pts.keys()], o = pts.get(ids[0] === e.pointerId ? ids[1] : ids[0]);
+        const d0 = Math.hypot(prev.x - o.x, prev.y - o.y), d1 = Math.hypot(cur.x - o.x, cur.y - o.y);
+        if (d0 > 0) c.z.s = clamp(c.z.s * d1 / d0, 1, 6);
+        c.z.x += (cur.x - prev.x) / 2; c.z.y += (cur.y - prev.y) / 2;
+      }
+      pts.set(e.pointerId, cur); apply();
+    });
+    const end = e => { pts.delete(e.pointerId); };
+    v.addEventListener('pointerup', end); v.addEventListener('pointercancel', end);
+    v.addEventListener('wheel', e => { e.preventDefault(); c.z.s = clamp(c.z.s * (e.deltaY < 0 ? 1.1 : 1 / 1.1), 1, 6); if (c.z.s === 1) { c.z.x = 0; c.z.y = 0; } apply(); }, { passive: false });
+    v.addEventListener('dblclick', () => { c.z = { s: 1, x: 0, y: 0 }; apply(); });
+  });
+  const hd = root.querySelector('[data-phhandle]');
+  if (hd) {
+    const v = hd.parentElement; let drag = false;
+    const mv = e => { const r = v.getBoundingClientRect(); c.split = clamp(Math.round((e.clientX - r.left) / r.width * 100), 0, 100); hd.style.left = c.split + '%'; const l = v.querySelector('.phlayer.after'); if (l) l.style.clipPath = 'inset(0 0 0 ' + c.split + '%)'; };
+    hd.addEventListener('pointerdown', e => { drag = true; try { hd.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); });
+    hd.addEventListener('pointermove', e => { if (drag) mv(e); });
+    hd.addEventListener('pointerup', () => { drag = false; }); hd.addEventListener('pointercancel', () => { drag = false; });
+  }
+  const op = root.querySelector('[data-phop]');
+  if (op) op.addEventListener('input', () => { c.op = +op.value; const l = root.querySelector('.phlayer.after'); if (l) l.style.opacity = c.op / 100; });
+  root.querySelectorAll('img[data-ph]').forEach(async img => { const u = await phUrl(img.dataset.ph, img.dataset.kind); if (u) img.src = u; });
+  return apply;
+}
+function phOpenFull() {
+  const wrap = document.createElement('div'); wrap.className = 'phfull';
+  const draw = () => {
+    wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700">' + esc(phCmp.angle[0].toUpperCase() + phCmp.angle.slice(1)) + ' · ' + esc(phCmp.a || '—') + ' → ' + esc(phCmp.b || '—') + '</div><button class="btn btn-tonal btn-sm" data-phclose>Close</button></div>' +
+      '<div data-phroot>' + phCompareHTML(true) + '</div><div style="font-size:12px;opacity:.7;text-align:center">Pinch or scroll to zoom both photos together · double-tap to reset</div>';
+    phBindViewer(wrap.querySelector('[data-phroot]'));
+    wrap.querySelector('[data-phclose]').addEventListener('click', () => { wrap.remove(); if (Pages.stack.length) Pages.render(); });
+  };
+  document.body.appendChild(wrap); draw();
+}
+
+/* ---- Progress photos page ---- */
+function phAngleLabel(a) { const f = PH_ANGLES.find(x => x[0] === a); return f ? f[1] : 'Unsorted'; }
+async function phHydrate(root) { root.querySelectorAll('img[data-ph]').forEach(async img => { if (img.src) return; const u = await phUrl(img.dataset.ph, img.dataset.kind || 'thumb'); if (u) img.src = u; }); }
+function phGalleryHTML() {
+  const dates = phDates().slice().reverse();
+  if (!dates.length) return '<div class="empty">No photos yet.</div>';
+  return '<div style="display:flex;flex-direction:column;gap:10px">' + dates.map(dk => {
+    const unsorted = phMetas.filter(m => m.dateKey === dk && !m.angle);
+    return '<div class="phrow"><div style="font-size:12px;font-weight:700;line-height:1.3">' + esc(DTF.md.format(new Date(dk + 'T12:00:00'))) + '<br><span style="font-weight:500;color:var(--faint)">' + dk.slice(0, 4) + '</span></div>' +
+      PH_ANGLES.map(a => { const m = phFind(dk, a[0]); return m ? '<button class="phslot" data-phopen="' + m.id + '"><img alt="" data-ph="' + m.id + '" data-kind="thumb"></button>' : '<button class="phslot" data-phadd="' + dk + '" data-angle="' + a[0] + '" style="border:1.5px dashed var(--line);background:transparent">' + a[1] + '</button>'; }).join('') + '</div>' +
+      (unsorted.length ? '<div class="phrow" style="grid-template-columns:62px repeat(3,1fr)"><div style="font-size:11px;color:var(--faint)">Unsorted</div>' + unsorted.map(m => '<button class="phslot" data-phopen="' + m.id + '"><img alt="" data-ph="' + m.id + '" data-kind="thumb"></button>').join('') + '</div>' : '');
+  }).join('') + '</div>';
+}
+function phCompareCardHTML() {
+  phDefaults(); const c = phCmp, dates = phDates();
+  if (dates.length < 1) return '';
+  const sel = (id, cur) => '<select class="field" id="' + id + '">' + dates.map(d => '<option value="' + d + '"' + (d === cur ? ' selected' : '') + '>' + esc(DTF.md.format(new Date(d + 'T12:00:00')) + ', ' + d.slice(0, 4)) + (phFind(d, c.angle) ? '' : ' — no ' + c.angle) + '</option>').join('') + '</select>';
+  const chip = (act, v, cur, label) => '<button class="chip' + (cur === v ? ' on' : '') + '" data-phc="' + act + '" data-v="' + v + '">' + label + '</button>';
+  let h = '<div class="card"><div class="f-label" style="margin-top:0">Compare</div>' +
+    '<div class="f-2col"><div><div class="f-hint" style="margin:0 0 4px">Before</div>' + sel('ph-a', c.a) + '</div><div><div class="f-hint" style="margin:0 0 4px">After</div>' + sel('ph-b', c.b) + '</div></div>' +
+    '<div class="f-label">Angle</div><div class="chips">' + PH_ANGLES.map(a => chip('angle', a[0], c.angle, a[1])).join('') + '</div>' +
+    '<div class="f-label">View</div><div class="chips">' + chip('mode', 'side', c.mode, 'Side by side') + chip('mode', 'slider', c.mode, 'Slider') + chip('mode', 'overlay', c.mode, 'Overlay') + '</div>' +
+    '<div style="margin-top:14px" data-phroot>' + phCompareHTML(false) + '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"><button class="btn btn-tonal btn-sm" data-phc="full">Full screen</button><button class="btn btn-tonal btn-sm" data-phc="reset">Reset zoom</button><button class="btn btn-tonal btn-sm" data-phc="nums">' + (c.nums ? 'Hide' : 'Show') + ' numbers</button></div>' +
+    '<div class="f-label">Align the After photo</div><div style="display:flex;flex-wrap:wrap;gap:6px">' +
+    [['◀', 'x', -4], ['▶', 'x', 4], ['▲', 'y', -4], ['▼', 'y', 4], ['−', 's', -0.02], ['+', 's', 0.02]].map(b => '<button class="btn btn-tonal btn-sm" data-phal="' + b[1] + '" data-d="' + b[2] + '" style="min-width:44px">' + b[0] + '</button>').join('') + '<button class="btn btn-tonal btn-sm" data-phal="reset">Reset</button></div>';
+  if (c.nums) {
+    const col = (k) => { if (!k) return ''; const n = phNearest(k); return '<div><b>' + esc(DTF.md.format(new Date(k + 'T12:00:00'))) + '</b><br>' + (n.kg != null ? labFmt(n.kg, 1) + ' kg' : 'no weigh-in within 3 days') + (n.m ? ['waist', 'hip', 'belly'].filter(f => +n.m[f] > 0).map(f => '<br>' + f[0].toUpperCase() + f.slice(1) + ' ' + labFmt(+n.m[f], 1) + ' cm') .join('') : '') + '</div>'; };
+    h += '<div class="f-2col" style="margin-top:12px;font-size:13px;line-height:1.5">' + col(c.a) + col(c.b) + '</div><div class="footnote" style="margin:6px 0 0">Nearest weigh-in within 3 days and tape measurements within 7 days.</div>';
+  }
+  return h + '</div>';
+}
+function phRenderPage(body) {
+  const n = phMetas.length;
+  let h = '';
+  if (!phRevealed) {
+    h = '<div class="card" style="text-align:center;padding:26px 18px"><div style="font-size:15px;line-height:1.5;margin-bottom:14px">Your progress photos stay hidden until you open them.<br><span style="color:var(--muted);font-size:13.5px">They are stored only on this device — not in backups, Drive, exports or anywhere else in the app unless you export them yourself.</span></div>' +
+      '<button class="btn btn-primary" data-phc="reveal">' + (n ? 'Show ' + n + ' photo' + (n === 1 ? '' : 's') : 'Open') + '</button></div>';
+  } else {
+    h += phCompareCardHTML();
+    h += '<div class="card" style="display:flex;gap:8px"><button class="btn btn-primary" style="flex:1" data-phc="add">' + ic('plus', 16) + ' Add photos</button><button class="btn btn-tonal" style="flex:1" data-phc="hide">Hide</button></div>';
+    if (!n) h += '<div class="card"><div class="empty">Add a front, side or back photo to start comparing. The same angle on two dates is what lines up.</div></div>';
+    else h += '<div class="sec-label">All photos, by date</div><div class="card">' + phGalleryHTML() + '</div>';
+    h += '<div class="sec-label">Storage &amp; privacy</div><div class="card"><div class="footnote" style="margin:0 0 10px">' + n + ' photo' + (n === 1 ? '' : 's') + ' on this device. They are not included in JSON backups or Drive sync, so export them if you want a copy; clearing browser data or removing the app deletes them.</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn btn-tonal btn-sm" data-phc="export"' + (n ? '' : ' disabled') + '>Export all</button><button class="btn btn-tonal btn-sm" data-phc="import">Import archive</button>' +
+      (legacyPhotoCount > 0 ? '<button class="btn btn-tonal btn-sm" data-phc="legacy">Import ' + legacyPhotoCount + ' earlier photo' + (legacyPhotoCount === 1 ? '' : 's') + '</button>' : '') +
+      '<button class="btn btn-tonal btn-sm" data-phc="wipe" style="color:var(--err-fg)"' + (n ? '' : ' disabled') + '>Delete all</button></div></div>';
+  }
+  body.innerHTML = h;
+  phHydrate(body); const root = body.querySelector('[data-phroot]'); if (root) phBindViewer(root);
+  const redraw = () => Pages.render();
+  const a = $('#ph-a', body), b = $('#ph-b', body);
+  if (a) a.addEventListener('change', () => { phCmp.a = a.value; phCmp.z = { s: 1, x: 0, y: 0 }; redraw(); });
+  if (b) b.addEventListener('change', () => { phCmp.b = b.value; phCmp.z = { s: 1, x: 0, y: 0 }; redraw(); });
+  body.querySelectorAll('[data-phc]').forEach(el => el.addEventListener('click', () => phAct(el.dataset.phc, el.dataset.v)));
+  body.querySelectorAll('[data-phal]').forEach(el => el.addEventListener('click', () => {
+    const k = el.dataset.phal, al = phCmp.al;
+    if (k === 'reset') { phCmp.al = { x: 0, y: 0, s: 1 }; } else { const d = +el.dataset.d; if (k === 's') al.s = clamp(Math.round((al.s + d) * 100) / 100, 0.5, 2); else al[k] += d; }
+    root && root.querySelectorAll('.phlayer.after img, .phlayer.single-after img').forEach(i => { i.style.transform = phAlignCss(phCmp.al); });
+  }));
+  body.querySelectorAll('[data-phopen]').forEach(el => el.addEventListener('click', () => phOpenPhoto(el.dataset.phopen)));
+  body.querySelectorAll('[data-phadd]').forEach(el => el.addEventListener('click', () => phOpenAdd(el.dataset.phadd, el.dataset.angle)));
+}
+async function phAct(act, v) {
+  if (act === 'reveal') { phRevealed = true; return Pages.render(); }
+  if (act === 'hide') { phRevealed = false; return Pages.render(); }
+  if (act === 'angle') { phCmp.angle = v; phCmp.z = { s: 1, x: 0, y: 0 }; return Pages.render(); }
+  if (act === 'mode') { phCmp.mode = v; return Pages.render(); }
+  if (act === 'nums') { phCmp.nums = !phCmp.nums; return Pages.render(); }
+  if (act === 'reset') { phCmp.z = { s: 1, x: 0, y: 0 }; return Pages.render(); }
+  if (act === 'full') return phOpenFull();
+  if (act === 'add') return phOpenAdd();
+  if (act === 'export') return phExport();
+  if (act === 'import') return phImportPick();
+  if (act === 'legacy') return phImportLegacy();
+  if (act === 'wipe') {
+    if (!await confirmDlg('Delete all progress photos?', 'This removes every photo stored for Body Studio on this device. It cannot be undone — export first if you want a copy.', 'Delete all', true)) return;
+    try { await PhotoStore.clear(); phRevokeAll(); phMetas = []; } catch (e) { toast('Could not delete'); }
+    toast('Photos deleted'); Pages.render();
+  }
+}
+function phOpenAdd(dk, angle) {
+  const today = dateKey(new Date()); dk = dk || today;
+  const files = {};
+  Sheet.open({
+    title: 'Add photos', sub: 'One photo per angle per date. Adding to a slot that is taken replaces it.',
+    html: '<input class="field" type="date" id="ph-date" value="' + dk + '" max="' + today + '">' +
+      '<div id="ph-slots" style="margin-top:12px"></div><div class="sheet-actions"><button class="btn btn-primary" id="ph-save">Save</button></div>',
+    mount(el, close) {
+      const drawSlots = () => {
+        const d = $('#ph-date', el).value;
+        $('#ph-slots', el).innerHTML = PH_ANGLES.map(a => '<label class="row" style="display:flex;align-items:center;gap:10px;cursor:pointer"><div class="rmain"><div class="rtitle">' + a[1] + '</div><div class="rsub" id="ph-st-' + a[0] + '">' + (files[a[0]] ? esc(files[a[0]].name) : phFind(d, a[0]) ? 'Already added · choose a file to replace' : 'Choose a photo') + '</div></div><input type="file" accept="image/*" data-pha="' + a[0] + '" style="max-width:120px;font-size:12px"></label>').join('');
+        el.querySelectorAll('[data-pha]').forEach(i => i.addEventListener('change', () => { if (i.files[0]) { files[i.dataset.pha] = i.files[0]; $('#ph-st-' + i.dataset.pha, el).textContent = i.files[0].name; } }));
+      };
+      drawSlots(); $('#ph-date', el).addEventListener('change', drawSlots);
+      if (angle) { const hint = el.querySelector('[data-pha="' + angle + '"]'); if (hint) hint.closest('.row').style.outline = '2px solid var(--lav)'; }
+      $('#ph-save', el).addEventListener('click', async () => {
+        const d = $('#ph-date', el).value, keys = Object.keys(files);
+        if (!d) return toast('Pick a date'); if (!keys.length) return toast('Choose at least one photo');
+        $('#ph-save', el).disabled = true; $('#ph-save', el).textContent = 'Saving…';
+        try {
+          if (!await PhotoStore.open()) throw new Error('Photo storage is not available in this browser');
+          for (const a of keys) {
+            const out = await phProcess(files[a]), old = phFind(d, a);
+            if (old) { await PhotoStore.remove(old.id); phUrls.forEach((u, k) => { if (k.indexOf(old.id + ':') === 0) { try { URL.revokeObjectURL(u); } catch (e) {} phUrls.delete(k); } }); }
+            await PhotoStore.put({ id: uid(), dateKey: d, angle: a, thumb: out.thumb, w: out.w, h: out.h, note: '', addedAt: nowISO() }, out.full);
+          }
+          await phReload(); close(); toast('Saved'); Pages.render();
+        } catch (e) { $('#ph-save', el).disabled = false; $('#ph-save', el).textContent = 'Save'; toast(e && e.message ? e.message : 'Could not save'); }
+      });
+    }
+  });
+}
+async function phOpenPhoto(id) {
+  const m = phMetas.find(x => x.id === id); if (!m) return;
+  const u = await phUrl(id, 'full');
+  Sheet.open({
+    title: DTF.md.format(new Date(m.dateKey + 'T12:00:00')) + ', ' + m.dateKey.slice(0, 4) + ' · ' + phAngleLabel(m.angle),
+    html: '<div class="photoview"><img alt="" src="' + (u || '') + '"></div>' +
+      '<div class="f-label">Angle</div><div class="chips">' + PH_ANGLES.map(a => '<button class="chip' + (m.angle === a[0] ? ' on' : '') + '" data-pa="' + a[0] + '">' + a[1] + '</button>').join('') + '</div>' +
+      '<div class="f-label">Note</div><input class="field" id="ph-note" value="' + esc(m.note || '') + '" placeholder="optional">' +
+      '<div class="sheet-actions" style="flex-wrap:wrap"><button class="btn btn-tonal" id="ph-before" style="flex:1">Use as Before</button><button class="btn btn-tonal" id="ph-after" style="flex:1">Use as After</button></div>' +
+      '<div class="sheet-actions" style="flex-wrap:wrap"><button class="btn btn-tonal" id="ph-dl" style="flex:1">Save image</button><button class="btn btn-tonal" id="ph-del" style="flex:1;color:var(--err-fg)">Delete</button></div>',
+    mount(el, close) {
+      const set = k => { phCmp.angle = m.angle || phCmp.angle; phCmp[k] = m.dateKey; phCmp.z = { s: 1, x: 0, y: 0 }; close(); Pages.render(); };
+      $('#ph-before', el).addEventListener('click', () => set('a')); $('#ph-after', el).addEventListener('click', () => set('b'));
+      el.querySelectorAll('[data-pa]').forEach(b => b.addEventListener('click', async () => {
+        const a = b.dataset.pa, clash = phFind(m.dateKey, a);
+        if (clash && clash.id !== m.id && !await confirmDlg('Replace the ' + a + ' photo?', 'That date already has a ' + a + ' photo. This one will take its place.', 'Replace', true)) return;
+        if (clash && clash.id !== m.id) await PhotoStore.remove(clash.id);
+        m.angle = a; await PhotoStore.setMeta(m); close(); await phReload(); Pages.render();
+      }));
+      $('#ph-note', el).addEventListener('change', async () => { m.note = $('#ph-note', el).value.trim(); await PhotoStore.setMeta(m); });
+      $('#ph-dl', el).addEventListener('click', () => { const a = document.createElement('a'); a.href = u; a.download = 'tempo-' + m.dateKey + '-' + (m.angle || 'photo') + '.jpg'; document.body.appendChild(a); a.click(); a.remove(); });
+      $('#ph-del', el).addEventListener('click', async () => {
+        if (!await confirmDlg('Delete this photo?', 'It is removed from this device and cannot be recovered.', 'Delete', true)) return;
+        await PhotoStore.remove(m.id); close(); await phReload(); phDefaults(); toast('Deleted'); Pages.render();
+      });
+    }
+  });
+}
+async function phExport() {
+  toast('Preparing export…');
+  try {
+    const out = [];
+    for (const m of phMetas) { const f = await PhotoStore.full(m.id); out.push({ id: m.id, dateKey: m.dateKey, angle: m.angle, note: m.note || '', addedAt: m.addedAt, w: m.w, h: m.h, thumbData: m.thumb ? await blobToDataURL(m.thumb) : null, fullData: f ? await blobToDataURL(f) : null }); }
+    await shareFile('tempo-photos-' + stamp() + '.json', 'application/json', JSON.stringify({ kind: 'tempo-photos', version: 1, exportedAt: nowISO(), photos: out }));
+    toast('Exported ' + out.length + ' photo' + (out.length === 1 ? '' : 's'));
+  } catch (e) { toast('Export failed'); }
+}
+async function dataURLToBlob(u) { const r = await fetch(u); return r.blob(); }
+function phImportPick() {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json,.json';
+  inp.addEventListener('change', async () => {
+    const f = inp.files[0]; if (!f) return;
+    try {
+      const data = JSON.parse(await f.text()); if (!data || !Array.isArray(data.photos)) throw new Error('Not a Tempo photo archive');
+      await PhotoStore.open(); let added = 0, skipped = 0;
+      for (const p of data.photos) {
+        if (!p.fullData || !p.dateKey) { skipped++; continue; }
+        if (phMetas.some(m => m.id === p.id) || (p.angle && phFind(p.dateKey, p.angle))) { skipped++; continue; }
+        const full = await dataURLToBlob(p.fullData), thumb = p.thumbData ? await dataURLToBlob(p.thumbData) : full;
+        await PhotoStore.put({ id: p.id || uid(), dateKey: p.dateKey, angle: p.angle || null, thumb, w: p.w || 0, h: p.h || 0, note: p.note || '', addedAt: p.addedAt || nowISO() }, full); added++;
+      }
+      await phReload(); toast('Imported ' + added + (skipped ? ' · skipped ' + skipped : '')); Pages.render();
+    } catch (e) { toast(e && e.message ? e.message : 'Could not import'); }
+  });
+  inp.click();
+}
+async function phImportLegacy() {
+  try {
+    await PhotoStore.open(); const metas = await PhotoDB.allMeta(); let added = 0;
+    for (const m of metas) {
+      const full = await PhotoDB.getFull(m.id); if (!full) continue;
+      await PhotoStore.put({ id: 'legacy-' + m.id, dateKey: dateKey(m.dateTime), angle: null, thumb: m.thumb || full, w: 0, h: 0, note: m.note || '', addedAt: m.dateTime || nowISO() }, full); added++;
+    }
+    await phReload();
+    toast('Imported ' + added + ' — they show as Unsorted; open one to set its angle'); Pages.render();
+  } catch (e) { toast('Could not import earlier photos'); }
+}
+async function openPhotosPage() {
+  phRevealed = false; await phReload();
+  Pages.push({ title: 'Progress photos', onClose() { phRevokeAll(); }, render(body) { phRenderPage(body); } });
+}
+
+/* ---- Body Recomposition ---- */
+let recState = null;
+function recMeasDates() { return [...new Set(Store.state.measurements.map(m => dateKey(m.dateTime)))].sort(); }
+function recValue(dk, f) { const m = Store.state.measurements.filter(x => dateKey(x.dateTime) === dk && +x[f] > 0).sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))[0]; return m ? +m[f] : null; }
+function recSVG(opts) {
+  /* shared date context: every chart uses the same x domain [from, to] */
+  const w = 336, h = opts.h || 120, p = { l: 12, r: 12, t: 10, b: 20 }, t0 = new Date(opts.from + 'T12:00:00').getTime(), t1 = new Date(opts.to + 'T12:00:00').getTime();
+  const X = t => p.l + (t - t0) / ((t1 - t0) || 1) * (w - p.l - p.r);
+  const vals = opts.series.reduce((a, s) => a.concat(s.pts.map(q => q.v)), []).concat(opts.bars ? opts.bars.map(b => b.v) : []);
+  if (!vals.length) return '<div class="footnote">No data in this window.</div>';
+  let lo = Math.min.apply(null, vals.concat(opts.zero ? [0] : [])), hi = Math.max.apply(null, vals.concat(opts.zero ? [0] : []));
+  if (lo === hi) { lo -= 1; hi += 1; } const pad = (hi - lo) * .12; if (!opts.zero && !opts.bars) { lo -= pad; hi += pad; } else if (opts.bars) { lo = Math.min(0, lo); hi += pad; }
+  const Y = v => h - p.b - (v - lo) / (hi - lo) * (h - p.t - p.b);
+  let o = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="height:auto">';
+  if (opts.zero) o += '<line x1="' + p.l + '" x2="' + (w - p.r) + '" y1="' + Y(0).toFixed(1) + '" y2="' + Y(0).toFixed(1) + '" stroke="var(--line)"/>';
+  (opts.marks || []).forEach(k => { const x = X(new Date(k + 'T12:00:00').getTime()).toFixed(1); o += '<line x1="' + x + '" x2="' + x + '" y1="' + p.t + '" y2="' + (h - p.b) + '" stroke="var(--faint)" stroke-dasharray="3 4"/>'; });
+  (opts.bars || []).forEach(b => { const x0 = X(b.t0), x1 = X(b.t1); o += '<rect x="' + (x0 + 1).toFixed(1) + '" y="' + Y(b.v).toFixed(1) + '" width="' + Math.max(2, x1 - x0 - 2).toFixed(1) + '" height="' + Math.max(1, Y(0) - Y(b.v)).toFixed(1) + '" rx="3" fill="var(--mint-deep)" fill-opacity=".75"/>'; });
+  opts.series.forEach(s => {
+    const d = s.pts.map((q, i) => (i ? 'L' : 'M') + X(new Date(q.k + 'T12:00:00').getTime()).toFixed(1) + ' ' + Y(q.v).toFixed(1)).join('');
+    o += '<path d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    s.pts.forEach(q => { o += '<circle cx="' + X(new Date(q.k + 'T12:00:00').getTime()).toFixed(1) + '" cy="' + Y(q.v).toFixed(1) + '" r="2.8" fill="var(--surface)" stroke="' + s.color + '" stroke-width="1.8"/>'; });
+  });
+  o += '<text x="' + p.l + '" y="' + (h - 5) + '" font-size="10" fill="var(--faint)">' + esc(DTF.md.format(new Date(opts.from + 'T12:00:00'))) + '</text><text x="' + (w - p.r) + '" y="' + (h - 5) + '" font-size="10" fill="var(--faint)" text-anchor="end">' + esc(DTF.md.format(new Date(opts.to + 'T12:00:00'))) + '</text>';
+  return o + '</svg>';
+}
+function recompData(a, b) {
+  const S = Store.state, sites = MEAS_FIELDS.map(f => { const va = recValue(a, f[0]), vb = recValue(b, f[0]); return { id: f[0], label: f[1], a: va, b: vb, d: va != null && vb != null ? vb - va : null }; }).filter(x => x.a != null || x.b != null);
+  const wa = phNearest(a).kg, wb = phNearest(b).kg;
+  const weights = labInRange(labMapAll('weight', 'day'), a, b);
+  const dates = recMeasDates().filter(k => k >= a && k <= b);
+  const wks = S.workouts.filter(w => { const k = dateKey(w.dateTime); return k >= a && k <= b; });
+  const firstW = S.workouts.length ? S.workouts.map(w => dateKey(w.dateTime)).sort()[0] : null;
+  const tFrom = firstW && firstW > a ? firstW : a;
+  const trainDays = firstW ? Math.max(0, daysBetween(new Date(tFrom + 'T12:00:00'), new Date(b + 'T12:00:00')) + 1) : 0;
+  const bars = [];
+  if (firstW) { for (let t = new Date(tFrom + 'T12:00:00').getTime(); t <= new Date(b + 'T12:00:00').getTime(); t += 7 * DAY) { const k0 = dateKey(new Date(t)), k1 = labAddDays(k0, 6); bars.push({ t0: t, t1: Math.min(t + 7 * DAY, new Date(b + 'T12:00:00').getTime()), v: new Set(wks.map(w => dateKey(w.dateTime)).filter(k => k >= k0 && k <= k1)).size }); } }
+  /* weight roughly steady while a tape measure moved: consecutive measurement dates */
+  const all = recMeasDates().filter(k => k >= a && k <= b), steady = [];
+  for (let i = 1; i < all.length; i++) {
+    const w1 = phNearest(all[i - 1]).kg, w2 = phNearest(all[i]).kg; if (w1 == null || w2 == null) continue;
+    if (Math.abs(w2 - w1) <= 1.0) MEAS_FIELDS.forEach(f => { const v1 = recValue(all[i - 1], f[0]), v2 = recValue(all[i], f[0]); if (v1 != null && v2 != null && Math.abs(v2 - v1) >= 1.5) steady.push({ from: all[i - 1], to: all[i], label: f[1], d: v2 - v1, dw: w2 - w1 }); });
+  }
+  return { sites, wa, wb, weights, dates, wks, firstW, trainDays, bars, steady, setCount: wks.reduce((n, w) => n + strengthSetCount(w), 0), vol: wks.reduce((n, w) => n + workoutVolume(w), 0), days: daysBetween(new Date(a + 'T12:00:00'), new Date(b + 'T12:00:00')) };
+}
+function openRecompPage() {
+  const ds = recMeasDates();
+  if (!recState || ds.indexOf(recState.a) < 0 || ds.indexOf(recState.b) < 0) recState = { a: ds[0] || null, b: ds[ds.length - 1] || null, picks: ['waist', 'belly', 'hip'] };
+  Pages.push({
+    title: 'Recomposition', render(body) {
+      const ds2 = recMeasDates();
+      if (ds2.length < 2) { body.innerHTML = '<div class="card"><div class="empty">Recomposition compares two sets of body measurements. Log at least two, a few weeks apart, and this page will line them up against your weight and training.</div></div>'; return; }
+      const s = recState; if (s.a > s.b) { const t = s.a; s.a = s.b; s.b = t; }
+      const d = recompData(s.a, s.b), fmtD = k => DTF.md.format(new Date(k + 'T12:00:00')) + ', ' + k.slice(0, 4);
+      const sel = (id, cur) => '<select class="field" id="' + id + '">' + ds2.map(k => '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + esc(fmtD(k)) + '</option>').join('') + '</select>';
+      let h = '<div class="card"><div class="f-label" style="margin-top:0">Compare two dates</div><div class="f-2col"><div><div class="f-hint" style="margin:0 0 4px">From</div>' + sel('rc-a', s.a) + '</div><div><div class="f-hint" style="margin:0 0 4px">To</div>' + sel('rc-b', s.b) + '</div></div>' +
+        '<div class="footnote" style="margin:8px 0 0">' + d.days + ' days apart. Every chart below uses this same window.</div></div>';
+      h += '<div class="sec-label">Tape measurements</div><div class="card">' + (d.sites.length ? d.sites.map(x => '<div class="kv"><span>' + esc(x.label) + '</span><b>' + (x.a != null ? labFmt(x.a, 1) : '—') + ' → ' + (x.b != null ? labFmt(x.b, 1) : '—') + ' cm' + (x.d != null ? ' <span class="delta ' + (x.d < 0 ? 'down' : x.d > 0 ? 'up' : 'flat') + '">' + (x.d > 0 ? '+' : '') + labFmt(x.d, 1) + (x.a ? ' (' + (x.d > 0 ? '+' : '') + labFmt(x.d / x.a * 100, 1) + '%)' : '') + '</span>' : '') + '</b></div>').join('') : '<div class="footnote" style="margin:0">No measurements on these dates.</div>') +
+        '<div class="kv" style="border:0"><span>Weight</span><b>' + (d.wa != null ? labFmt(d.wa, 1) : '—') + ' → ' + (d.wb != null ? labFmt(d.wb, 1) : '—') + ' kg' + (d.wa != null && d.wb != null ? ' <span class="delta ' + (d.wb < d.wa ? 'down' : 'up') + '">' + (d.wb - d.wa > 0 ? '+' : '') + labFmt(d.wb - d.wa, 1) + '</span>' : '') + '</b></div><div class="footnote" style="margin:6px 0 0">Weight is the nearest weigh-in within 3 days of each date.</div></div>';
+      h += '<div class="sec-label">Same window, three views</div><div class="card"><div class="rtitle">Weight</div>' +
+        recSVG({ from: s.a, to: s.b, series: [{ color: 'var(--coral)', pts: d.weights.map(q => ({ k: q.k, v: q.v })) }], marks: [s.a, s.b], h: 120 }) +
+        '<div class="rtitle" style="margin-top:12px">Measurement change from ' + esc(DTF.md.format(new Date(s.a + 'T12:00:00'))) + ' (cm)</div><div class="chips" style="margin:6px 0">' + MEAS_FIELDS.filter(f => recValue(s.a, f[0]) != null || d.dates.some(k => recValue(k, f[0]) != null)).map(f => '<button class="chip' + (s.picks.indexOf(f[0]) >= 0 ? ' on' : '') + '" data-rcp="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
+        recSVG({ from: s.a, to: s.b, zero: true, h: 130, marks: [s.a, s.b], series: s.picks.map((f, i) => { const base = recValue(s.a, f); return { color: LAB_COLORS[i % 3], pts: d.dates.map(k => ({ k, v: recValue(k, f) })).filter(q => q.v != null && base != null).map(q => ({ k: q.k, v: q.v - base })) }; }).filter(x => x.pts.length) }) +
+        '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px">' + s.picks.map((f, i) => '<span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + LAB_COLORS[i % 3] + ';margin-right:5px"></i>' + esc((MEAS_FIELDS.find(x => x[0] === f) || [0, f])[1]) + '</span>').join('') + '</div>' +
+        '<div class="rtitle" style="margin-top:12px">Workout days per week</div>' + (d.bars.length ? recSVG({ from: s.a, to: s.b, series: [], bars: d.bars, h: 100, marks: [s.a, s.b] }) + '<div class="footnote" style="margin:4px 0 0">Counted from your first logged session (' + esc(fmtD(d.firstW)) + '); earlier weeks are left blank rather than shown as zero.</div>' : '<div class="footnote" style="margin:4px 0 0">No workouts were logged in this window' + (d.firstW ? ' (they start ' + esc(fmtD(d.firstW)) + ')' : '') + '.</div>') + '</div>';
+      h += '<div class="sec-label">Training in this window</div><div class="card"><div class="kv"><span>Sessions logged</span><b>' + new Set(d.wks.map(w => dateKey(w.dateTime))).size + '</b></div><div class="kv"><span>Strength sets</span><b>' + d.setCount + '</b></div><div class="kv" style="border:0"><span>Training volume</span><b>' + (d.vol ? fmtVolume(d.vol) : '—') + '</b></div>' +
+        (d.firstW && d.firstW > s.a ? '<div class="footnote" style="margin:6px 0 0">Workouts were only logged from ' + esc(fmtD(d.firstW)) + ', so about ' + d.trainDays + ' of these ' + (d.days + 1) + ' days have training data.</div>' : '') + '</div>';
+      if (d.steady.length) h += '<div class="sec-label">Weight steady, tape moved</div><div class="card">' + d.steady.slice(0, 6).map(x => '<div class="kv"><span>' + esc(x.label) + ' ' + (x.d > 0 ? '+' : '') + labFmt(x.d, 1) + ' cm</span><b style="font-weight:500;color:var(--muted)">' + esc(DTF.md.format(new Date(x.from + 'T12:00:00')) + ' → ' + DTF.md.format(new Date(x.to + 'T12:00:00'))) + ', weight ' + (x.dw > 0 ? '+' : '') + labFmt(x.dw, 1) + ' kg</b></div>').join('') + '<div class="footnote" style="margin:6px 0 0">Between consecutive measurement dates where weight moved by 1 kg or less and a site moved 1.5 cm or more.</div></div>';
+      const alld = recMeasDates();
+      h += '<div class="sec-label">Every measurement date</div><div class="card" style="overflow-x:auto"><table style="border-collapse:collapse;font-size:12.5px;min-width:100%"><tr><th style="text-align:left;padding:4px 8px 4px 0"></th>' + alld.map(k => '<th style="padding:4px 8px;white-space:nowrap;font-weight:600">' + esc(DTF.md.format(new Date(k + 'T12:00:00'))) + '</th>').join('') + '</tr>' +
+        MEAS_FIELDS.filter(f => alld.some(k => recValue(k, f[0]) != null)).map(f => '<tr><td style="padding:4px 8px 4px 0;white-space:nowrap;color:var(--muted)">' + f[1] + '</td>' + alld.map(k => { const v = recValue(k, f[0]); return '<td style="padding:4px 8px;text-align:right">' + (v != null ? labFmt(v, 1) : '—') + '</td>'; }).join('') + '</tr>').join('') + '</table></div>';
+      h += '<div class="footnote">This shows tape measurements, weigh-ins and logged workouts. It does not include body-fat or muscle measurements, so it cannot say whether weight change was fat or lean tissue.</div>';
+      body.innerHTML = h;
+      const a = $('#rc-a', body), b = $('#rc-b', body);
+      if (a) a.addEventListener('change', () => { s.a = a.value; Pages.render(); }); if (b) b.addEventListener('change', () => { s.b = b.value; Pages.render(); });
+      body.querySelectorAll('[data-rcp]').forEach(el => el.addEventListener('click', () => { const f = el.dataset.rcp, i = s.picks.indexOf(f); if (i >= 0) s.picks.splice(i, 1); else { s.picks.push(f); if (s.picks.length > 3) s.picks.shift(); } Pages.render(); }));
+    }
+  });
+}
+
+/* ---- Body Studio hub ---- */
+function openBodyStudioPage() {
+  Pages.push({
+    title: 'Body Studio', render(body) {
+      const rows = [
+        ['open-recomp', 'compare', 'teal', 'Recomposition', 'Two dates: tape, weight and training in one window'],
+        ['open-photos', 'camera', 'lav', 'Progress photos', 'Hidden until opened · same angle, any two dates']
+      ];
+      body.innerHTML = '<div class="list">' + rows.map(r => '<button class="row" style="width:100%;text-align:left" data-act="' + r[0] + '"><div class="ichip ' + r[2] + '" style="margin-right:2px">' + ic(r[1], 16) + '</div><div class="rmain"><div class="rtitle">' + esc(r[3]) + '</div><div class="rsub">' + esc(r[4]) + '</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>').join('') + '</div>' +
+        '<div class="footnote">Photos never appear on the dashboard, in Wrapped or anywhere outside this section.</div>';
+    }
+  });
+}
+
+/* ================= Forecast Lab: dynamic energy-balance model =================
+   Structure from "About the model" (energy stored = intake − expenditure; fat mass 9,500 kcal/kg,
+   fat-free mass 1,020 kcal/kg; EE = RMR + PA + DIT + SPA; Forbes FFM–FM relation; spontaneous activity
+   adapts with weight change). Where that document is inconsistent or silent, the choices below were
+   checked against the published model it describes (Thomas et al., Math Biosci Eng 2009):
+     • DIT = 0.075 × intake            (the document's "0.75" is a typo; its own text and the paper say 7.5 %)
+     • RMR = (1 − a)(c·W^p − y·A)      Livingston–Kohlstadt; women c=248 p=0.4356 y=5.09, men c=293 p=0.4330 y=5.92.
+                                      `a` is optional metabolic adaptation applied to RMR only (default 0).
+     • SPA = max(0, SPA0 + s/(1−s)·Δ(DIT+PA+RMR)), s = 2/3 for loss, 0.56 for gain
+     • Forbes: FFM = 10.4·ln(FM/C). Only its derivative is needed, dFFM = 10.4·dFM/FM, so C never enters.
+   NOT given in either source and therefore ASSUMPTIONS (editable, shown in the app): baseline activity
+   level (PAL), the share of baseline expenditure that is spontaneous activity (paper benchmark 10 %),
+   and starting body composition. This is a mathematical simulation, not a personal forecast. */
+const FC_LK = { female: { c: 248, p: 0.4356, y: 5.09 }, male: { c: 293, p: 0.4330, y: 5.92 } };
+const FC_RHO_F = 9500, FC_RHO_L = 1020, FC_FORBES = 10.4, FC_DIT = 0.075, FC_S_LOSS = 2 / 3, FC_S_GAIN = 0.56;
+function fcRmr(sex, W, age, a) { const k = FC_LK[sex === 'male' ? 'male' : 'female']; return (1 - (a || 0)) * (k.c * Math.pow(W, k.p) - k.y * age); }
+/* Deurenberg et al. 1991 — a population estimate of body-fat %, used only when none is entered */
+function fcBodyFatEstimate(W, heightCm, age, sex) { const bmi = W / Math.pow(heightCm / 100, 2); return (1.2 * bmi + 0.23 * age - 10.8 * (sex === 'male' ? 1 : 0) - 5.4) / 100; }
+function fcBaseline(p) {
+  const W0 = +p.W0, A0 = +p.age;
+  const bf = p.bf != null && p.bf !== '' ? +p.bf : fcBodyFatEstimate(W0, +p.heightCm, A0, p.sex);
+  const rmr0 = fcRmr(p.sex, W0, A0, 0), E0 = rmr0 * (+p.pal || 1.375), dit0 = FC_DIT * E0;
+  let neat0 = (p.neat != null ? +p.neat : 0.10) * E0, pa0 = E0 - rmr0 - dit0 - neat0, note = null;
+  if (pa0 < 0) { neat0 = Math.max(0, E0 - rmr0 - dit0); pa0 = Math.max(0, E0 - rmr0 - dit0 - neat0); note = 'At this activity factor the baseline leaves no room for deliberate activity, so spontaneous activity was reduced to fit.'; }
+  return { bf, F0: bf * W0, L0: W0 - bf * W0, rmr0, E0, dit0, neat0, pa0, m: pa0 / W0, B0: rmr0 + pa0 + dit0, note };
+}
+function fcValidate(p) {
+  const err = [], warn = [];
+  const num = (v, lo, hi, msg) => { if (v === '' || v == null || !isFinite(+v) || +v < lo || +v > hi) err.push(msg); };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(p.start || '')) || isNaN(new Date(p.start + 'T12:00:00'))) err.push('Enter a valid start date (YYYY-MM-DD).');
+  num(p.W0, 30, 400, 'Starting weight must be a number between 30 and 400 kg.');
+  num(p.age, 1, 120, 'Age must be a number.');
+  if (isFinite(+p.age) && +p.age < 18) err.push('The resting-metabolism formula was built from adult data (18+), so no projection is produced for this age.');
+  else if (isFinite(+p.age) && +p.age > 80) warn.push('The resting-metabolism formula has little data above about 80 years; treat results as rougher.');
+  if (p.sex !== 'female' && p.sex !== 'male') err.push('Choose the sex the formula should use (it has separate female and male constants).');
+  if ((p.bf === '' || p.bf == null)) { if (!(+p.heightCm >= 100 && +p.heightCm <= 230)) err.push('Enter your height or a body-fat percentage — the model needs a starting fat / fat-free split.'); }
+  else if (!(+p.bf >= 0.05 && +p.bf <= 0.70)) err.push('Body fat should be between 5 % and 70 %.');
+  num(p.pal, 1.0, 2.5, 'Activity factor must be between 1.0 and 2.5.');
+  num(p.days, 7, 730, 'Duration must be between 7 and 730 days.');
+  if (p.mode === 'deficit') { if (p.deficit === '' || !isFinite(+p.deficit)) err.push('Enter the average daily energy deficit (kcal).'); else if (+p.deficit < -2000 || +p.deficit > 3000) err.push('Deficit should be between −2,000 (surplus) and 3,000 kcal/day.'); }
+  else if (p.intake === '' || !isFinite(+p.intake) || +p.intake <= 0 || +p.intake > 10000) err.push('Enter an average daily intake between 1 and 10,000 kcal.');
+  if (p.target !== '' && p.target != null && (!isFinite(+p.target) || +p.target < 25 || +p.target > 400)) err.push('Target weight must be a number between 25 and 400 kg.');
+  return { err, warn };
+}
+/* one run; returns { days:[{t,W,F,L,EI,EE,RMR,PA,DIT,SPA}], flags[], base } */
+function fcSimulate(p, opts) {
+  opts = opts || {};
+  const sex = p.sex === 'male' ? 'male' : 'female', base = fcBaseline(p), a = +p.a || 0, k = FC_LK[sex];
+  const days = Math.round(+p.days), out = [], flags = [];
+  let F = base.F0, L = base.L0, extrapolated = false, spaFloor = false, fatOut = false;
+  const state = (t, F, L, EIforced) => {
+    const W = F + L, A = +p.age + t / 365, rmr = (1 - a) * (k.c * Math.pow(W, k.p) - k.y * A), pa = base.m * W;
+    const evalEI = EI => { const dit = FC_DIT * EI, B = rmr + pa + dit, dB = B - base.B0, s = dB < 0 ? FC_S_LOSS : FC_S_GAIN, spaRaw = base.neat0 + s / (1 - s) * dB, spa = Math.max(0, spaRaw); return { dit, spa, floor: spaRaw < 0, EE: B + spa }; };
+    let EI;
+    if (p.mode === 'deficit' && p.basis === 'current') { EI = base.E0 - (+p.deficit); for (let i = 0; i < 12; i++) EI = evalEI(EI).EE - (+p.deficit); }
+    else if (p.mode === 'deficit') EI = base.E0 - (+p.deficit);
+    else EI = +p.intake;
+    const e = evalEI(EI);
+    return { W, A, rmr, pa, EI, dit: e.dit, spa: e.spa, EE: e.EE, floor: e.floor };
+  };
+  const deriv = (t, F, L) => { const s = state(t, F, L), dF = (s.EI - s.EE) / (FC_RHO_F + FC_RHO_L * FC_FORBES / Math.max(F, 0.5)); return { dF, dL: FC_FORBES / Math.max(F, 0.5) * dF, s }; };
+  for (let t = 0; t <= days; t++) {
+    const d1 = deriv(t, F, L), s = d1.s;
+    out.push({ t, W: F + L, F, L, EI: s.EI, EE: s.EE, RMR: s.rmr, PA: s.pa, DIT: s.dit, SPA: s.spa });
+    if (s.floor) spaFloor = true;
+    if (s.EI < base.E0 * 0.5 || s.EI < s.rmr * 0.8) extrapolated = true;
+    if (t === days) break;
+    const d2 = deriv(t + 0.5, F + d1.dF / 2, L + d1.dL / 2), d3 = deriv(t + 0.5, F + d2.dF / 2, L + d2.dL / 2), d4 = deriv(t + 1, F + d3.dF, L + d3.dL);
+    F += (d1.dF + 2 * d2.dF + 2 * d3.dF + d4.dF) / 6; L += (d1.dL + 2 * d2.dL + 2 * d3.dL + d4.dL) / 6;
+    if (F < 1) { fatOut = true; flags.push({ id: 'fat-floor', text: 'Modelled fat mass fell below 1 kg on day ' + (t + 1) + ', where the Forbes relation stops being meaningful. The curve ends there.' }); break; }
+  }
+  if (extrapolated) flags.push({ id: 'extrapolated', text: 'Part of this scenario is below about half of estimated starting expenditure or below estimated resting needs. The adaptation rules in the model come from studies of moderate energy restriction, so beyond that range the curve is an extrapolation rather than a supported estimate.' });
+  if (spaFloor) flags.push({ id: 'spa-floor', text: 'Modelled spontaneous activity reached zero (its floor); from there the model adapts no further, which understates real-world adaptation.' });
+  if (base.note) flags.push({ id: 'baseline', text: base.note });
+  return { days: out, flags, base, ended: fatOut };
+}
+/* the range that comes from assumptions the sources do not settle (not a statistical interval) */
+function fcBand(p) {
+  const bfBase = fcBaseline(p).bf, runs = [];
+  [-0.05, 0, 0.05].forEach(db => [0.05, 0.10, 0.15].forEach(nt => [0, 0.03].forEach(a => [-0.1, 0, 0.1].forEach(dp => {
+    const q = Object.assign({}, p, { bf: Math.min(0.7, Math.max(0.05, bfBase + db)), neat: nt, a, pal: Math.max(1, (+p.pal || 1.375) + dp) });
+    const r = fcSimulate(q); runs.push(r.days);
+  }))));
+  const n = Math.min.apply(null, runs.map(r => r.length)), lo = [], hi = [];
+  for (let i = 0; i < n; i++) { let mn = Infinity, mx = -Infinity; runs.forEach(r => { if (r[i].W < mn) mn = r[i].W; if (r[i].W > mx) mx = r[i].W; }); lo.push(mn); hi.push(mx); }
+  return { lo, hi };
+}
+/* how far each assumption alone moves the final weight */
+function fcSensitivity(p) {
+  const base = fcSimulate(p).days, end = base[base.length - 1].W, bf = fcBaseline(p).bf;
+  const run = q => { const d = fcSimulate(Object.assign({}, p, q)).days; return d[d.length - 1].W - end; };
+  return [
+    { label: 'Body fat ±5 points', lo: run({ bf: Math.max(0.05, bf - 0.05) }), hi: run({ bf: Math.min(0.7, bf + 0.05) }) },
+    { label: 'Activity factor ±0.1', lo: run({ pal: Math.max(1, (+p.pal || 1.375) - 0.1) }), hi: run({ pal: (+p.pal || 1.375) + 0.1 }) },
+    { label: 'Spontaneous activity 5 % ↔ 15 %', lo: run({ neat: 0.05 }), hi: run({ neat: 0.15 }) },
+    { label: 'Extra RMR adaptation 0 → 3 %', lo: 0, hi: run({ a: 0.03 }) }
+  ];
+}
+/* the constant intake that best reproduces logged weights over a past window — descriptive, not a target */
+function fcFitIntake(p, actuals) {
+  const t0 = actuals[0].t, rmse = EI => { const d = fcSimulate(Object.assign({}, p, { mode: 'intake', intake: EI, days: Math.ceil(actuals[actuals.length - 1].t - t0) + 1 })).days; let s = 0; actuals.forEach(q => { const r = d[Math.min(d.length - 1, Math.round(q.t - t0))]; s += (r.W - q.kg) * (r.W - q.kg); }); return Math.sqrt(s / actuals.length); };
+  let lo = 300, hi = 6000;
+  for (let i = 0; i < 40; i++) { const m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3; if (rmse(m1) < rmse(m2)) hi = m2; else lo = m1; }
+  const EI = (lo + hi) / 2; return { intake: EI, rmse: rmse(EI) };
+}
+
+/* ---- Forecast Lab UI ---- */
+const FC_COLORS = ['var(--coral)', 'var(--teal)', 'var(--lav-deep)', 'var(--peach-deep)'];
+function fcBirthAge(dk) {
+  const set = Store.state.settings; if (!set.birthYear) return '';
+  const t = new Date((dk || dateKey(new Date())) + 'T12:00:00'), b = new Date(set.birthYear, (set.birthMonth || 1) - 1, 15);
+  return Math.round((t - b) / (365.25 * DAY) * 10) / 10;
+}
+function fcStartInfo() {
+  const sw = startWeight(), ws = weightsSorted(false);
+  return { kg: sw != null ? sw : (ws[0] ? +ws[0].kg : ''), date: ws[0] ? dateKey(ws[0].dateTime) : dateKey(new Date()) };
+}
+function fcDefaults() {
+  const set = Store.state.settings, st = fcStartInfo();
+  return { start: st.date, W0: st.kg, age: fcBirthAge(st.date), sex: set.sex || '', heightCm: set.heightCm || '', bf: '', pal: set.activity || 1.375, neat: 0.10, a: 0, mode: 'deficit', deficit: 500, basis: 'start', intake: 1800, days: 90, target: set.goalKg || '' };
+}
+let fcState = null, fcChecked = [], fcOpenInfo = false;
+function fcInit() {
+  if (!fcState) { const m = Store.state.meta.forecastDraft; fcState = Object.assign(fcDefaults(), m && typeof m === 'object' ? m : {}); }
+  return fcState;
+}
+function fcSave() { Store.state.meta.forecastDraft = Object.assign({}, fcState); Store.save(); }
+function fcScenarios() { const m = Store.state.meta; if (!Array.isArray(m.forecastScenarios)) m.forecastScenarios = []; return m.forecastScenarios; }
+function fcDescribe(p) { return (p.mode === 'deficit' ? (+p.deficit >= 0 ? labFmt(+p.deficit, 0) + ' kcal below ' : labFmt(-p.deficit, 0) + ' kcal above ') + (p.basis === 'current' ? 'current' : 'starting') + ' expenditure' : labFmt(+p.intake, 0) + ' kcal intake') + ' · ' + p.days + ' days'; }
+function fcChartSVG(o) {
+  const w = 336, h = 230, p = { l: 40, r: 12, t: 12, b: 28 }, days = o.days;
+  let lo = Infinity, hi = -Infinity; const eat = v => { if (v < lo) lo = v; if (v > hi) hi = v; };
+  o.lines.forEach(l => l.pts.forEach(q => eat(q[1]))); if (o.band) { o.band.lo.forEach(eat); o.band.hi.forEach(eat); } o.actual.forEach(q => eat(q.kg));
+  if (!isFinite(lo)) return '';
+  /* a target far outside the plotted range would flatten the curves, so it is only drawn when it is near them */
+  const span0 = (hi - lo) || 1, showTarget = o.target != null && o.target !== '' && +o.target >= lo - span0 * .6 && +o.target <= hi + span0 * .6;
+  if (showTarget) eat(+o.target);
+  const pad = (hi - lo) * .08 || 1; lo -= pad; hi += pad;
+  const X = t => p.l + t / days * (w - p.l - p.r), Y = v => h - p.b - (v - lo) / (hi - lo) * (h - p.t - p.b);
+  let s = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="height:auto">';
+  [0, .5, 1].forEach(u => { const y = (h - p.b - u * (h - p.t - p.b)).toFixed(1); s += '<line x1="' + p.l + '" x2="' + (w - p.r) + '" y1="' + y + '" y2="' + y + '" stroke="var(--line)" stroke-dasharray="1 4"/><text x="' + (p.l - 6) + '" y="' + y + '" font-size="10" fill="var(--faint)" text-anchor="end" dominant-baseline="middle">' + labFmt(lo + (hi - lo) * u, 1) + '</text>'; });
+  if (o.band) { const up = o.band.hi.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(''), dn = o.band.lo.map((v, i) => [X(i), Y(v)]).reverse().map(q => 'L' + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(''); s += '<path d="' + up + dn + 'Z" fill="var(--coral)" fill-opacity=".13"/>'; }
+  if (showTarget) s += '<line x1="' + p.l + '" x2="' + (w - p.r) + '" y1="' + Y(+o.target).toFixed(1) + '" y2="' + Y(+o.target).toFixed(1) + '" stroke="var(--mint)" stroke-width="1.5" stroke-dasharray="4 4"/>';
+  o.lines.forEach(l => { s += '<path d="' + l.pts.map((q, i) => (i ? 'L' : 'M') + X(q[0]).toFixed(1) + ' ' + Y(q[1]).toFixed(1)).join('') + '" fill="none" stroke="' + l.color + '" stroke-width="2.4" stroke-linecap="round"' + (l.dash ? ' stroke-dasharray="6 4"' : '') + '/>'; });
+  o.actual.forEach(q => { if (q.t < 0 || q.t > days) return; s += '<circle cx="' + X(q.t).toFixed(1) + '" cy="' + Y(q.kg).toFixed(1) + '" r="3" fill="var(--text)"/>'; });
+  [[0, 'start'], [days / 2, 'middle'], [days, 'end']].forEach(a => { s += '<text x="' + X(a[0]).toFixed(1) + '" y="' + (h - 8) + '" font-size="10" fill="var(--faint)" text-anchor="' + a[1] + '">' + esc(DTF.md.format(new Date(labAddDays(o.startKey, Math.round(a[0])) + 'T12:00:00'))) + '</text>'; });
+  return s + '</svg>';
+}
+function fcSens(sens) {
+  const items = [];
+  sens.forEach(x => { items.push({ label: x.label, value: x.lo, text: (x.lo > 0 ? '+' : '') + labFmt(x.lo, 1) }); items.push({ label: '', value: x.hi, text: (x.hi > 0 ? '+' : '') + labFmt(x.hi, 1) + ' kg' }); });
+  return labHBarsSVG(items.map(i => Object.assign(i, { color: 'var(--lav-deep)' })), ' kg', 1);
+}
+function fcField(label, id, val, opts) {
+  opts = opts || {};
+  return '<div><div class="f-hint" style="margin:0 0 4px">' + label + '</div><input class="field num" type="text" inputmode="decimal" data-fc="' + id + '" value="' + esc(val == null ? '' : val) + '"' + (opts.ph ? ' placeholder="' + esc(opts.ph) + '"' : '') + '></div>';
+}
+function fcActualPoints(startKey, days) {
+  const st = new Date(startKey + 'T12:00:00').getTime();
+  return dailyWeightSeries().map(d => ({ t: Math.round((d.t - st) / DAY), kg: d.kg, k: d.k })).filter(q => q.t >= 0 && q.t <= days);
+}
+function fcRenderPage(body) {
+  const s = fcInit(), v = fcValidate(s);
+  const chip = (act, val, cur, label) => '<button class="chip' + (cur === val ? ' on' : '') + '" data-fcc="' + act + '" data-v="' + val + '">' + label + '</button>';
+  let h = '<div class="banner" style="background:var(--lav-soft);color:var(--lav-deep);font-size:13.5px;line-height:1.5">A mathematical simulation of energy balance, for exploring scenarios and comparing them with what you logged. It is not a forecast of what will happen to you, and not advice about intake, activity or medication.</div>';
+  /* inputs */
+  h += '<div class="card"><div class="f-label" style="margin-top:0">Starting point</div><div class="f-2col">' + fcField('Start date', 'start', s.start) + fcField('Weight (kg)', 'W0', s.W0) + '</div>' +
+    '<div class="f-2col" style="margin-top:8px">' + fcField('Age (years)', 'age', s.age) + fcField('Height (cm)', 'heightCm', s.heightCm) + '</div>' +
+    '<div class="f-label">Sex used by the formula</div><div class="chips">' + chip('sex', 'female', s.sex, 'Female') + chip('sex', 'male', s.sex, 'Male') + '</div>' +
+    '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-tonal btn-sm" data-fcc="usestart">Use my starting point</button><button class="btn btn-tonal btn-sm" data-fcc="usetoday">Use today</button></div></div>';
+  const base = v.err.length ? null : fcBaseline(s);
+  h += '<div class="card"><div class="f-label" style="margin-top:0">Energy scenario</div><div class="chips">' + chip('mode', 'deficit', s.mode, 'Daily deficit') + chip('mode', 'intake', s.mode, 'Average intake') + '</div><div style="margin-top:10px">' +
+    (s.mode === 'deficit' ? fcField('Average daily deficit (kcal) — negative for a surplus', 'deficit', s.deficit) + '<div class="f-label">Deficit is measured against</div><div class="chips">' + chip('basis', 'start', s.basis, 'Starting expenditure') + chip('basis', 'current', s.basis, 'Current expenditure') + '</div><div class="footnote" style="margin:8px 0 0">' +
+      (s.basis === 'start' ? 'Intake stays fixed at (estimated starting expenditure − deficit). As weight falls, expenditure falls too, so the real gap narrows over time.' : 'Intake is adjusted every day so it stays exactly this far below that day’s modelled expenditure — which means intake itself drifts down as expenditure falls.') + '</div>'
+      : fcField('Average daily intake (kcal)', 'intake', s.intake) + '<div class="footnote" style="margin:8px 0 0">Compared against the model’s estimate of your starting expenditure' + (base ? ' (' + labFmt(base.E0, 0) + ' kcal/day)' : '') + '.</div>') + '</div>' +
+    '<div class="f-2col" style="margin-top:12px">' + fcField('Duration (days)', 'days', s.days) + fcField('Target weight (optional)', 'target', s.target, { ph: 'optional' }) + '</div>' +
+    '<div class="chips" style="margin-top:8px">' + [30, 60, 90, 180, 365].map(d => chip('days', d, +s.days, d + 'd')).join('') + '</div></div>';
+  h += '<div class="card"><div class="f-label" style="margin-top:0">Assumptions the sources don’t settle <span style="text-transform:none;letter-spacing:0;font-weight:400">(editable)</span></div><div class="f-2col">' + fcField('Body fat % at start', 'bf', typeof s.bf === 'number' ? Math.round(s.bf * 1000) / 10 : s.bf, { ph: base ? 'est. ' + labFmt(base.bf * 100, 0) : 'estimated' }) + fcField('Activity factor', 'pal', s.pal) + '</div>' +
+    '<div class="footnote" style="margin:8px 0 6px">Body fat: leave blank to use a population estimate from height, weight, age and sex (Deurenberg). A scale reading can go here instead — bioimpedance values are low-confidence, so check how much the result depends on it below.</div>' +
+    '<div class="f-2col">' + fcField('Spontaneous activity, share of baseline (0–1)', 'neat', s.neat) + fcField('Extra RMR adaptation (0–1)', 'a', s.a) + '</div></div>';
+  if (v.err.length) { h += '<div class="card"><div class="rtitle" style="margin-bottom:6px">No projection yet</div>' + v.err.map(e => '<div class="footnote" style="margin:0 0 6px;color:var(--err-fg)">' + esc(e) + '</div>').join('') + '<div class="footnote" style="margin:0">Your other inputs are kept; fix this one and the curve appears.</div></div>'; body.innerHTML = h; fcBind(body); return; }
+  /* run */
+  const run = fcSimulate(s), d = run.days, last = d[d.length - 1], band = fcBand(s), sc = fcScenarios();
+  const lines = [{ color: FC_COLORS[0], pts: d.map(q => [q.t, q.W]) }];
+  const cmp = fcChecked.map(id => sc.find(x => x.id === id)).filter(Boolean).slice(0, 3).map((x, i) => ({ x, run: fcSimulate(x.p), color: FC_COLORS[i + 1] }));
+  cmp.forEach(c => lines.push({ color: c.color, dash: true, pts: c.run.days.map(q => [q.t, q.W]) }));
+  const horizon = Math.max.apply(null, [d.length - 1].concat(cmp.map(c => c.run.days.length - 1)));
+  const actual = fcActualPoints(s.start, horizon);
+  h += '<div class="sec-label">Weight projection</div><div class="card">' + fcChartSVG({ startKey: s.start, days: horizon, lines, band: { lo: band.lo, hi: band.hi }, actual, target: s.target }) +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:4px"><span><i style="display:inline-block;width:14px;height:3px;background:var(--coral);vertical-align:middle;margin-right:5px"></i>Model</span>' + cmp.map(c => '<span><i style="display:inline-block;width:14px;height:0;border-top:3px dashed ' + c.color + ';vertical-align:middle;margin-right:5px"></i>' + esc(c.x.name) + '</span>').join('') +
+    (actual.length ? '<span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--text);margin-right:5px"></i>Logged weigh-ins</span>' : '') + '<span><i style="display:inline-block;width:14px;height:8px;background:var(--coral);opacity:.2;margin-right:5px"></i>Range from unsettled assumptions</span></div>' +
+    '<div class="footnote" style="margin:8px 0 0">The shaded range only reflects the assumptions above (body fat ±5 points, activity factor ±0.1, spontaneous-activity share, optional adaptation). It is not a statistical interval, and day-to-day water shifts, adherence, medication effects and measurement error are not in it — real variation is usually wider.</div></div>';
+  run.flags.forEach(f => { h += '<div class="banner" style="background:var(--warn-bg);color:var(--warn-fg);font-size:13.5px;line-height:1.5">' + esc(f.text) + '</div>'; });
+  v.warn.forEach(w => { h += '<div class="banner" style="background:var(--warn-bg);color:var(--warn-fg);font-size:13.5px;line-height:1.5">' + esc(w) + '</div>'; });
+  /* key points table */
+  const pts = [30, 60, 90, 180, 365].filter(x => x < d.length - 1).concat([d.length - 1]);
+  h += '<div class="sec-label">Model output</div><div class="card"><table style="width:100%;border-collapse:collapse;font-size:13.5px"><tr style="color:var(--faint);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em"><th style="text-align:left;padding:3px 0">Day</th><th style="text-align:right">Weight</th><th style="text-align:right">Change</th><th style="text-align:right">Fat / lean</th><th style="text-align:right">Expend.</th></tr>' +
+    pts.map(t => { const q = d[t]; return '<tr style="border-top:1px solid var(--line)"><td style="padding:6px 0">' + t + '</td><td style="text-align:right;font-weight:700">' + labFmt(q.W, 1) + '</td><td style="text-align:right">' + (q.W - d[0].W > 0 ? '+' : '') + labFmt(q.W - d[0].W, 1) + '</td><td style="text-align:right;color:var(--muted)">' + labFmt(q.F - d[0].F, 1) + ' / ' + labFmt(q.L - d[0].L, 1) + '</td><td style="text-align:right;color:var(--muted)">' + labFmt(q.EE, 0) + '</td></tr>'; }).join('') + '</table>' +
+    '<div class="footnote" style="margin:8px 0 0">Weight and change in kg; fat / lean = modelled change in fat mass and fat-free mass (not measured); expenditure in kcal/day. ' + (s.mode === 'deficit' && s.basis === 'start' ? 'Expenditure responds right away (less thermic effect, spontaneous activity adapts), so the first-day gap is smaller than the deficit you entered. ' : '') + (s.mode === 'deficit' && +s.deficit > 0 ? 'For comparison, the 7,700 kcal/kg rule of thumb would give ' + labFmt(-(+s.deficit) * (d.length - 1) / 7700, 1) + ' kg for a constant deficit; this model lets expenditure fall as weight falls instead.' : '') + '</div>' +
+    (s.target && +s.target < last.W ? '<div class="footnote" style="margin:6px 0 0">Within this run the modelled weight does not reach ' + labFmt(+s.target, 1) + ' kg.</div>' : (s.target ? (() => { const hit = d.find(q => q.W <= +s.target); return hit ? '<div class="footnote" style="margin:6px 0 0">Modelled weight passes ' + labFmt(+s.target, 1) + ' kg around day ' + hit.t + ' (' + esc(DTF.md.format(new Date(labAddDays(s.start, hit.t) + 'T12:00:00'))) + ') in this scenario — a model result, not a date to plan around.</div>' : ''; })() : '')) + '</div>';
+  /* scenarios */
+  h += '<div class="sec-label">Scenarios</div><div class="card">' + (sc.length ? sc.map((x, i) => '<div class="kv" style="align-items:center"><label style="display:flex;gap:8px;align-items:center;flex:1;cursor:pointer"><input type="checkbox" data-fcs="' + x.id + '"' + (fcChecked.indexOf(x.id) >= 0 ? ' checked' : '') + '><span><b>' + esc(x.name) + '</b><br><span style="font-size:12px;color:var(--muted)">' + esc(fcDescribe(x.p)) + '</span></span></label><span style="display:flex;gap:6px"><button class="btn btn-tonal btn-sm" data-fcc="loadsc" data-v="' + x.id + '">Edit</button><button class="mini-add" data-fcc="delsc" data-v="' + x.id + '" aria-label="Delete">' + ic('trash', 14) + '</button></span></div>').join('') : '<div class="footnote" style="margin:0 0 8px">Save the current inputs as a scenario to keep it and compare it with others side by side — saving never overwrites another scenario.</div>') +
+    '<button class="btn btn-tonal" style="width:100%;margin-top:10px" data-fcc="savesc">Save current as a scenario</button></div>';
+  if (cmp.length) h += '<div class="card" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="color:var(--faint);font-size:11.5px;text-transform:uppercase"><th style="text-align:left">Scenario</th><th style="text-align:right">End weight</th><th style="text-align:right">Change</th></tr>' + [{ x: { name: 'Current inputs' }, run }].concat(cmp).map(c => { const e = c.run.days[c.run.days.length - 1], b0 = c.run.days[0]; return '<tr style="border-top:1px solid var(--line)"><td style="padding:6px 0">' + esc(c.x.name) + '</td><td style="text-align:right;font-weight:700">' + labFmt(e.W, 1) + '</td><td style="text-align:right">' + (e.W - b0.W > 0 ? '+' : '') + labFmt(e.W - b0.W, 1) + ' kg · ' + (c.run.days.length - 1) + ' d</td></tr>'; }).join('') + '</table></div>';
+  /* predicted vs actual */
+  h += '<div class="sec-label">Predicted vs. actual</div><div class="card">';
+  const act = actual.filter(q => q.t <= d.length - 1);
+  if (act.length < 2) h += '<div class="footnote" style="margin:0">Needs at least two logged weigh-ins inside this run’s window (it starts ' + esc(DTF.md.format(new Date(s.start + 'T12:00:00'))) + '). Set the start date to a day you have weighed in.</div>';
+  else {
+    const errs = act.map(q => d[q.t].W - q.kg), mean = labMean(errs), rmse = Math.sqrt(labMean(errs.map(e => e * e))), lastA = act[act.length - 1];
+    h += '<div class="kv"><span>Logged weigh-ins in window</span><b>' + act.length + '</b></div><div class="kv"><span>Average gap (model − logged)</span><b>' + (mean > 0 ? '+' : '') + labFmt(mean, 1) + ' kg</b></div><div class="kv"><span>Typical gap (RMSE)</span><b>' + labFmt(rmse, 1) + ' kg</b></div><div class="kv" style="border:0"><span>Day ' + lastA.t + ': model vs logged</span><b>' + labFmt(d[lastA.t].W, 1) + ' vs ' + labFmt(lastA.kg, 1) + ' kg</b></div>';
+    if (act.length >= 6 && lastA.t >= 21) {
+      const fit = fcFitIntake(s, act.map(q => ({ t: q.t, kg: q.kg }))), b0 = fcBaseline(s), ok = fit.intake >= 0.5 * b0.E0 && fit.intake >= 0.8 * b0.rmr0 && fit.intake <= 1.4 * b0.E0;
+      h += '<div class="divider"></div>' + (ok
+        ? '<div class="footnote" style="margin:0">To follow your logged weights, the model would need an average intake of about <b>' + labFmt(Math.round(fit.intake / 10) * 10, 0) + ' kcal/day</b> over this window (typical gap then ' + labFmt(fit.rmse, 1) + ' kg). That describes the past under this model’s assumptions — it also absorbs water changes, medication effects and model error — and is not a target.</div>'
+        : '<div class="footnote" style="margin:0">No intake inside the range this model supports reproduces your logged weights: the loss you recorded is larger than the model can account for through intake alone (below about half of estimated starting expenditure it is extrapolating). That points to things the model does not contain — early water and glycogen loss, medication effects on expenditure, a different starting composition — or error in the assumptions, not a verdict on your record. Treat model curves for this period as illustrative only.</div>');
+    }
+  }
+  h += '</div>';
+  /* explanation */
+  const sens = fcSensitivity(s);
+  h += '<div class="sec-label">What moves the answer</div><div class="card"><div class="footnote" style="margin:0 0 6px">Change in final modelled weight (kg) when one assumption is varied on its own:</div>' + fcSens(sens) + '</div>';
+  h += '<div class="sec-label">How the model works</div><div class="card"><button class="btn btn-tonal" style="width:100%" data-fcc="info">' + (fcOpenInfo ? 'Hide' : 'Show') + ' equations, sources and what was verified</button>' + (fcOpenInfo ? fcInfoHTML() : '') + '</div>';
+  h += '<div class="footnote">Model output, logged measurements and uncertainty are kept apart on purpose: the line is a calculation, the dots are what you recorded, the shading is only the effect of unsettled assumptions.</div>';
+  body.innerHTML = h; fcBind(body);
+}
+function fcInfoHTML() {
+  const row = (a, b, c) => '<tr style="border-top:1px solid var(--line);vertical-align:top"><td style="padding:6px 8px 6px 0;font-weight:600">' + a + '</td><td style="padding:6px 8px 6px 0">' + b + '</td><td style="padding:6px 0;color:var(--muted)">' + c + '</td></tr>';
+  return '<div style="font-size:13.5px;line-height:1.55;margin-top:12px">' +
+    '<p style="margin:0 0 8px"><b>Energy balance.</b> Stored or lost energy = intake − expenditure. It is split between fat mass (9,500 kcal/kg) and fat-free mass (1,020 kcal/kg) using the Forbes relation, so how much of a change is fat depends on how much fat there already is.</p>' +
+    '<p style="margin:0 0 8px"><b>Expenditure</b> = resting (Livingston–Kohlstadt, depends on weight, age and sex) + activity (proportional to weight) + diet-induced thermogenesis (7.5 % of intake) + spontaneous activity, which follows two-thirds of any fall in expenditure and 56 % of any rise.</p>' +
+    '<table style="width:100%;border-collapse:collapse;font-size:12.5px"><tr style="color:var(--faint);text-transform:uppercase;font-size:11px"><th style="text-align:left">Item</th><th style="text-align:left">Used here</th><th style="text-align:left">Status</th></tr>' +
+    row('DIT', '0.075 × intake', 'The source document shows 0.075 in one place and 0.75 in its final line; 0.075 matches its own text and the published model. Treated as a typo.') +
+    row('Resting rate', 'F: 248·W<sup>0.4356</sup> − 5.09·age · M: 293·W<sup>0.4330</sup> − 5.92·age', 'The document refers to its Table 1 without printing it; the constants were taken from the published model that uses the same equation.') +
+    row('Adaptation “a”', '(1 − a) on resting rate only; default 0', 'The document’s last line applies (1 − a) to everything and never defines a. The published model applies it to resting rate. Optional here.') +
+    row('Forbes constant', 'not needed', 'Only the derivative dFFM = 10.4·dFM/FM enters the dynamics, so the constant cancels.') +
+    row('Spontaneous activity start', 'activity-factor share (default 10 %)', 'Assumption: the document does not give the integration constant; 10 % is a benchmark from the published model.') +
+    row('Activity factor', 'from your Settings', 'Assumption: sets estimated starting expenditure.') +
+    row('Starting body fat', 'estimate or your value', 'Assumption: not given by the document. Deurenberg et al. population formula unless you enter one.') +
+    '</table>' +
+    '<p style="margin:10px 0 8px"><b>Why the second study isn’t used for the curve.</b> The 2025 Health Science Reports paper trains machine-learning classifiers on 893 people on a 3-month diet to predict whether someone reaches a weight-loss category or changes metabolic-syndrome status. It answers “which group is this person likely to fall into?”, not “what will this person’s weight be on a given day?”. Its classification accuracy doesn’t transfer to a continuous weight curve, and its model can’t be rebuilt from published summary numbers, so none of it is simulated here.</p>' +
+    '<p style="margin:0"><b>Not modelled:</b> medication effects, water and glycogen shifts, menstrual-cycle fluid changes, changes in exercise, adherence, individual variation in metabolism.</p></div>';
+}
+function fcBind(body) {
+  const s = fcInit(), numKeys = { W0: 1, age: 1, heightCm: 1, pal: 1, neat: 1, a: 1, deficit: 1, intake: 1, days: 1, target: 1 };
+  body.querySelectorAll('[data-fc]').forEach(el => el.addEventListener('change', () => {
+    const k = el.dataset.fc, raw = el.value.trim();
+    if (k === 'start') s.start = raw; else if (k === 'bf') s.bf = raw === '' ? '' : (isFinite(parseNumStrict(raw)) && parseNumStrict(raw) != null ? parseNumStrict(raw) / 100 : raw);
+    else if (numKeys[k]) { const n = parseNumStrict(raw); s[k] = raw === '' ? '' : (n == null || Number.isNaN(n) ? raw : n); }
+    fcSave(); Pages.render();
+  }));
+  body.querySelectorAll('[data-fcc]').forEach(el => el.addEventListener('click', () => {
+    const a = el.dataset.fcc, v = el.dataset.v;
+    if (a === 'sex' || a === 'mode' || a === 'basis') s[a] = v; else if (a === 'days') s.days = +v;
+    else if (a === 'usestart') { const st = fcStartInfo(); s.start = st.date; s.W0 = st.kg; s.age = fcBirthAge(st.date); }
+    else if (a === 'usetoday') { const cw = currentWeight(); s.start = dateKey(new Date()); if (cw) s.W0 = cw.kg; s.age = fcBirthAge(s.start); }
+    else if (a === 'info') fcOpenInfo = !fcOpenInfo;
+    else if (a === 'savesc') { if (fcValidate(s).err.length) return toast('Fix the inputs first'); return openTextSheet('Name this scenario', fcDescribe(s), name => { fcScenarios().push({ id: uid(), name, p: Object.assign({}, s), savedAt: nowISO() }); Store.save(); toast('Scenario saved'); Pages.render(); }); }
+    else if (a === 'loadsc') { const x = fcScenarios().find(q => q.id === v); if (x) Object.assign(s, x.p); }
+    else if (a === 'delsc') { Store.state.meta.forecastScenarios = fcScenarios().filter(q => q.id !== v); fcChecked = fcChecked.filter(i => i !== v); Store.save(); }
+    else return;
+    fcSave(); Pages.render();
+  }));
+  body.querySelectorAll('[data-fcs]').forEach(el => el.addEventListener('change', () => { const id = el.dataset.fcs, i = fcChecked.indexOf(id); if (el.checked && i < 0) fcChecked.push(id); else if (!el.checked && i >= 0) fcChecked.splice(i, 1); if (fcChecked.length > 3) fcChecked.shift(); Pages.render(); }));
+}
+function openForecastPage() { fcInit(); Pages.push({ title: 'Forecast Lab', render(body) { fcRenderPage(body); } }); }
+
 /* -------- Calendar Export (.ics) -------- */
 function openIcsExportPage() {
   Pages.push({
@@ -6779,6 +8035,12 @@ const Handlers = {
   'open-vials': () => openVialsPage(),
   'open-periodlog': () => openPeriodLogPage(),
   'open-mypattern': () => openMyPatternPage(),
+  'open-lab': () => openInsightsPage('lab'),
+  'open-forecast': () => openForecastPage(),
+  'open-bodystudio': () => openBodyStudioPage(),
+  'open-recomp': () => openRecompPage(),
+  'open-photos': () => openPhotosPage(),
+  'open-explore': () => openInsightsPage('explore'),
   'open-whatchanged': () => openWhatChangedPage(),
   'open-icsexport': () => openIcsExportPage(),
   'open-sendcoach': () => openSendCoachPage(),
