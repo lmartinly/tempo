@@ -269,6 +269,61 @@ input[type="datetime-local"].field,input[type="time"].field{min-height:49px}
 .compare .cinfo{text-align:center;font-size:12.5px;color:var(--muted);margin-top:7px;line-height:1.5}
 .compare .cinfo b{display:block;color:var(--text);font-size:14px}
 .photoview img{width:100%;border-radius:18px;background:var(--surface2)}
+/* ---- Tempo Play (optional, deliberately its own world) ---- */
+.plwrap{background:#1E1229;border-radius:24px;padding:16px;color:#F1E9DC;margin:0 0 8px}
+.plwrap .field{background:#2B1A38;color:#F1E9DC;border-color:rgba(241,233,220,.12)}
+.plwrap .field:focus{border-color:#B9A6CC}
+.plwrap .chev-ico{color:#B9A6CC}
+.plk{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#B9A6CC;margin:20px 2px 8px}
+.plk:first-child{margin-top:4px}
+.plhero{border-radius:20px;overflow:hidden;margin-bottom:12px;background:#241631;padding-bottom:14px}
+.plhero svg{display:block}
+.plh-t{font-family:Georgia,'Times New Roman',serif;font-size:26px;padding:12px 16px 0;color:#F1E9DC}
+.plh-s{font-size:13px;line-height:1.5;padding:4px 16px 0;color:rgba(241,233,220,.72)}
+.plt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;background:#2B1A38;color:#F1E9DC;border:1px solid rgba(241,233,220,.08);border-radius:18px;padding:16px;margin-bottom:10px;min-height:56px}
+.plt-n{font-weight:700;font-size:16px}
+.plt-s{font-size:12.5px;line-height:1.5;color:rgba(241,233,220,.68);margin-top:2px}
+.plcard{background:#2B1A38;border:1px solid rgba(241,233,220,.08);border-radius:18px;padding:16px;margin-bottom:10px}
+.plcard.dim{opacity:.62}
+.plrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.plb{background:#F1E9DC;color:#3A2150;border:0;border-radius:999px;padding:12px 20px;font-weight:700;font-size:14px;min-height:44px}
+.plb.ghost{background:transparent;color:#F1E9DC;border:1.5px solid rgba(241,233,220,.35)}
+.plb:disabled{opacity:.4}
+.plfoot{font-size:12px;line-height:1.55;color:rgba(241,233,220,.55);margin:14px 4px 2px}
+.plchips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.plc{background:transparent;border:1.5px solid rgba(241,233,220,.25);color:#F1E9DC;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:600;min-height:40px}
+.plc.on{background:#B9A6CC;border-color:#B9A6CC;color:#1E1229}
+.plc small{font-weight:500;opacity:.7;font-size:11px}
+.plc.pal i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;vertical-align:-1px;border:1px solid rgba(0,0,0,.2)}
+.plq{font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:1.35;margin:4px 2px 14px}
+.plopt{display:block;width:100%;text-align:left;background:#2B1A38;color:#F1E9DC;border:1.5px solid rgba(241,233,220,.14);border-radius:18px;padding:16px;margin-bottom:10px;position:relative;min-height:64px}
+.plopt.win{border-color:#A9BEA3}
+.plopt.picked{box-shadow:0 0 0 2px #B9A6CC inset}
+.plopt:disabled{opacity:1}
+.plo-t{font-weight:700;font-size:15px}
+.plo-s{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(241,233,220,.55);margin-top:2px}
+.plo-v{font-family:Georgia,'Times New Roman',serif;font-size:28px;margin-top:6px}
+.plo-v span{font-size:13px;font-family:system-ui,sans-serif;opacity:.7}
+.plbar{height:6px;border-radius:3px;background:rgba(241,233,220,.12);margin-top:8px;overflow:hidden}
+.plbar i{display:block;height:100%;background:#B9A6CC}
+.plopt.win .plbar i{background:#A9BEA3}
+.plres{font-family:Georgia,'Times New Roman',serif;font-size:18px;margin:6px 2px 12px}
+.pldet{background:#2B1A38;border-radius:16px;padding:12px 16px;margin:10px 0;font-size:13px;line-height:1.55;color:rgba(241,233,220,.85)}
+.pldet summary{font-weight:700;cursor:pointer}
+.pldet p{margin:8px 0 0}
+.pldemo{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#E3B79F;color:#3A2150;border-radius:6px;padding:4px 8px;margin-bottom:10px}
+.plnum{position:absolute;right:14px;top:14px;width:26px;height:26px;border-radius:50%;background:#B9A6CC;color:#1E1229;font-weight:800;display:grid;place-items:center}
+.plgrid2,.plcmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plcmp{margin:8px 0}
+.plgal{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.plthumb{text-align:left;color:#F1E9DC;background:none;border:0;padding:0}
+.artbox svg{display:block;width:100%;height:auto;border-radius:8px}
+.plthumb .artbox{box-shadow:0 6px 18px rgba(0,0,0,.35);border-radius:8px;margin-bottom:6px}
+.plsl{display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:13px;font-weight:600;margin-bottom:10px}
+.plsl input{flex:1}
+.plfull{align-items:center;justify-content:center;background:#120A1A}
+.plfull .artbox{max-width:min(100%,calc((100vh - 24px)*.8))}
+.plfull .phclose{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:rgba(241,233,220,.15);color:#fff;border:0;display:grid;place-items:center;z-index:2}
 .phpair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .phv{position:relative;overflow:hidden;border-radius:15px;background:var(--surface2);aspect-ratio:3/4;touch-action:none;user-select:none;-webkit-user-select:none}
 .phlayer{position:absolute;inset:0}
@@ -827,7 +882,7 @@ const MEAS_GROUPS = [
 ];
 const MEAS_FIELDS = MEAS_GROUPS.reduce((a, g) => a.concat(g[1]), []);
 const CURRENCIES = ['₺', '$', '€', '£'];
-const APP_VERSION = '1.40.0';
+const APP_VERSION = '2.0.0';
 const SCHEMA = 7;
 const KEY_PREFIX = 'tempo_';
 const LS_KEY = KEY_PREFIX + 'data';
@@ -3794,6 +3849,7 @@ function openToolsPage() {
       const rows = [
         ['open-bodystudio', 'compare', 'lav', 'Body Studio', 'Recomposition and private progress photos'],
         ['open-forecast', 'sparkle', 'peach', 'Forecast Lab', 'Energy-balance simulation, scenarios, predicted vs. actual'],
+        ['open-play', 'sparkle', 'lav', 'Tempo Play', 'Optional: seasons, arcade, data art and a gallery'],
         ['open-explore', 'sparkle', 'mint', 'Explore Your Data', 'Questions your records can answer'],
         ['open-lab', 'compare', 'teal', 'Insights Lab', 'Compare variables, lags and periods'],
         ['open-dosejourney', 'syringe', 'coral', 'Dose Journey', 'Dose history, future plan & budget'],
@@ -6909,6 +6965,17 @@ function fcBaseline(p) {
   if (pa0 < 0) { neat0 = Math.max(0, E0 - rmr0 - dit0); pa0 = Math.max(0, E0 - rmr0 - dit0 - neat0); note = 'At this activity factor the baseline leaves no room for deliberate activity, so spontaneous activity was reduced to fit.'; }
   return { bf, F0: bf * W0, L0: W0 - bf * W0, rmr0, E0, dit0, neat0, pa0, m: pa0 / W0, B0: rmr0 + pa0 + dit0, note };
 }
+/* calories from the daily check-ins: logged days use their own value; a past day without one uses the window's logged average; days after today continue at the average of the last 14 logged days */
+function fcLoggedSeries(p) {
+  const days = Math.max(0, Math.round(+p.days) || 0), today = dateKey(new Date()), kc = new Map(), start = /^\d{4}-\d{2}-\d{2}$/.test(String(p.start || '')) ? p.start : today;
+  Store.state.checkIns.forEach(c => { const v = +c.kcal; if (c.kcal != null && c.kcal !== '' && isFinite(v) && v > 0) kc.set(c.dateKey, v); });
+  const past = [], vals = [];
+  for (let t = 0; t <= days; t++) { const k = labAddDays(start, t); if (k > today) break; past.push(k); if (kc.has(k)) vals.push(kc.get(k)); }
+  const mean = vals.length ? labMean(vals) : null, recent = []; for (let i = past.length - 1; i >= 0 && recent.length < 14; i--) if (kc.has(past[i])) recent.push(kc.get(past[i]));
+  const tail = recent.length ? labMean(recent) : mean, series = [];
+  for (let t = 0; t <= days; t++) { const k = labAddDays(start, t); series.push(k <= today ? (kc.has(k) ? kc.get(k) : mean) : tail); }
+  return { series, logged: vals.length, past: past.length, filled: past.length - vals.length, mean, tail, min: vals.length ? Math.min.apply(null, vals) : null, max: vals.length ? Math.max.apply(null, vals) : null, future: Math.max(0, days + 1 - past.length) };
+}
 function fcValidate(p) {
   const err = [], warn = [];
   const num = (v, lo, hi, msg) => { if (v === '' || v == null || !isFinite(+v) || +v < lo || +v > hi) err.push(msg); };
@@ -6922,7 +6989,8 @@ function fcValidate(p) {
   else if (!(+p.bf >= 0.05 && +p.bf <= 0.70)) err.push('Body fat should be between 5 % and 70 %.');
   num(p.pal, 1.0, 2.5, 'Activity factor must be between 1.0 and 2.5.');
   num(p.days, 7, 730, 'Duration must be between 7 and 730 days.');
-  if (p.mode === 'deficit') { if (p.deficit === '' || !isFinite(+p.deficit)) err.push('Enter the average daily energy deficit (kcal).'); else if (+p.deficit < -2000 || +p.deficit > 3000) err.push('Deficit should be between −2,000 (surplus) and 3,000 kcal/day.'); }
+  if (p.mode === 'logged') { if (fcLoggedSeries(p).logged < 7) err.push('Calories from check-ins need at least 7 days with a calorie value logged between the start date and today. Set an earlier start date, or use one of the other scenarios.'); }
+  else if (p.mode === 'deficit') { if (p.deficit === '' || !isFinite(+p.deficit)) err.push('Enter the average daily energy deficit (kcal).'); else if (+p.deficit < -2000 || +p.deficit > 3000) err.push('Deficit should be between −2,000 (surplus) and 3,000 kcal/day.'); }
   else if (p.intake === '' || !isFinite(+p.intake) || +p.intake <= 0 || +p.intake > 10000) err.push('Enter an average daily intake between 1 and 10,000 kcal.');
   if (p.target !== '' && p.target != null && (!isFinite(+p.target) || +p.target < 25 || +p.target > 400)) err.push('Target weight must be a number between 25 and 400 kg.');
   return { err, warn };
@@ -6931,13 +6999,14 @@ function fcValidate(p) {
 function fcSimulate(p, opts) {
   opts = opts || {};
   const sex = p.sex === 'male' ? 'male' : 'female', base = fcBaseline(p), a = +p.a || 0, k = FC_LK[sex];
-  const days = Math.round(+p.days), out = [], flags = [];
+  const days = Math.round(+p.days), out = [], flags = [], ser = p.mode === 'logged' ? (p.eiSeries || fcLoggedSeries(p).series) : null;
   let F = base.F0, L = base.L0, extrapolated = false, spaFloor = false, fatOut = false;
   const state = (t, F, L, EIforced) => {
     const W = F + L, A = +p.age + t / 365, rmr = (1 - a) * (k.c * Math.pow(W, k.p) - k.y * A), pa = base.m * W;
     const evalEI = EI => { const dit = FC_DIT * EI, B = rmr + pa + dit, dB = B - base.B0, s = dB < 0 ? FC_S_LOSS : FC_S_GAIN, spaRaw = base.neat0 + s / (1 - s) * dB, spa = Math.max(0, spaRaw); return { dit, spa, floor: spaRaw < 0, EE: B + spa }; };
     let EI;
-    if (p.mode === 'deficit' && p.basis === 'current') { EI = base.E0 - (+p.deficit); for (let i = 0; i < 12; i++) EI = evalEI(EI).EE - (+p.deficit); }
+    if (ser) EI = ser[Math.min(ser.length - 1, Math.max(0, Math.floor(t)))];
+    else if (p.mode === 'deficit' && p.basis === 'current') { EI = base.E0 - (+p.deficit); for (let i = 0; i < 12; i++) EI = evalEI(EI).EE - (+p.deficit); }
     else if (p.mode === 'deficit') EI = base.E0 - (+p.deficit);
     else EI = +p.intake;
     const e = evalEI(EI);
@@ -6950,7 +7019,7 @@ function fcSimulate(p, opts) {
     if (s.floor) spaFloor = true;
     if (s.EI < base.E0 * 0.5 || s.EI < s.rmr * 0.8) extrapolated = true;
     if (t === days) break;
-    const d2 = deriv(t + 0.5, F + d1.dF / 2, L + d1.dL / 2), d3 = deriv(t + 0.5, F + d2.dF / 2, L + d2.dL / 2), d4 = deriv(t + 1, F + d3.dF, L + d3.dL);
+    const d2 = deriv(t + 0.5, F + d1.dF / 2, L + d1.dL / 2), d3 = deriv(t + 0.5, F + d2.dF / 2, L + d2.dL / 2), d4 = deriv(t + 1 - 1e-9, F + d3.dF, L + d3.dL);
     F += (d1.dF + 2 * d2.dF + 2 * d3.dF + d4.dF) / 6; L += (d1.dL + 2 * d2.dL + 2 * d3.dL + d4.dL) / 6;
     if (F < 1) { fatOut = true; flags.push({ id: 'fat-floor', text: 'Modelled fat mass fell below 1 kg on day ' + (t + 1) + ', where the Forbes relation stops being meaningful. The curve ends there.' }); break; }
   }
@@ -6991,6 +7060,12 @@ function fcFitIntake(p, actuals) {
 
 /* ---- Forecast Lab UI ---- */
 const FC_COLORS = ['var(--coral)', 'var(--teal)', 'var(--lav-deep)', 'var(--peach-deep)'];
+function fcLoggedNote(s) {
+  const L = fcLoggedSeries(s);
+  if (!L.logged) return '<div class="footnote" style="margin:0">No calorie values are logged in your check-ins between this start date and today.</div>';
+  return '<div class="kv"><span>Days with calories logged</span><b>' + L.logged + ' of ' + L.past + '</b></div><div class="kv"><span>Average / range</span><b>' + labFmt(L.mean, 0) + ' kcal · ' + labFmt(L.min, 0) + '–' + labFmt(L.max, 0) + '</b></div>' +
+    '<div class="footnote" style="margin:8px 0 0">Each logged total is treated as that day’s whole intake.' + (L.filled ? ' ' + L.filled + ' past day' + (L.filled === 1 ? '' : 's') + ' without a value use the average of the logged ones.' : '') + (L.future ? ' ' + L.future + ' day' + (L.future === 1 ? '' : 's') + ' after today continue at ' + labFmt(L.tail, 0) + ' kcal, the average of your last logged days.' : '') + ' This keeps using your check-ins, so it changes as you log; a saved scenario freezes the values it used.</div>';
+}
 function fcBirthAge(dk) {
   const set = Store.state.settings; if (!set.birthYear) return '';
   const t = new Date((dk || dateKey(new Date())) + 'T12:00:00'), b = new Date(set.birthYear, (set.birthMonth || 1) - 1, 15);
@@ -7011,7 +7086,7 @@ function fcInit() {
 }
 function fcSave() { Store.state.meta.forecastDraft = Object.assign({}, fcState); Store.save(); }
 function fcScenarios() { const m = Store.state.meta; if (!Array.isArray(m.forecastScenarios)) m.forecastScenarios = []; return m.forecastScenarios; }
-function fcDescribe(p) { return (p.mode === 'deficit' ? (+p.deficit >= 0 ? labFmt(+p.deficit, 0) + ' kcal below ' : labFmt(-p.deficit, 0) + ' kcal above ') + (p.basis === 'current' ? 'current' : 'starting') + ' expenditure' : labFmt(+p.intake, 0) + ' kcal intake') + ' · ' + p.days + ' days'; }
+function fcDescribe(p) { if (p.mode === 'logged') { const L = fcLoggedSeries(p); return 'Calories from check-ins' + (L.mean != null ? ' (avg ' + labFmt(L.mean, 0) + ' kcal, ' + L.logged + ' days)' : '') + ' · ' + p.days + ' days'; } return (p.mode === 'deficit' ? (+p.deficit >= 0 ? labFmt(+p.deficit, 0) + ' kcal below ' : labFmt(-p.deficit, 0) + ' kcal above ') + (p.basis === 'current' ? 'current' : 'starting') + ' expenditure' : labFmt(+p.intake, 0) + ' kcal intake') + ' · ' + p.days + ' days'; }
 function fcChartSVG(o) {
   const w = 336, h = 230, p = { l: 40, r: 12, t: 12, b: 28 }, days = o.days;
   let lo = Infinity, hi = -Infinity; const eat = v => { if (v < lo) lo = v; if (v > hi) hi = v; };
@@ -7054,8 +7129,8 @@ function fcRenderPage(body) {
     '<div class="f-label">Sex used by the formula</div><div class="chips">' + chip('sex', 'female', s.sex, 'Female') + chip('sex', 'male', s.sex, 'Male') + '</div>' +
     '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-tonal btn-sm" data-fcc="usestart">Use my starting point</button><button class="btn btn-tonal btn-sm" data-fcc="usetoday">Use today</button></div></div>';
   const base = v.err.length ? null : fcBaseline(s);
-  h += '<div class="card"><div class="f-label" style="margin-top:0">Energy scenario</div><div class="chips">' + chip('mode', 'deficit', s.mode, 'Daily deficit') + chip('mode', 'intake', s.mode, 'Average intake') + '</div><div style="margin-top:10px">' +
-    (s.mode === 'deficit' ? fcField('Average daily deficit (kcal) — negative for a surplus', 'deficit', s.deficit) + '<div class="f-label">Deficit is measured against</div><div class="chips">' + chip('basis', 'start', s.basis, 'Starting expenditure') + chip('basis', 'current', s.basis, 'Current expenditure') + '</div><div class="footnote" style="margin:8px 0 0">' +
+  h += '<div class="card"><div class="f-label" style="margin-top:0">Energy scenario</div><div class="chips">' + chip('mode', 'deficit', s.mode, 'Daily deficit') + chip('mode', 'intake', s.mode, 'Average intake') + chip('mode', 'logged', s.mode, 'From my check-ins') + '</div><div style="margin-top:10px">' +
+    (s.mode === 'logged' ? fcLoggedNote(s) : s.mode === 'deficit' ? fcField('Average daily deficit (kcal) — negative for a surplus', 'deficit', s.deficit) + '<div class="f-label">Deficit is measured against</div><div class="chips">' + chip('basis', 'start', s.basis, 'Starting expenditure') + chip('basis', 'current', s.basis, 'Current expenditure') + '</div><div class="footnote" style="margin:8px 0 0">' +
       (s.basis === 'start' ? 'Intake stays fixed at (estimated starting expenditure − deficit). As weight falls, expenditure falls too, so the real gap narrows over time.' : 'Intake is adjusted every day so it stays exactly this far below that day’s modelled expenditure — which means intake itself drifts down as expenditure falls.') + '</div>'
       : fcField('Average daily intake (kcal)', 'intake', s.intake) + '<div class="footnote" style="margin:8px 0 0">Compared against the model’s estimate of your starting expenditure' + (base ? ' (' + labFmt(base.E0, 0) + ' kcal/day)' : '') + '.</div>') + '</div>' +
     '<div class="f-2col" style="margin-top:12px">' + fcField('Duration (days)', 'days', s.days) + fcField('Target weight (optional)', 'target', s.target, { ph: 'optional' }) + '</div>' +
@@ -7099,6 +7174,8 @@ function fcRenderPage(body) {
       h += '<div class="divider"></div>' + (ok
         ? '<div class="footnote" style="margin:0">To follow your logged weights, the model would need an average intake of about <b>' + labFmt(Math.round(fit.intake / 10) * 10, 0) + ' kcal/day</b> over this window (typical gap then ' + labFmt(fit.rmse, 1) + ' kg). That describes the past under this model’s assumptions — it also absorbs water changes, medication effects and model error — and is not a target.</div>'
         : '<div class="footnote" style="margin:0">No intake inside the range this model supports reproduces your logged weights: the loss you recorded is larger than the model can account for through intake alone (below about half of estimated starting expenditure it is extrapolating). That points to things the model does not contain — early water and glycogen loss, medication effects on expenditure, a different starting composition — or error in the assumptions, not a verdict on your record. Treat model curves for this period as illustrative only.</div>');
+      const LL = fcLoggedSeries(Object.assign({}, s, { days: Math.max(0, Math.ceil(lastA.t)) }));
+      if (LL.logged >= 7) h += '<div class="footnote" style="margin:8px 0 0">For comparison, your check-ins over the same window average <b>' + labFmt(Math.round(LL.mean / 10) * 10, 0) + ' kcal/day</b> across ' + LL.logged + ' logged days' + (ok ? ' — about ' + labFmt(Math.abs(Math.round((fit.intake - LL.mean) / 10) * 10), 0) + ' kcal ' + (fit.intake > LL.mean ? 'below' : 'above') + ' what the model would need. The model cannot say why (logged totals that miss items, expenditure that differs from the formula, water shifts and more are all outside it); it only reports the gap.' : '. The model cannot place that number against your weights either.') + '</div>';
     }
   }
   h += '</div>';
@@ -7140,7 +7217,7 @@ function fcBind(body) {
     else if (a === 'usestart') { const st = fcStartInfo(); s.start = st.date; s.W0 = st.kg; s.age = fcBirthAge(st.date); }
     else if (a === 'usetoday') { const cw = currentWeight(); s.start = dateKey(new Date()); if (cw) s.W0 = cw.kg; s.age = fcBirthAge(s.start); }
     else if (a === 'info') fcOpenInfo = !fcOpenInfo;
-    else if (a === 'savesc') { if (fcValidate(s).err.length) return toast('Fix the inputs first'); return openTextSheet('Name this scenario', fcDescribe(s), name => { fcScenarios().push({ id: uid(), name, p: Object.assign({}, s), savedAt: nowISO() }); Store.save(); toast('Scenario saved'); Pages.render(); }); }
+    else if (a === 'savesc') { if (fcValidate(s).err.length) return toast('Fix the inputs first'); return openTextSheet('Name this scenario', fcDescribe(s), name => { fcScenarios().push({ id: uid(), name, p: Object.assign({}, s, s.mode === 'logged' ? { eiSeries: fcLoggedSeries(s).series } : {}), savedAt: nowISO() }); Store.save(); toast('Scenario saved'); Pages.render(); }); }
     else if (a === 'loadsc') { const x = fcScenarios().find(q => q.id === v); if (x) Object.assign(s, x.p); }
     else if (a === 'delsc') { Store.state.meta.forecastScenarios = fcScenarios().filter(q => q.id !== v); fcChecked = fcChecked.filter(i => i !== v); Store.save(); }
     else return;
@@ -7149,6 +7226,798 @@ function fcBind(body) {
   body.querySelectorAll('[data-fcs]').forEach(el => el.addEventListener('change', () => { const id = el.dataset.fcs, i = fcChecked.indexOf(id); if (el.checked && i < 0) fcChecked.push(id); else if (!el.checked && i >= 0) fcChecked.splice(i, 1); if (fcChecked.length > 3) fcChecked.shift(); Pages.render(); }));
 }
 function openForecastPage() { fcInit(); Pages.push({ title: 'Forecast Lab', render(body) { fcRenderPage(body); } }); }
+
+/* ================= Tempo Play: engine (Arcade rounds, Mirror Room, Data Art) =================
+   Optional and self-contained. It only READS existing records; it never writes to them and it never
+   touches progress photos. Everything it saves lives in meta.play and meta.playGallery.
+   Rules: no invented history; missing data is never a zero or a failure; sensitive categories
+   (weight, symptoms, medication) stay out of games unless switched on. */
+function playMeta() {
+  const m = Store.state.meta;
+  if (!m.play || typeof m.play !== 'object' || Array.isArray(m.play)) m.play = {};
+  const p = m.play;
+  if (!p.sens || typeof p.sens !== 'object' || Array.isArray(p.sens)) p.sens = {};
+  ['weight', 'symptoms', 'medication'].forEach(k => { p.sens[k] = !!p.sens[k]; });
+  if (!Array.isArray(p.seasons)) p.seasons = [];
+  if (!Array.isArray(p.recent)) p.recent = [];
+  if (!Array.isArray(p.dailyDone)) p.dailyDone = [];
+  if (!(p.rounds >= 0)) p.rounds = 0;
+  return p;
+}
+function playGallery() { const m = Store.state.meta; if (!Array.isArray(m.playGallery)) m.playGallery = []; return m.playGallery; }
+function playHash(s) { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function playRng(seed) { let a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function playPick(rng, arr) { return arr.length ? arr[Math.floor(rng() * arr.length)] : null; }
+function playShuffle(rng, arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function playNote(id) { const p = playMeta(); p.recent.push(id); if (p.recent.length > 80) p.recent = p.recent.slice(-80); }
+function playDateLong(k) { return DTF.mdy.format(new Date(k + 'T12:00:00')); }
+function playDateShort(k) { return DTF.md.format(new Date(k + 'T12:00:00')); }
+function playWeekKey(k) { const wi = weekIndex(new Date(k + 'T12:00:00')); return dateKey(new Date(WEEK_ANCHOR + wi * 7 * DAY + 12 * 3600000)); }
+function playWeekLabel(wk) { return playDateShort(wk) + ' – ' + playDateShort(labAddDays(wk, 6)); }
+function playJoin(a) { return a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+
+/* ---- which categories may appear ---- */
+function playAllowed(overrideAll) {
+  const s = playMeta().sens;
+  return { workouts: true, checkins: true, weight: overrideAll || s.weight, symptoms: overrideAll || s.symptoms, medication: overrideAll || s.medication };
+}
+
+/* ---- Which Week? ---- */
+/* every metric: values per week (null = not enough records), the question and a "how do we know" sentence */
+function playWeekMetrics(allowed) {
+  const S = Store.state, M = [];
+  const dayMap = id => labDaily(id);
+  const inWeek = (map, wk) => { const out = []; for (let i = 0; i < 7; i++) { const k = labAddDays(wk, i); if (map.has(k)) out.push({ k, v: map.get(k) }); } return out; };
+  const firstOf = arr => arr.length ? arr.slice().sort()[0] : null;
+  if (allowed.workouts) {
+    const wdays = new Set(S.workouts.map(w => dateKey(w.dateTime))), first = firstOf([...wdays]);
+    if (first) {
+      M.push({ id: 'wdays', cat: 'workouts', lens: 'movement', min: 1, q: 'Which week had more days with a logged workout?', unit: 'days', dec: 0,
+        val: wk => { if (wk < playWeekKey(first)) return null; const d = []; for (let i = 0; i < 7; i++) { const k = labAddDays(wk, i); if (wdays.has(k)) d.push(k); } return { v: d.length, dates: d }; },
+        how: (r, wk) => 'Counted distinct days with at least one logged workout, ' + playWeekLabel(wk) + ': ' + (r.dates.length ? playJoin(r.dates.map(playDateShort)) : 'none logged') + '.' });
+      const sets = dayMap('workoutSets');
+      M.push({ id: 'wsets', cat: 'workouts', lens: 'movement', min: 1, q: 'Which week contained more logged strength sets?', unit: 'sets', dec: 0,
+        val: wk => { const d = inWeek(sets, wk); if (!d.length) return null; return { v: d.reduce((a, x) => a + x.v, 0), dates: d.map(x => x.k) }; },
+        how: (r, wk) => 'Added up strength sets from workouts logged ' + playWeekLabel(wk) + ' (' + playJoin(r.dates.map(playDateShort)) + ').' });
+    }
+  }
+  if (allowed.checkins) {
+    const cis = new Set(S.checkIns.map(c => c.dateKey)), first = firstOf([...cis]);
+    if (first) M.push({ id: 'ci', cat: 'checkins', lens: 'tracking', min: 1, q: 'Which week had more days with a check-in?', unit: 'days', dec: 0,
+      val: wk => { if (wk < playWeekKey(first)) return null; const d = []; for (let i = 0; i < 7; i++) { const k = labAddDays(wk, i); if (cis.has(k)) d.push(k); } return { v: d.length, dates: d }; },
+      how: (r, wk) => 'Counted days with a logged check-in, ' + playWeekLabel(wk) + ': ' + (r.dates.length ? playJoin(r.dates.map(playDateShort)) : 'none') + '.' });
+    [['sleep', 'Which week had the higher average sleep?', 'h', 1, 0.3], ['energy', 'Which week had the higher average energy rating?', '/5', 1, 0.4], ['appetite', 'Which week had the higher average appetite rating?', '/5', 1, 0.4], ['protein', 'Which week had the higher average protein?', 'g', 0, 10]].forEach(a => {
+      const map = dayMap(a[0]);
+      M.push({ id: 'avg:' + a[0], cat: 'checkins', lens: (a[0] === 'sleep' || a[0] === 'energy' || a[0] === 'appetite') ? 'energy' : 'tracking', min: a[4], q: a[1], unit: a[2], dec: a[3], avg: true,
+        val: wk => { const d = inWeek(map, wk); if (d.length < 3) return null; return { v: labMean(d.map(x => x.v)), dates: d.map(x => x.k), n: d.length }; },
+        how: (r, wk) => 'Averaged ' + r.n + ' daily ' + labVar(a[0]).label.toLowerCase() + ' entries for ' + playWeekLabel(wk) + ' (' + playJoin(r.dates.map(playDateShort)) + '). Weeks with fewer than 3 entries are never used.' });
+    });
+  }
+  if (allowed.weight) {
+    const ds = dailyWeightSeries();
+    M.push({ id: 'wt', cat: 'weight', lens: null, min: 0.4, q: 'Which week had the higher average recorded weight?', unit: 'kg', dec: 1, avg: true,
+      val: wk => { const d = ds.filter(x => x.k >= wk && x.k <= labAddDays(wk, 6)); if (d.length < 2) return null; return { v: labMean(d.map(x => x.kg)), dates: d.map(x => x.k), n: d.length }; },
+      how: (r, wk) => 'Averaged ' + r.n + ' weigh-in days in ' + playWeekLabel(wk) + ' (' + playJoin(r.dates.map(playDateShort)) + '). Weeks with a single weigh-in are not used.' });
+  }
+  if (allowed.symptoms && S.symptoms.length) {
+    const days = S.symptoms.map(s => dateKey(s.dateTime));
+    M.push({ id: 'sy', cat: 'symptoms', lens: null, min: 1, q: 'Which week had more symptom entries logged?', unit: 'entries', dec: 0,
+      val: wk => { if (wk < playWeekKey(days.slice().sort()[0])) return null; const d = days.filter(k => k >= wk && k <= labAddDays(wk, 6)); return { v: d.length, dates: d.sort() }; },
+      how: (r, wk) => 'Counted symptom entries logged ' + playWeekLabel(wk) + ': ' + (r.dates.length ? playJoin(r.dates.map(playDateShort)) : 'none') + '.' });
+  }
+  if (allowed.medication && S.injections.length) {
+    const dm = dayMap('dose');
+    M.push({ id: 'ds', cat: 'medication', lens: null, min: 0.01, q: 'Which week had the larger total of logged doses?', unit: 'mg', dec: 2,
+      val: wk => { const d = inWeek(dm, wk); if (!d.length) return null; return { v: d.reduce((a, x) => a + x.v, 0), dates: d.map(x => x.k) }; },
+      how: (r, wk) => 'Added the doses logged ' + playWeekLabel(wk) + ' (' + playJoin(r.dates.map(playDateShort)) + '). Only weeks with a logged dose are compared.' });
+  }
+  return M;
+}
+function playCompletedWeeks() {
+  const start = trackingStartKey(); if (!start) return [];
+  const thisWk = playWeekKey(dateKey(new Date())), out = [];
+  for (let wk = playWeekKey(start); wk < thisWk; wk = labAddDays(wk, 7)) out.push(wk);
+  return out;
+}
+/* returns a round, or null when records can't support one. opts: {rng, lens, sensAll, avoidRecent} */
+function playMakeWhichWeek(opts) {
+  opts = opts || {};
+  const rng = opts.rng || Math.random, weeks = playCompletedWeeks(), allowed = playAllowed(opts.sensAll);
+  if (weeks.length < 2) return null;
+  const recent = new Set(opts.avoidRecent === false ? [] : playMeta().recent);
+  let metrics = playWeekMetrics(allowed);
+  if (opts.lens) { const L = metrics.filter(m => m.lens === opts.lens); if (L.length) metrics = L; }
+  const options = [];
+  metrics.forEach(m => {
+    const vals = weeks.map(wk => ({ wk, r: m.val(wk) })).filter(x => x.r && x.r.v != null && isFinite(x.r.v));
+    const pairs = [];
+    for (let i = 0; i < vals.length; i++) for (let j = i + 1; j < vals.length; j++) {
+      if (Math.abs(vals[i].r.v - vals[j].r.v) < m.min - 1e-9) continue;
+      if (m.id === 'wsets' && (vals[i].r.v === 0 || vals[j].r.v === 0)) continue;
+      const id = 'ww:' + m.id + ':' + vals[i].wk + ':' + vals[j].wk;
+      if (!recent.has(id)) pairs.push({ id, a: vals[i], b: vals[j] });
+    }
+    if (pairs.length) options.push({ m, pairs });
+  });
+  if (!options.length) return null;
+  const o = playPick(rng, options), pr = playPick(rng, o.pairs), flip = rng() < 0.5, A = flip ? pr.b : pr.a, B = flip ? pr.a : pr.b;
+  return { game: 'which', id: pr.id, metric: o.m.id, cat: o.m.cat, q: o.m.q, unit: o.m.unit, dec: o.m.dec,
+    a: { wk: A.wk, v: A.r.v, dates: A.r.dates, how: o.m.how(A.r, A.wk) }, b: { wk: B.wk, v: B.r.v, dates: B.r.dates, how: o.m.how(B.r, B.wk) },
+    answer: A.r.v > B.r.v ? 'a' : 'b' };
+}
+
+/* ---- Timeline Shuffle ---- */
+function playEvents(allowed) {
+  const S = Store.state, ev = [];
+  if (allowed.workouts) S.workouts.forEach(w => { const sets = strengthSetCount(w), foc = workoutFocus(w), ttl = workoutTitle(w); ev.push({ id: 'wo:' + w.id, k: dateKey(w.dateTime), t: new Date(w.dateTime).getTime(), cat: 'workouts', title: 'A workout' + (ttl !== 'Workout' ? ' — ' + ttl : '') + (foc ? ' · ' + foc : ''), ctx: sets ? sets + ' strength sets logged' : 'Session logged' }); });
+  if (allowed.checkins) S.checkIns.forEach(c => {
+    const bits = []; if (c.sleepHours > 0) bits.push('sleep ' + c.sleepHours + ' h'); if (c.energy != null && c.energy !== '') bits.push('energy ' + c.energy + '/5'); if (c.proteinG > 0) bits.push('protein ' + c.proteinG + ' g'); if (c.kcal > 0) bits.push(c.kcal + ' kcal');
+    if (!bits.length) return;
+    const lead = c.sleepHours > 0 ? 'A check-in with ' + c.sleepHours + ' h of sleep logged' : c.proteinG > 0 ? 'A check-in with ' + c.proteinG + ' g of protein logged' : c.kcal > 0 ? 'A check-in with ' + c.kcal + ' kcal logged' : 'A check-in with an energy rating of ' + c.energy + '/5';
+    ev.push({ id: 'ci:' + c.id, k: c.dateKey, t: new Date(c.dateKey + 'T12:00:00').getTime(), cat: 'checkins', title: lead, ctx: bits.join(' · ') });
+  });
+  if (allowed.weight) { S.weights.forEach(w => ev.push({ id: 'wt:' + w.id, k: dateKey(w.dateTime), t: new Date(w.dateTime).getTime(), cat: 'weight', title: 'A weigh-in', ctx: w.kg + ' kg' })); S.measurements.forEach(m => ev.push({ id: 'ms:' + m.id, k: dateKey(m.dateTime), t: new Date(m.dateTime).getTime(), cat: 'weight', title: 'A tape-measurement session', ctx: MEAS_FIELDS.filter(f => +m[f[0]] > 0).length + ' sites measured' })); }
+  if (allowed.symptoms) S.symptoms.forEach(s => ev.push({ id: 'sy:' + s.id, k: dateKey(s.dateTime), t: new Date(s.dateTime).getTime(), cat: 'symptoms', title: 'A symptom entry', ctx: (s.name || 'Symptom') + ' · severity ' + (s.severity || '—') + '/5' }));
+  if (allowed.medication) S.injections.forEach(i => ev.push({ id: 'in:' + i.id, k: dateKey(i.dateTime), t: new Date(i.dateTime).getTime(), cat: 'medication', title: 'A logged dose', ctx: i.doseMg + ' mg' + (i.site ? ' · ' + i.site : '') }));
+  return ev;
+}
+function playMakeShuffle(opts) {
+  opts = opts || {};
+  const rng = opts.rng || Math.random, ev = playEvents(playAllowed(opts.sensAll)), recent = new Set(opts.avoidRecent === false ? [] : playMeta().recent);
+  if (ev.length < 3) return null;
+  for (let tries = 0; tries < 120; tries++) {
+    const first = playPick(rng, ev), other = ev.filter(e => e.cat !== first.cat), second = (other.length && tries < 60) ? playPick(rng, other) : playPick(rng, ev.filter(e => e !== first)), third = playPick(rng, ev.filter(e => e !== first && e !== second));
+    if (!second || !third) continue;
+    const a = [first, second, third].sort((x, y) => x.t - y.t);
+    if (daysBetween(new Date(a[0].k + 'T12:00:00'), new Date(a[1].k + 'T12:00:00')) < 6 || daysBetween(new Date(a[1].k + 'T12:00:00'), new Date(a[2].k + 'T12:00:00')) < 6) continue;
+    const id = 'ts:' + a.map(x => x.id).join('|');
+    if (recent.has(id) && tries < 70) continue;
+    return { game: 'shuffle', id, items: playShuffle(rng, a), order: a.map(x => x.id) };
+  }
+  if (ev.length <= 150) {   // a scan, for sparse histories where random draws can miss
+    const srt = ev.slice().sort((a, b) => a.t - b.t), gap = (x, y) => daysBetween(new Date(x.k + 'T12:00:00'), new Date(y.k + 'T12:00:00')), found = [];
+    for (let i = 0; i < srt.length; i++) for (let j = i + 1; j < srt.length; j++) { if (gap(srt[i], srt[j]) < 6) continue; for (let k = j + 1; k < srt.length; k++) if (gap(srt[j], srt[k]) >= 6) found.push([srt[i], srt[j], srt[k]]); }
+    const fresh = found.filter(a => !recent.has('ts:' + a.map(x => x.id).join('|'))), pool = fresh.length ? fresh : found;
+    if (pool.length) { const a = playPick(rng, pool); return { game: 'shuffle', id: 'ts:' + a.map(x => x.id).join('|'), items: playShuffle(rng, a), order: a.map(x => x.id) }; }
+  }
+  return null;
+}
+/* an explicitly labelled demonstration used only when records can't support a real round (never mixed with real data) */
+function playDemoRound(game) {
+  if (game === 'shuffle') {
+    const it = [{ id: 'd1', k: '2025-03-04', cat: 'workouts', title: 'A workout — Demo', ctx: 'Invented example' }, { id: 'd2', k: '2025-03-19', cat: 'checkins', title: 'A check-in with 7.5 h of sleep logged', ctx: 'Invented example' }, { id: 'd3', k: '2025-04-08', cat: 'workouts', title: 'A workout — Demo', ctx: 'Invented example' }];
+    return { game: 'shuffle', id: 'demo', demo: true, items: [it[2], it[0], it[1]], order: ['d1', 'd2', 'd3'] };
+  }
+  return { game: 'which', id: 'demo', demo: true, metric: 'wdays', cat: 'workouts', q: 'Which week had more days with a logged workout?', unit: 'days', dec: 0,
+    a: { wk: '2025-03-03', v: 2, dates: ['2025-03-04', '2025-03-07'], how: 'Invented example: 2 workout days.' }, b: { wk: '2025-03-10', v: 4, dates: ['2025-03-10', '2025-03-12', '2025-03-14', '2025-03-15'], how: 'Invented example: 4 workout days.' }, answer: 'b' };
+}
+
+/* ---- lenses (what each one draws on) ---- */
+const PLAY_LENSES = [
+  { id: 'energy', name: 'Energy & Rest', note: 'Sleep, energy and appetite ratings from your check-ins', vars: ['sleep', 'energy', 'appetite'] },
+  { id: 'movement', name: 'Movement', note: 'Workout days, strength sets and training volume', vars: ['workoutSets', 'workoutVol'] },
+  { id: 'tracking', name: 'Tracking Patterns', note: 'When you logged things, and how much', vars: ['protein', 'kcal'] }
+];
+function playLens(id) { return PLAY_LENSES.find(l => l.id === id) || null; }
+function playLensHasData(id) {
+  if (id === 'movement') return Store.state.workouts.length >= 2;
+  if (id === 'energy') return Store.state.checkIns.filter(c => c.sleepHours > 0 || c.energy != null).length >= 6;
+  return Store.state.checkIns.length + Store.state.workouts.length >= 6;
+}
+function playResolveSurprise(rng) {
+  const have = PLAY_LENSES.filter(l => playLensHasData(l.id)), pool = have.length ? have : PLAY_LENSES;
+  return playPick(rng || Math.random, pool).id;
+}
+
+/* ---- Mirror Room: two periods, one honest comparison ---- */
+function playPeriodStats(id, from, to) {
+  const map = labDaily(id), vals = [];
+  map.forEach((v, k) => { if (k >= from && k <= to) vals.push(v); });
+  const n = vals.length, mean = labMean(vals);
+  let sd = null; if (n >= 2) { const m = mean; sd = Math.sqrt(vals.reduce((a, x) => a + (x - m) * (x - m), 0) / (n - 1)); }
+  return { n, mean, sd, sum: vals.reduce((a, x) => a + x, 0) };
+}
+function playMirrorRows(lensId, A, B) {
+  const lens = playLens(lensId) || PLAY_LENSES[0], rows = [];
+  const mk = (label, id, mode, dec, unit) => {
+    const a = playPeriodStats(id, A.from, A.to), b = playPeriodStats(id, B.from, B.to);
+    let va, vb, verdict;
+    if (mode === 'sum') { va = a.n ? a.sum : null; vb = b.n ? b.sum : null; }
+    else { va = a.mean; vb = b.mean; }
+    if (va == null || vb == null) verdict = 'Not enough records in one of the periods to compare.';
+    else if (a.n < 5 || b.n < 5) verdict = 'Too few records (' + a.n + ' vs ' + b.n + ') to call this a difference.';
+    else if (mode === 'sum') verdict = Math.abs(va - vb) < Math.pow(10, -dec) ? 'About the same.' : 'A difference in totals — it depends on how many days each period covers and how often you logged.';
+    else {
+      const sdA = a.sd, sdB = b.sd, sdm = (sdA != null && sdB != null) ? (sdA + sdB) / 2 : null, d = Math.abs(va - vb);
+      verdict = sdm == null || sdm === 0 ? 'Not enough variation to judge.' : d < 0.5 * sdm ? 'Smaller than the usual day-to-day swing in these records.' : d < sdm ? 'Comparable to the usual day-to-day swing.' : 'Larger than the usual day-to-day swing.';
+    }
+    rows.push({ label, unit, dec, a: va, b: vb, an: a.n, bn: b.n, verdict });
+  };
+  lens.vars.forEach(id => { const v = labVar(id); mk(v.label, id, v.agg === 'sum' ? 'sum' : 'mean', v.dec, v.unit); });
+  const span = (from, to) => daysBetween(new Date(from + 'T12:00:00'), new Date(to + 'T12:00:00')) + 1;
+  if (lens.id === 'movement') {
+    const c = (from, to) => new Set(Store.state.workouts.map(w => dateKey(w.dateTime)).filter(k => k >= from && k <= to)).size;
+    rows.push({ label: 'Days with a workout', unit: 'days', dec: 0, a: c(A.from, A.to), b: c(B.from, B.to), an: span(A.from, A.to), bn: span(B.from, B.to), verdict: 'A count of days with a logged session; it says nothing about days you did not log.' });
+  }
+  if (lens.id === 'tracking') {
+    const days = (from, to) => { const set = new Set(); Store.state.checkIns.forEach(c => { if (c.dateKey >= from && c.dateKey <= to) set.add(c.dateKey); }); Store.state.workouts.forEach(w => { const k = dateKey(w.dateTime); if (k >= from && k <= to) set.add(k); }); return set.size; };
+    rows.push({ label: 'Days with a check-in or workout', unit: 'days', dec: 0, a: days(A.from, A.to), b: days(B.from, B.to), an: span(A.from, A.to), bn: span(B.from, B.to), verdict: 'A count of logging days. A quiet period means nothing was logged, not that anything went wrong.' });
+  }
+  return rows;
+}
+
+/* ================= Data Art ================= */
+const ART_PALETTES = [
+  { id: 'plum', name: 'Plum & Ivory', bg: '#F4EEE3', ink: '#5A3674', c: ['#5A3674', '#A593B8', '#D9A98E', '#9DB09A'], dark: false },
+  { id: 'night', name: 'Night Plum', bg: '#25152F', ink: '#F1E9DC', c: ['#F1E9DC', '#B9A6CC', '#E8B79B', '#A9BEA3'], dark: true },
+  { id: 'sage', name: 'Sage Paper', bg: '#E6EADD', ink: '#3E5545', c: ['#3E5545', '#7B8F7F', '#C99C86', '#8B6E9E'], dark: false },
+  { id: 'dusk', name: 'Dusk', bg: '#1B2132', ink: '#EADFC8', c: ['#E5B97A', '#C98C9C', '#7FA3A8', '#EADFC8'], dark: true },
+  { id: 'graphite', name: 'Graphite', bg: '#F6F4EF', ink: '#2E2A33', c: ['#2E2A33', '#5A3674', '#B58A74', '#8A9A8C'], dark: false }
+];
+function artPalette(id) { return ART_PALETTES.find(p => p.id === id) || ART_PALETTES[0]; }
+const ART_SYSTEMS = [
+  { id: 'orbit', name: 'ORBIT', note: 'Concentric rings. Angle is the date, one ring per kind of record.' },
+  { id: 'constellation', name: 'CONSTELLATION', note: 'Each record is a star. Left to right is time.' },
+  { id: 'woven', name: 'WOVEN', note: 'Ribbons for each record type, threaded day by day.' }
+];
+/* the kinds of record a piece can draw on (event-type series only, so a day without an entry stays empty) */
+const ART_VARS = ['sleep', 'energy', 'appetite', 'protein', 'kcal', 'workoutSets', 'workoutVol', 'weight', 'symptom', 'dose'];
+const ART_SENSITIVE = { weight: 'weight', symptom: 'symptoms', dose: 'medication' };
+function artVarLabel(id) { const v = labVar(id); return v ? (id === 'workoutSets' ? 'Strength sets' : id === 'workoutVol' ? 'Training volume' : v.label) : id; }
+/* a frozen copy of exactly the values the piece draws — later logging never changes a saved piece */
+function artSnapshot(from, to, types) {
+  const series = types.filter(t => ART_VARS.indexOf(t) >= 0).map(id => {
+    const map = labDaily(id), days = [];
+    map.forEach((v, k) => { if (k >= from && k <= to) days.push([k, Math.round(v * 1000) / 1000]); });
+    days.sort((a, b) => a[0] < b[0] ? -1 : 1);
+    return { id, label: artVarLabel(id), unit: (labVar(id) || {}).unit || '', days };
+  });
+  return { from, to, series, takenAt: nowISO() };
+}
+function artDefaults(snap) { return { system: 'orbit', palette: 'plum', density: 3, symmetry: 0, texture: 'grain', frame: 'matte', layers: 'layered', title: true, legend: true, name: '', variant: 1, extras: [] }; }
+function artNDays(snap) { return Math.max(1, daysBetween(new Date(snap.from + 'T12:00:00'), new Date(snap.to + 'T12:00:00')) + 1); }
+function artNorm(days) {
+  if (!days.length) return () => 0.5;
+  const vs = days.map(d => d[1]), lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs);
+  return v => hi === lo ? 0.5 : (v - lo) / (hi - lo);
+}
+function artIdx(snap, k) { return daysBetween(new Date(snap.from + 'T12:00:00'), new Date(k + 'T12:00:00')); }
+function artF(n) { return Math.round(n * 10) / 10; }
+function artPolar(cx, cy, r, ang) { return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)]; }
+function artArc(cx, cy, r, a0, a1) { const p0 = artPolar(cx, cy, r, a0), p1 = artPolar(cx, cy, r, a1), large = (a1 - a0) > Math.PI ? 1 : 0; return 'M' + artF(p0[0]) + ' ' + artF(p0[1]) + 'A' + r + ' ' + r + ' 0 ' + large + ' 1 ' + artF(p1[0]) + ' ' + artF(p1[1]); }
+function artWeeklyAgg(days, from, norm) {
+  const wk = new Map();
+  days.forEach(d => { const w = playWeekKey(d[0]); if (!wk.has(w)) wk.set(w, []); wk.get(w).push(norm(d[1])); });
+  return [...wk.entries()].map(([w, a]) => ({ w, n: a.length, m: labMean(a) }));
+}
+function artFrameSVG(prm, pal, W, H) {
+  if (prm.frame === 'none') return '';
+  const ink = pal.ink;
+  if (prm.frame === 'matte') return '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="none" stroke="' + pal.bg + '" stroke-width="70"/><rect x="40" y="40" width="' + (W - 80) + '" height="' + (H - 80) + '" fill="none" stroke="' + ink + '" stroke-opacity=".55" stroke-width="1.2"/>';
+  if (prm.frame === 'double') return '<rect x="28" y="28" width="' + (W - 56) + '" height="' + (H - 56) + '" fill="none" stroke="' + ink + '" stroke-opacity=".6" stroke-width="2"/><rect x="44" y="44" width="' + (W - 88) + '" height="' + (H - 88) + '" fill="none" stroke="' + ink + '" stroke-opacity=".35" stroke-width="1"/>';
+  return '<rect x="34" y="34" width="' + (W - 68) + '" height="' + (H - 68) + '" fill="none" stroke="' + ink + '" stroke-opacity=".55" stroke-width="1.5"/>';
+}
+function artTexture(prm, pal, W, H, id) {
+  if (prm.texture === 'grain') return '<filter id="g' + id + '" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".5"/></feComponentTransfer></filter><rect width="' + W + '" height="' + H + '" filter="url(#g' + id + ')" opacity="' + (pal.dark ? .18 : .22) + '" style="mix-blend-mode:multiply"/>';
+  if (prm.texture === 'lines') { let s = ''; for (let y = 6; y < H; y += 9) s += '<line x1="0" y1="' + y + '" x2="' + W + '" y2="' + y + '"/>'; return '<g stroke="' + pal.ink + '" stroke-opacity=".06" stroke-width="1">' + s + '</g>'; }
+  return '';
+}
+/* decorative echoes: thin orbits repeated with N-fold symmetry. They are NOT data and are labelled as such. */
+function artEchoes(prm, pal, cx, cy, R, rng) {
+  const n = +prm.symmetry; if (!n) return '';
+  let s = '<g fill="none" stroke="' + pal.ink + '" stroke-opacity=".16" stroke-width="1">';
+  const ell = [rng(), rng(), rng()];
+  for (let k = 0; k < n; k++) {
+    const rot = k * 360 / n;
+    s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + artF(R * (.55 + ell[0] * .3)) + '" ry="' + artF(R * (.2 + ell[1] * .15)) + '" transform="rotate(' + artF(rot + ell[2] * 20) + ' ' + cx + ' ' + cy + ')"/>';
+    const p = artPolar(cx, cy, R * .93, rot * Math.PI / 180 - Math.PI / 2);
+    s += '<circle cx="' + artF(p[0]) + '" cy="' + artF(p[1]) + '" r="3.5" fill="' + pal.ink + '" fill-opacity=".35" stroke="none"/>';
+  }
+  return s + '</g>';
+}
+function artLegend(prm, pal, snap, W, H, sys) {
+  if (!prm.legend) return '';
+  const lines = snap.series.map((s, i) => ({ c: pal.c[i % pal.c.length], t: s.label + (s.days.length ? ' · ' + s.days.length + ' days recorded' : ' · none in this period') }));
+  const how = sys === 'orbit' ? 'Angle = date (full circle = whole period). Mark length = value relative to this period. Gaps = nothing recorded.' : sys === 'constellation' ? 'Left to right = date. Star size = value relative to this period. Lines join consecutive records of one kind.' : 'Columns = days. Ribbon thickness = value relative to this period. A missing ribbon = nothing recorded.';
+  const y0 = H - 118 - lines.length * 16;
+  let s = '<g font-family="system-ui,sans-serif" font-size="12.5" fill="' + pal.ink + '">';
+  lines.forEach((l, i) => { s += '<rect x="86" y="' + (y0 + i * 18 - 9) + '" width="10" height="10" rx="2" fill="' + l.c + '"/><text x="104" y="' + (y0 + i * 18) + '" fill-opacity=".85">' + esc(l.t) + '</text>'; });
+  s += '<text x="86" y="' + (y0 + lines.length * 18 + 8) + '" font-size="11" fill-opacity=".6">' + esc(how) + (prm.symmetry && sys === 'orbit' ? ' Faint ellipses are decoration, not data.' : '') + '</text></g>';
+  return s;
+}
+function artTitleSVG(prm, pal, snap, W, H) {
+  if (!prm.title) return '';
+  const name = prm.name || (ART_SYSTEMS.find(s => s.id === prm.system).name.toLowerCase().replace(/^./, c => c.toUpperCase()) + ' · ' + playDateShort(snap.from) + ' – ' + playDateShort(snap.to));
+  return '<text x="86" y="112" font-family="Georgia,\'Times New Roman\',serif" font-size="40" fill="' + pal.ink + '">' + esc(name) + '</text><text x="86" y="140" font-family="system-ui,sans-serif" font-size="12" letter-spacing="3" fill="' + pal.ink + '" fill-opacity=".6">' + esc((ART_SYSTEMS.find(s => s.id === prm.system).name) + ' · ' + playDateLong(snap.from) + ' – ' + playDateLong(snap.to)) + '</text>';
+}
+function artOrbit(prm, pal, snap, W, H, rng, uid_) {
+  const cx = W / 2, cy = H / 2 + (prm.title ? 30 : 0) - (prm.legend ? 40 : 0), n = artNDays(snap), series = snap.series, dens = +prm.density;
+  const R0 = 120, gap = Math.min(92, (Math.min(W / 2 - 110, cy - 190) - R0) / Math.max(1, series.length)), extras = prm.extras || [];
+  let s = artEchoes(prm, pal, cx, cy, R0 + gap * series.length + 60, rng);
+  // month ticks: a quiet clock face for the period
+  const tickN = [8, 16, 28, 40, 60][dens - 1] || 28;
+  s += '<g stroke="' + pal.ink + '" stroke-opacity=".22" stroke-width="1">';
+  for (let i = 0; i < tickN; i++) { const a = -Math.PI / 2 + i / tickN * Math.PI * 2, p0 = artPolar(cx, cy, R0 - 24, a), p1 = artPolar(cx, cy, R0 - (i % 4 === 0 ? 40 : 32), a); s += '<line x1="' + artF(p0[0]) + '" y1="' + artF(p0[1]) + '" x2="' + artF(p1[0]) + '" y2="' + artF(p1[1]) + '"/>'; }
+  s += '</g>';
+  const band = [];
+  series.forEach((ser, i) => {
+    const r = R0 + gap * i, col = pal.c[i % pal.c.length], norm = artNorm(ser.days), maxLen = gap * .78;
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + pal.ink + '" stroke-opacity=".14" stroke-width="1"/>';
+    if (prm.layers !== 'single') {
+      artWeeklyAgg(ser.days, snap.from, norm).forEach(w => {
+        const i0 = Math.max(0, artIdx(snap, w.w)), i1 = Math.min(n, artIdx(snap, w.w) + 7);
+        if (i1 <= i0) return;
+        const a0 = -Math.PI / 2 + i0 / n * Math.PI * 2, a1 = -Math.PI / 2 + i1 / n * Math.PI * 2;
+        const rr = r + 3 + (maxLen * .5) * w.m;
+        s += '<path d="' + artArc(cx, cy, rr, a0 + .004, a1 - .004) + '" fill="none" stroke="' + col + '" stroke-opacity="' + (prm.layers === 'deep' ? .18 + .3 * (w.n / 7) : .22) + '" stroke-width="' + artF(maxLen * .5 * w.m + 6) + '" stroke-linecap="butt"/>';
+        band.push({ i, w, a0, a1, rr });
+      });
+    }
+    const sw = Math.max(1.4, Math.min(6, (2 * Math.PI * r / n) * (.35 + dens * .1)));
+    s += '<g stroke="' + col + '" stroke-width="' + artF(sw) + '" stroke-linecap="round">';
+    ser.days.forEach(d => {
+      const idx = artIdx(snap, d[0]), a = -Math.PI / 2 + (idx + .5) / n * Math.PI * 2, len = 10 + (maxLen - 10) * norm(d[1]);
+      const p0 = artPolar(cx, cy, r + 2, a), p1 = artPolar(cx, cy, r + 2 + len, a);
+      s += '<line x1="' + artF(p0[0]) + '" y1="' + artF(p0[1]) + '" x2="' + artF(p1[0]) + '" y2="' + artF(p1[1]) + '"/>';
+    });
+    s += '</g>';
+  });
+  // unlocked season elements (all data-derived except the mirror, which is labelled decorative)
+  if (extras.indexOf('facets') >= 0 && series.length) {
+    const ser = series[series.length - 1], i = series.length - 1, norm = artNorm(ser.days), pts = artWeeklyAgg(ser.days, snap.from, norm).map(w => { const idx = Math.max(0, artIdx(snap, w.w)) + 3.5; return artPolar(cx, cy, R0 + gap * i + 8 + gap * .4 * w.m, -Math.PI / 2 + idx / n * Math.PI * 2); });
+    if (pts.length > 2) s += '<polygon points="' + pts.map(p => artF(p[0]) + ',' + artF(p[1])).join(' ') + '" fill="' + pal.c[2] + '" fill-opacity=".10" stroke="' + pal.c[2] + '" stroke-opacity=".5" stroke-width="1"/>';
+  }
+  if (extras.indexOf('beams') >= 0) {
+    series.forEach((ser, i) => { if (!ser.days.length) return; const norm = artNorm(ser.days), top = ser.days.slice().sort((a, b) => norm(b[1]) - norm(a[1]))[0], idx = artIdx(snap, top[0]), a = -Math.PI / 2 + (idx + .5) / n * Math.PI * 2, p0 = artPolar(cx, cy, 24, a), p1 = artPolar(cx, cy, R0 + gap * series.length + 30, a);
+      s += '<line x1="' + artF(p0[0]) + '" y1="' + artF(p0[1]) + '" x2="' + artF(p1[0]) + '" y2="' + artF(p1[1]) + '" stroke="' + pal.c[i % pal.c.length] + '" stroke-opacity=".55" stroke-width="1" stroke-dasharray="2 5"/>'; });
+  }
+  if (extras.indexOf('mirror') >= 0 && band.length) {
+    s += '<g opacity=".28" fill="none" stroke-linecap="butt">';
+    band.filter(b => b.i === 0).forEach(b => { s += '<path d="' + artArc(cx, cy, Math.max(20, R0 - 60 - (b.rr - R0) * .4), -Math.PI - b.a1, -Math.PI - b.a0) + '" stroke="' + pal.c[0] + '" stroke-width="3"/>'; });
+    s += '</g>';
+  }
+  s += '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="' + pal.ink + '"/>';
+  return s;
+}
+function artConstellation(prm, pal, snap, W, H, rng) {
+  const n = artNDays(snap), series = snap.series, x0 = 110, x1 = W - 110, top = prm.title ? 210 : 130, bot = H - (prm.legend ? 250 : 130), bandH = (bot - top) / Math.max(1, series.length), dens = +prm.density;
+  let s = artEchoes(prm, pal, W / 2, (top + bot) / 2, Math.min(W, H) * .42, rng);
+  // faint dust that is not data: only at higher density, and skipped entirely at 1
+  const dust = [0, 20, 45, 80, 120][dens - 1] || 0;
+  if (dust) { s += '<g fill="' + pal.ink + '" fill-opacity=".12">'; for (let i = 0; i < dust; i++) s += '<circle cx="' + artF(x0 + rng() * (x1 - x0)) + '" cy="' + artF(top + rng() * (bot - top)) + '" r="' + artF(.6 + rng() * 1.2) + '"/>'; s += '</g>'; }
+  series.forEach((ser, i) => {
+    const col = pal.c[i % pal.c.length], norm = artNorm(ser.days), yc = top + bandH * (i + .5);
+    const pts = ser.days.map(d => { const idx = artIdx(snap, d[0]), jit = (playHash(ser.id + d[0]) % 1000) / 1000 - .5; return { k: d[0], x: x0 + (idx + .5) / n * (x1 - x0), y: yc + jit * bandH * .5, r: 2.5 + norm(d[1]) * (4 + dens * 1.6), idx }; });
+    s += '<line x1="' + x0 + '" y1="' + yc + '" x2="' + x1 + '" y2="' + yc + '" stroke="' + pal.ink + '" stroke-opacity=".1" stroke-dasharray="1 6"/>';
+    for (let j = 1; j < pts.length; j++) { const gapD = pts[j].idx - pts[j - 1].idx; s += '<line x1="' + artF(pts[j - 1].x) + '" y1="' + artF(pts[j - 1].y) + '" x2="' + artF(pts[j].x) + '" y2="' + artF(pts[j].y) + '" stroke="' + col + '" stroke-opacity="' + (gapD <= 3 ? .55 : .25) + '" stroke-width="1"' + (gapD > 3 ? ' stroke-dasharray="3 5"' : '') + '/>'; }
+    pts.forEach(p => { s += '<circle cx="' + artF(p.x) + '" cy="' + artF(p.y) + '" r="' + artF(p.r * 2.2) + '" fill="' + col + '" fill-opacity=".12"/><circle cx="' + artF(p.x) + '" cy="' + artF(p.y) + '" r="' + artF(p.r) + '" fill="' + col + '"/>'; });
+  });
+  return s;
+}
+function artSmooth(p) {
+  if (p.length < 2) return '';
+  let d = 'M' + artF(p[0][0]) + ' ' + artF(p[0][1]);
+  for (let i = 1; i < p.length - 1; i++) { const mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2; d += 'Q' + artF(p[i][0]) + ' ' + artF(p[i][1]) + ' ' + artF(mx) + ' ' + artF(my); }
+  return d + 'L' + artF(p[p.length - 1][0]) + ' ' + artF(p[p.length - 1][1]);
+}
+function artWoven(prm, pal, snap, W, H, rng) {
+  const n = artNDays(snap), series = snap.series, x0 = 110, x1 = W - 110, top = prm.title ? 210 : 130, bot = H - (prm.legend ? 250 : 130), bandH = (bot - top) / Math.max(1, series.length), cw = (x1 - x0) / n, dens = +prm.density;
+  const step = Math.max(1, Math.round(n / ([14, 22, 32, 46, 64][dens - 1] || 32)));
+  let s = '<g stroke="' + pal.ink + '" stroke-opacity=".16" stroke-width="1">';
+  for (let d = 0; d <= n; d += step) s += '<line x1="' + artF(x0 + d * cw) + '" y1="' + (top - 16) + '" x2="' + artF(x0 + d * cw) + '" y2="' + (bot + 8) + '"/>';
+  s += '</g>';
+  series.forEach((ser, i) => {
+    const col = pal.c[i % pal.c.length], norm = artNorm(ser.days), yc = top + bandH * (i + .5), maxH = bandH * .8;
+    s += '<line x1="' + x0 + '" y1="' + yc + '" x2="' + x1 + '" y2="' + yc + '" stroke="' + pal.ink + '" stroke-opacity=".1" stroke-dasharray="1 6"/>';
+    // runs of consecutive recorded days; a missing day ends the ribbon rather than being bridged
+    const runs = []; let cur = null;
+    ser.days.forEach(d => { const idx = artIdx(snap, d[0]); if (cur && idx === cur.last + 1) { cur.pts.push([idx, d[1]]); cur.last = idx; } else { cur = { pts: [[idx, d[1]]], last: idx }; runs.push(cur); } });
+    runs.forEach(run => {
+      const pts = run.pts.map(q => ({ x: x0 + (q[0] + .5) * cw, h: 5 + (maxH - 5) * norm(q[1]) }));
+      const fill = prm.layers === 'single' ? .92 : .8;
+      if (pts.length === 1) { s += '<rect x="' + artF(pts[0].x - cw * .5) + '" y="' + artF(yc - pts[0].h / 2) + '" width="' + artF(cw) + '" height="' + artF(pts[0].h) + '" rx="' + artF(Math.min(cw, pts[0].h) * .45) + '" fill="' + col + '" fill-opacity="' + fill + '"/>'; return; }
+      const topP = [[pts[0].x - cw * .5, yc - pts[0].h / 2]].concat(pts.map(q => [q.x, yc - q.h / 2])).concat([[pts[pts.length - 1].x + cw * .5, yc - pts[pts.length - 1].h / 2]]);
+      const botP = [[pts[0].x - cw * .5, yc + pts[0].h / 2]].concat(pts.map(q => [q.x, yc + q.h / 2])).concat([[pts[pts.length - 1].x + cw * .5, yc + pts[pts.length - 1].h / 2]]).reverse();
+      s += '<path d="' + artSmooth(topP) + 'L' + artF(botP[0][0]) + ' ' + artF(botP[0][1]) + artSmooth(botP).replace(/^M[^QL]*/, '') + 'Z" fill="' + col + '" fill-opacity="' + fill + '"/>';
+    });
+    // over-and-under: some warp threads pass in front of this ribbon
+    s += '<g stroke="' + pal.bg + '" stroke-opacity=".85" stroke-width="2.2">';
+    for (let d = 0, k = 0; d <= n; d += step, k++) if ((k + i) % 2 === 0) { const day = Math.min(n - 1, d), v = ser.days.find(q => artIdx(snap, q[0]) === day); if (v) { const h = 5 + (maxH - 5) * norm(v[1]); s += '<line x1="' + artF(x0 + (day + .5) * cw) + '" y1="' + artF(yc - h / 2 - 3) + '" x2="' + artF(x0 + (day + .5) * cw) + '" y2="' + artF(yc + h / 2 + 3) + '"/>'; } }
+    s += '</g>';
+  });
+  return s;
+}
+/* the whole piece as one SVG string. width fixed at 1000; frame 'round' is not offered, so framing stays honest to the data */
+function artRender(prm, snap, opts) {
+  opts = opts || {};
+  const pal = artPalette(prm.palette), W = 1000, H = 1250, rng = playRng(playHash(snap.from + snap.to + snap.series.map(s => s.id).join(',') + ':' + (prm.variant || 1))), uidk = opts.uid || 'x';
+  let body;
+  if (prm.system === 'constellation') body = artConstellation(prm, pal, snap, W, H, rng);
+  else if (prm.system === 'woven') body = artWoven(prm, pal, snap, W, H, rng);
+  else body = artOrbit(prm, pal, snap, W, H, rng, uidk);
+  const empty = !snap.series.some(s => s.days.length);
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + (opts.w || W) + '" height="' + (opts.w ? Math.round(opts.w * H / W) : H) + '" role="img" aria-label="' + esc(prm.name || 'Tempo data art') + '"><rect width="' + W + '" height="' + H + '" fill="' + pal.bg + '"/>' +
+    body + (empty ? '<text x="500" y="640" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="' + pal.ink + '" fill-opacity=".6">No records in this period for the selected types</text>' : '') +
+    artTexture(prm, pal, W, H, uidk) + artFrameSVG(prm, pal, W, H) + (opts.thumb ? '' : artTitleSVG(prm, pal, snap, W, H) + artLegend(prm, pal, snap, W, H, prm.system)) + '</svg>';
+}
+function artMappingText(prm, snap) {
+  const sys = prm.system, lines = [];
+  lines.push('Period: ' + playDateLong(snap.from) + ' – ' + playDateLong(snap.to) + ' (' + artNDays(snap) + ' days). Snapshot taken ' + playDateLong(dateKey(snap.takenAt)) + ' — later entries do not change this piece.');
+  snap.series.forEach(s => lines.push(s.label + ': ' + s.days.length + ' recorded day' + (s.days.length === 1 ? '' : 's') + (s.days.length ? ', ' + labFmt(Math.min.apply(null, s.days.map(d => d[1])), 2) + '–' + labFmt(Math.max.apply(null, s.days.map(d => d[1])), 2) + ' ' + s.unit + ' (shortest to longest mark)' : '')));
+  if (sys === 'orbit') lines.push('Each ring is one kind of record. Position around the ring is the date; the full circle is the whole period, starting at the top and running clockwise. Each recorded day is one radial mark whose length is its value relative to the lowest and highest value in this period. Days without an entry have no mark. ' + (prm.layers !== 'single' ? 'The wide soft arcs are weekly averages of the same values' + (prm.layers === 'deep' ? ' (more opaque = more days recorded that week)' : '') + '.' : ''));
+  if (sys === 'constellation') lines.push('Each recorded day is a star. Horizontal position is the date; size is the value relative to the lowest and highest in this period; vertical position within a band is spread for legibility and carries no meaning. A line joins consecutive records of one kind — dashed when more than 3 days apart.');
+  if (sys === 'woven') lines.push('Each column is a day and each band is a kind of record. A ribbon\'s thickness is the value relative to the lowest and highest in this period. Where nothing was recorded, no ribbon is drawn. The over-and-under pattern is structure only.');
+  if (+prm.symmetry && sys !== 'woven') lines.push('The faint repeated ' + (sys === 'orbit' ? 'ellipses' : 'shapes') + ' (symmetry ' + prm.symmetry + ') are decoration generated from the dates, not data.');
+  if ((prm.extras || []).length) lines.push('Season layers on: ' + (prm.extras || []).map(e => ({ facets: 'Facets joins weekly averages of the outer ring', beams: 'Signal Beams mark each kind\'s highest day', mirror: 'Mirror echoes the first ring\'s weekly arcs (decorative)' }[e] || e)).join('; ') + '.');
+  lines.push('Colour, texture, framing and title are style choices and never depend on how the numbers turned out.');
+  return lines;
+}
+
+/* ================= Tempo Play: screens ================= */
+const PL_CHAPTERS = [
+  { id: 'c1', day: 1, name: 'Choose Your Lens', blurb: 'Pick the part of your records you want to look through.', el: 'facets', elName: 'Facets' },
+  { id: 'c2', day: 8, name: 'The Signal Room', blurb: 'A puzzle built from your history. Finishing it opens a new layer.', el: 'beams', elName: 'Signal beams' },
+  { id: 'c3', day: 15, name: 'The Mirror Room', blurb: 'Hold two periods side by side and see what the records support.', el: 'mirror', elName: 'Mirror plane' },
+  { id: 'c4', day: 22, name: 'The Studio', blurb: 'Turn the season into a piece of art for your Gallery.', el: null, elName: 'Your piece' }
+];
+function plWrap(inner) { return '<div class="plwrap">' + inner + '</div>'; }
+function plKick(t) { return '<div class="plk">' + esc(t) + '</div>'; }
+function plToday() { return dateKey(new Date()); }
+function plSeasons() { return playMeta().seasons; }
+function plSeason(id) { return plSeasons().find(s => s.id === id) || null; }
+function plSeasonEnd(s) { return labAddDays(s.startKey, 27); }
+function plSeasonDay(s) { return Math.min(28, Math.max(1, daysBetween(new Date(s.startKey + 'T12:00:00'), new Date()) + 1)); }
+function plCurrentSeason() { const t = plToday(); return plSeasons().slice().reverse().find(s => !s.endedAt && t <= plSeasonEnd(s)) || null; }
+function plChapterOpen(s, ch) { return plToday() >= labAddDays(s.startKey, ch.day - 1) || !!(s.early && s.early[ch.id]); }
+function plChapterDone(s, ch) { return !!(s.done && s.done[ch.id]); }
+function plComplete(s, chId) { if (!s.done) s.done = {}; if (!s.done[chId]) { s.done[chId] = nowISO(); Store.save(); return true; } return false; }
+function plElements() { const set = []; plSeasons().forEach(s => PL_CHAPTERS.forEach(c => { if (c.el && plChapterDone(s, c) && set.indexOf(c.el) < 0) set.push(c.el); })); return set; }
+function plLensTypes(l) { return ({ energy: ['sleep', 'energy', 'appetite'], movement: ['workoutSets', 'workoutVol'], tracking: ['protein', 'kcal'] })[l] || ['sleep', 'energy']; }
+function plPlain(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
+
+/* ---- the PRISM world: it only ever adds layers, never takes one away ---- */
+function prismWorldSVG(s) {
+  const done = c => s && plChapterDone(s, PL_CHAPTERS.find(x => x.id === c)), acc = ({ energy: '#B9A6CC', movement: '#E3B79F', tracking: '#A9BEA3' })[s && s.lens] || '#B9A6CC';
+  const rng = playRng(playHash(s ? s.id : 'prism'));
+  let g = '<rect width="360" height="300" fill="#241631"/><g fill="#F1E9DC">';
+  for (let i = 0; i < 26; i++) g += '<circle cx="' + artF(10 + rng() * 340) + '" cy="' + artF(8 + rng() * 280) + '" r="' + artF(.4 + rng() * .9) + '" fill-opacity="' + artF(.12 + rng() * .25) + '"/>';
+  g += '</g><line x1="20" y1="128" x2="152" y2="112" stroke="#F1E9DC" stroke-opacity=".75" stroke-width="1.3"/><polygon points="180,52 238,152 122,152" fill="none" stroke="#F1E9DC" stroke-opacity=".55" stroke-width="1.2"/>';
+  if (done('c1')) g += '<polygon points="180,52 180,152 122,152" fill="' + acc + '" fill-opacity=".30"/><polygon points="180,52 238,152 180,152" fill="#E3B79F" fill-opacity=".18"/><line x1="180" y1="52" x2="180" y2="152" stroke="#F1E9DC" stroke-opacity=".35"/><line x1="151" y1="102" x2="209" y2="102" stroke="#F1E9DC" stroke-opacity=".22"/>';
+  if (done('c2')) { const cols = ['#B9A6CC', '#E3B79F', '#A9BEA3', '#F1E9DC', '#D9A98E']; for (let i = 0; i < 5; i++) g += '<line x1="212" y1="' + (112 + i * 3) + '" x2="350" y2="' + (62 + i * 30) + '" stroke="' + cols[i] + '" stroke-opacity=".8" stroke-width="1.2"/>'; }
+  if (done('c3')) g += '<line x1="20" y1="168" x2="340" y2="168" stroke="#F1E9DC" stroke-opacity=".22"/><g transform="translate(0,320) scale(1,-1)" opacity=".2"><polygon points="180,52 238,152 122,152" fill="none" stroke="#F1E9DC" stroke-width="1.2"/><polygon points="180,52 180,152 122,152" fill="' + acc + '" fill-opacity="' + (done('c1') ? .5 : 0) + '"/></g>';
+  if (done('c4')) g += '<rect x="278" y="214" width="56" height="70" rx="3" fill="#F4EEE3" fill-opacity=".92"/><g fill="none" stroke="#5A3674"><circle cx="306" cy="249" r="8"/><circle cx="306" cy="249" r="15" stroke-opacity=".7"/><circle cx="306" cy="249" r="22" stroke-opacity=".4"/></g>';
+  return '<svg viewBox="0 0 360 300" width="100%" role="img" aria-label="The PRISM world, ' + PL_CHAPTERS.filter(c => done(c.id)).length + ' of 4 chapters revealed">' + g + '</svg>';
+}
+
+/* ---- hub ---- */
+function openPlayPage() {
+  Pages.push({
+    title: 'Tempo Play', render(body) {
+      const g = playGallery(), cur = plCurrentSeason();
+      const tile = (act, name, sub) => '<button class="plt" data-act="' + act + '"><div><div class="plt-n">' + esc(name) + '</div><div class="plt-s">' + esc(sub) + '</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>';
+      body.innerHTML = plWrap(
+        '<div class="plhero">' + prismWorldSVG(cur || plSeasons()[plSeasons().length - 1] || null) + '<div class="plh-t">Tempo Play</div><div class="plh-s">Optional. Made from your own records; nothing here changes them or asks you to log anything.</div></div>' +
+        tile('play-seasons', 'Seasons', cur ? 'PRISM · day ' + plSeasonDay(cur) + ' of 28' : 'PRISM — a 28-day season that starts when you choose') +
+        tile('play-arcade', 'Arcade', 'Which Week? and Timeline Shuffle') +
+        tile('play-studio', 'Data Art Studio', 'ORBIT, CONSTELLATION and WOVEN from the records you pick') +
+        tile('play-gallery', 'Living Gallery', g.length ? g.length + ' saved piece' + (g.length === 1 ? '' : 's') : 'Saved pieces collect here') +
+        '<div class="plfoot">Progress photos are never used in Tempo Play. No points, no leaderboards, nothing to keep up.</div>');
+    }
+  });
+}
+
+/* ---- Arcade ---- */
+function openArcadePage() {
+  Pages.push({
+    title: 'Arcade', render(body) {
+      const p = playMeta(), t = plToday(), done = p.dailyDone.indexOf(t) >= 0;
+      const chips = [['weight', 'Weight & measurements'], ['symptoms', 'Symptoms'], ['medication', 'Doses']].map(c => '<button class="plc' + (p.sens[c[0]] ? ' on' : '') + '" data-sens="' + c[0] + '" aria-pressed="' + p.sens[c[0]] + '">' + esc(c[1]) + '</button>').join('');
+      body.innerHTML = plWrap(
+        plKick('Daily Drop') + '<div class="plcard"><div class="plt-n">' + (done ? 'Played today' : 'One puzzle from your history') + '</div><div class="plt-s">' + (done ? 'Come back tomorrow for a new one, or keep going in Free Play.' : 'Same puzzle all day. Optional.') + '</div><div class="plrow"><button class="plb" data-pa="daily">' + (done ? 'Play it again' : 'Play today\'s drop') + '</button></div></div>' +
+        plKick('Free Play') +
+        '<button class="plt" data-pa="which"><div><div class="plt-n">Which Week?</div><div class="plt-s">Two past weeks, one question. Guess first.</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>' +
+        '<button class="plt" data-pa="shuffle"><div><div class="plt-n">Timeline Shuffle</div><div class="plt-s">Three real entries. Put them in order.</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>' +
+        plKick('May appear in games') + '<div class="plchips"><span class="plc on" style="cursor:default">Workouts</span><span class="plc on" style="cursor:default">Check-ins</span>' + chips + '</div>' +
+        '<div class="plfoot">Weight, symptoms and doses are off until you switch them on. Every answer comes with "How do we know?" and the entries behind it. There is no score, and wrong guesses cost nothing.</div>');
+      body.querySelectorAll('[data-sens]').forEach(b => b.addEventListener('click', () => { p.sens[b.dataset.sens] = !p.sens[b.dataset.sens]; Store.save(); Pages.render(); }));
+      body.querySelectorAll('[data-pa]').forEach(b => b.addEventListener('click', () => playRoundPage(b.dataset.pa === 'daily' ? { daily: true } : { game: b.dataset.pa })));
+    }
+  });
+}
+function playRoundPage(cfg) {
+  const st = { round: null, pick: null, order: [], revealed: false, note: '', counted: false };
+  const game = () => cfg.daily ? (playRng(playHash('dg' + plToday()))() < 0.5 ? 'which' : 'shuffle') : cfg.game;
+  const build = (g, lens) => { const rng = cfg.daily ? playRng(playHash('daily:' + plToday() + g + JSON.stringify(playMeta().sens))) : Math.random; return g === 'which' ? playMakeWhichWeek({ rng, lens, avoidRecent: !cfg.daily }) : playMakeShuffle({ rng, avoidRecent: !cfg.daily }); };
+  const make = () => {
+    st.pick = null; st.order = []; st.revealed = false; st.note = ''; st.counted = false;
+    let g = game(), r = build(g, cfg.lens);
+    if (!r && cfg.lens) { r = build(g); if (r) st.note = 'Your records could not support a question in this lens yet, so this one draws on another category.'; }
+    if (!r && cfg.daily) { g = g === 'which' ? 'shuffle' : 'which'; r = build(g); }
+    st.round = r;
+  };
+  const finish = () => {
+    if (st.counted) return; st.counted = true;
+    const p = playMeta(); if (!st.round.demo) playNote(st.round.id); p.rounds++;
+    if (cfg.daily && p.dailyDone.indexOf(plToday()) < 0) { p.dailyDone.push(plToday()); p.dailyDone = p.dailyDone.slice(-40); }
+    Store.save(); if (cfg.onReveal) cfg.onReveal(st.round);
+  };
+  make();
+  Pages.push({
+    title: cfg.season ? 'The Signal Room' : cfg.daily ? 'Daily Drop' : (st.round ? (st.round.game === 'which' ? 'Which Week?' : 'Timeline Shuffle') : (cfg.game === 'which' ? 'Which Week?' : 'Timeline Shuffle')), render(body) {
+      const r = st.round;
+      if (!r) {
+        const g = cfg.daily ? 'which' : cfg.game;
+        body.innerHTML = plWrap(plKick('Not enough to play with yet') + '<div class="plcard"><div class="plt-s" style="font-size:14px">' + (g === 'which' ? 'Which Week? needs at least two completed weeks of records that differ on something.' : 'Timeline Shuffle needs three entries at least six days apart, from allowed categories.') + ' Tempo does not invent history to fill the gap.</div><div class="plrow"><button class="plb" data-demo="1">Play a demonstration round</button></div><div class="plt-s" style="margin-top:10px">A demonstration uses invented example data and is labelled as one.</div></div>');
+        body.querySelector('[data-demo]').addEventListener('click', () => { st.round = playDemoRound(g); st.pick = null; st.order = []; st.revealed = false; Pages.render(); });
+        return;
+      }
+      let h = plKick(r.game === 'which' ? 'Which Week?' : 'Timeline Shuffle') + (r.demo ? '<div class="pldemo">Demonstration — invented example data, not your records</div>' : '') + (st.note ? '<div class="plt-s" style="margin:0 0 10px">' + esc(st.note) + '</div>' : '');
+      if (r.game === 'which') {
+        h += '<div class="plq">' + esc(r.q) + '</div>';
+        ['a', 'b'].forEach(k => {
+          const o = r[k], mx = Math.max(r.a.v, r.b.v) || 1, win = r.answer === k;
+          h += '<button class="plopt' + (st.revealed ? (win ? ' win' : '') + (st.pick === k ? ' picked' : '') : '') + '" data-pw="' + k + '"' + (st.revealed ? ' disabled' : '') + '><div class="plo-t">' + esc(playWeekLabel(o.wk)) + '</div>' +
+            (st.revealed ? '<div class="plo-v">' + labFmt(o.v, r.dec) + ' <span>' + esc(r.unit) + '</span></div><div class="plbar"><i style="width:' + Math.round(o.v / mx * 100) + '%"></i></div>' + (st.pick === k ? '<div class="plo-s">your guess</div>' : '') : '<div class="plo-s">Mon – Sun</div>') + '</button>';
+        });
+        if (st.revealed) h += '<div class="plres">' + (st.pick === r.answer ? 'You called it.' : 'The other one, this time.') + '</div><details class="pldet"><summary>How do we know?</summary><p>' + esc(r.a.how) + '</p><p>' + esc(r.b.how) + '</p><p>' + (r.demo ? 'Invented values for demonstration.' : 'These come straight from your entries. Nothing was estimated or filled in.') + '</p></details>';
+      } else {
+        h += '<div class="plq">Tap the three entries in the order they happened, earliest first.</div>';
+        r.items.forEach(it => {
+          const pos = st.order.indexOf(it.id);
+          h += '<button class="plopt" data-ts="' + it.id + '"' + (st.revealed ? ' disabled' : '') + '><div class="plo-t">' + esc(it.title) + '</div>' + (pos >= 0 ? '<span class="plnum">' + (pos + 1) + '</span>' : '') + '</button>';
+        });
+        if (!st.revealed) h += '<div class="plrow"><button class="plb" data-tscheck ' + (st.order.length === 3 ? '' : 'disabled') + '>Check my order</button><button class="plb ghost" data-tsreset ' + (st.order.length ? '' : 'disabled') + '>Reset</button></div>';
+        else {
+          const byId = {}; r.items.forEach(i => { byId[i.id] = i; });
+          const right = r.order.filter((id, i) => st.order[i] === id).length;
+          h += '<div class="plres">' + (right === 3 ? 'All three in place.' : right + ' of 3 in the right place.') + '</div>';
+          r.order.forEach((id, i) => { const it = byId[id]; h += '<div class="plcard"><div class="plo-s">' + (i + 1) + ' · ' + esc(playDateLong(it.k)) + (st.order[i] === id ? ' · ✓' : ' · you had it at ' + (st.order.indexOf(id) + 1)) + '</div><div class="plt-n" style="font-size:15px">' + esc(it.title) + '</div><div class="plt-s">' + esc(it.ctx) + '</div></div>'; });
+          h += '<details class="pldet"><summary>How do we know?</summary><p>' + (r.demo ? 'Invented dates for demonstration.' : 'Each date is the date stored on the entry itself: ' + r.order.map(id => playDateShort(byId[id].k)).join(', ') + '. Nothing was estimated.') + '</p></details>';
+        }
+      }
+      if (st.revealed) {
+        h += '<div class="plrow">' + (cfg.season ? '<button class="plb" data-done>Back to the season</button>' : '<button class="plb" data-again>Another round</button><button class="plb ghost" data-done>Done</button>') + '</div>' + (cfg.season ? '<div class="plt-s" style="margin-top:8px">Season progress does not depend on the answer.</div>' : '');
+      }
+      body.innerHTML = plWrap(h);
+      body.querySelectorAll('[data-pw]').forEach(b => b.addEventListener('click', () => { if (st.revealed) return; st.pick = b.dataset.pw; st.revealed = true; finish(); Pages.render(); }));
+      body.querySelectorAll('[data-ts]').forEach(b => b.addEventListener('click', () => { if (st.revealed) return; const i = st.order.indexOf(b.dataset.ts); if (i >= 0) st.order.splice(i, 1); else if (st.order.length < 3) st.order.push(b.dataset.ts); Pages.render(); }));
+      const chk = body.querySelector('[data-tscheck]'); if (chk) chk.addEventListener('click', () => { if (st.order.length === 3) { st.revealed = true; finish(); Pages.render(); } });
+      const rs = body.querySelector('[data-tsreset]'); if (rs) rs.addEventListener('click', () => { st.order = []; Pages.render(); });
+      const ag = body.querySelector('[data-again]'); if (ag) ag.addEventListener('click', () => { make(); if (!cfg.daily && st.round) { /* title stays */ } Pages.render(); });
+      const dn = body.querySelector('[data-done]'); if (dn) dn.addEventListener('click', () => Pages.pop());
+    }
+  });
+}
+
+/* ---- Seasons ---- */
+function openSeasonsPage() {
+  Pages.push({
+    title: 'Seasons', render(body) {
+      const cur = plCurrentSeason(), past = plSeasons().filter(s => s !== cur).slice().reverse();
+      let h = plKick('Season 01') + '<div class="plhero">' + prismWorldSVG(cur) + '<div class="plh-t">PRISM</div><div class="plh-s">The same stretch of your history, seen through different lenses. Four chapters over 28 days — Day 1, 8, 15 and 22.</div></div>';
+      if (cur) h += '<button class="plt" data-sopen="' + cur.id + '"><div><div class="plt-n">Continue PRISM</div><div class="plt-s">Day ' + plSeasonDay(cur) + ' of 28 · started ' + esc(playDateLong(cur.startKey)) + '</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>';
+      else h += '<div class="plrow"><button class="plb" data-sbegin>Begin PRISM today</button></div><div class="plt-s" style="margin-top:8px">It starts when you press this, not on a calendar date. Skipped chapters stay open. Nothing is lost if you leave it for a while, and nothing depends on your weight, food or medication.</div>';
+      if (past.length) h += plKick('Earlier seasons') + past.map(s => '<button class="plt" data-sopen="' + s.id + '"><div><div class="plt-n">PRISM · ' + esc(playDateShort(s.startKey)) + '</div><div class="plt-s">' + PL_CHAPTERS.filter(c => plChapterDone(s, c)).length + ' of 4 chapters explored</div></div><span class="chev-ico">' + ic('chevR', 15) + '</span></button>').join('');
+      h += '<div class="plfoot">More seasons will come later: ECHO, ORBIT and AFTERIMAGE.</div>';
+      body.innerHTML = plWrap(h);
+      body.querySelectorAll('[data-sopen]').forEach(b => b.addEventListener('click', () => openSeasonPage(b.dataset.sopen)));
+      const bg = body.querySelector('[data-sbegin]');
+      if (bg) bg.addEventListener('click', () => { const s = { id: uid(), key: 'prism', startKey: plToday(), startedAt: nowISO(), lens: null, surprise: false, done: {}, early: {}, art: null }; plSeasons().push(s); Store.save(); Pages.render(); openSeasonPage(s.id); });
+    }
+  });
+}
+function openSeasonPage(id) {
+  Pages.push({
+    title: 'PRISM', render(body) {
+      const s = plSeason(id); if (!s) { body.innerHTML = '<div class="empty">Season not found</div>'; return; }
+      const lens = playLens(s.lens);
+      let h = '<div class="plhero">' + prismWorldSVG(s) + '<div class="plh-t">Day ' + plSeasonDay(s) + ' of 28</div><div class="plh-s">' + (lens ? 'Lens: ' + esc(lens.name) + (s.surprise ? ' (chosen for you)' : '') : 'No lens yet.') + '</div></div>';
+      PL_CHAPTERS.forEach(c => {
+        const open = plChapterOpen(s, c), dn = plChapterDone(s, c), when = playDateLong(labAddDays(s.startKey, c.day - 1));
+        h += '<div class="plcard' + (open ? '' : ' dim') + '"><div class="plo-s">Day ' + c.day + (dn ? ' · explored' : open ? ' · open' : ' · opens ' + esc(when)) + '</div><div class="plt-n">' + esc(c.name) + '</div><div class="plt-s">' + esc(c.blurb) + (c.el ? ' Reveals: ' + esc(c.elName) + '.' : '') + '</div><div class="plrow">' +
+          (open ? '<button class="plb' + (dn ? ' ghost' : '') + '" data-ch="' + c.id + '">' + (dn ? 'Revisit' : 'Enter') + '</button>' : '<button class="plb ghost" data-early="' + c.id + '">Open early</button>') + '</div></div>';
+      });
+      h += '<div class="plfoot">Chapters never expire. Missing a day, or a week, changes nothing here.</div>';
+      body.innerHTML = plWrap(h);
+      body.querySelectorAll('[data-early]').forEach(b => b.addEventListener('click', () => { if (!s.early) s.early = {}; s.early[b.dataset.early] = true; Store.save(); Pages.render(); }));
+      body.querySelectorAll('[data-ch]').forEach(b => b.addEventListener('click', () => plEnterChapter(s, b.dataset.ch)));
+    }
+  });
+}
+function plEnterChapter(s, cid) {
+  if (cid === 'c1') return plLensSheet(s);
+  if (cid !== 'c1' && !s.lens) { toast('Choose your lens first (Day 1)'); return; }
+  if (cid === 'c2') return playRoundPage({ game: 'which', lens: s.lens, season: s.id, onReveal: () => { if (plComplete(s, 'c2')) toast('A new layer opened: Signal beams'); } });
+  if (cid === 'c3') return openMirrorPage(s);
+  if (cid === 'c4') return openStudioPage({ season: s });
+}
+function plLensSheet(s) {
+  const opts = PLAY_LENSES.concat([{ id: 'surprise', name: 'Surprise Me', note: 'Tempo picks one from where your records are richest' }]);
+  Sheet.open({
+    title: 'Choose Your Lens', sub: 'This steers the puzzle, the comparison and the starting data for your artwork. You can change it later.',
+    html: opts.map(o => '<button class="row" style="width:100%;text-align:left" data-lens="' + o.id + '"><div class="rmain"><div class="rtitle">' + esc(o.name) + (s.lens === o.id && !s.surprise ? ' ✓' : '') + '</div><div class="rsub">' + esc(o.note) + '</div></div></button>').join(''),
+    mount(el, close) {
+      el.querySelectorAll('[data-lens]').forEach(b => b.addEventListener('click', () => {
+        const pick = b.dataset.lens, sur = pick === 'surprise'; s.lens = sur ? playResolveSurprise() : pick; s.surprise = sur;
+        const first = plComplete(s, 'c1'); Store.save(); close(); toast(sur ? 'Your lens: ' + playLens(s.lens).name : first ? 'Lens chosen — Facets revealed' : 'Lens changed'); Pages.render();
+      }));
+    }
+  });
+}
+function openMirrorPage(s) {
+  const t = plToday(), P = { A: { from: labAddDays(t, -27), to: t }, B: { from: labAddDays(t, -55), to: labAddDays(t, -28) } };
+  Pages.push({
+    title: 'The Mirror Room', render(body) {
+      const lens = playLens(s.lens), rows = playMirrorRows(s.lens, P.A, P.B), ok = P.A.from <= P.A.to && P.B.from <= P.B.to;
+      const inp = (w, k) => '<input class="field" type="date" data-md="' + w + k + '" value="' + P[w][k] + '" max="' + t + '" style="padding:10px">';
+      let h = plKick('Lens: ' + (lens ? lens.name : '')) + '<div class="plq">Two periods, side by side.</div>' +
+        '<div class="plcard"><div class="plo-s">Period A (mirror, above)</div><div class="plgrid2">' + inp('A', 'from') + inp('A', 'to') + '</div><div class="plo-s" style="margin-top:10px">Period B (reflection, below)</div><div class="plgrid2">' + inp('B', 'from') + inp('B', 'to') + '</div></div>';
+      if (ok) {
+        h += '<div class="plcard">' + playMirrorSVG(P.A, P.B, lens ? lens.vars[0] : 'sleep') + '</div>';
+        rows.forEach(r => {
+          h += '<div class="plcard"><div class="plt-n" style="font-size:15px">' + esc(r.label) + '</div><div class="plcmp"><div><div class="plo-s">A · ' + r.an + ' ' + (r.unit === 'days' ? 'days' : 'logged days') + '</div><div class="plo-v">' + labFmt(r.a, r.dec) + ' <span>' + esc(r.unit) + '</span></div></div><div><div class="plo-s">B · ' + r.bn + ' ' + (r.unit === 'days' ? 'days' : 'logged days') + '</div><div class="plo-v">' + labFmt(r.b, r.dec) + ' <span>' + esc(r.unit) + '</span></div></div></div><div class="plt-s">' + esc(r.verdict) + '</div></div>';
+        });
+        h += '<div class="plfoot">Averages use only days with an entry; a missing day is not a zero. "Day-to-day swing" is the typical spread inside the two periods. This shows what the records contain, not why.</div>';
+      } else h += '<div class="plfoot">Each period needs a start on or before its end.</div>';
+      const any = rows.some(r => r.a != null && r.b != null);
+      h += '<div class="plrow"><button class="plb" data-keep ' + (ok && any ? '' : 'disabled') + '>' + (plChapterDone(s, PL_CHAPTERS[2]) ? 'Reflected already' : 'Keep this reflection') + '</button></div>';
+      body.innerHTML = plWrap(h);
+      body.querySelectorAll('[data-md]').forEach(i => i.addEventListener('change', () => { const w = i.dataset.md[0], k = i.dataset.md.slice(1); if (i.value) P[w][k] = i.value; Pages.render(); }));
+      const kp = body.querySelector('[data-keep]'); if (kp) kp.addEventListener('click', () => { if (plComplete(s, 'c3')) toast('A new layer opened: Mirror plane'); else toast('Already explored'); });
+    }
+  });
+}
+function playMirrorSVG(A, B, varId) {
+  const W = 320, H = 140, mid = H / 2, mk = (per, up) => {
+    const map = labDaily(varId), n = daysBetween(new Date(per.from + 'T12:00:00'), new Date(per.to + 'T12:00:00')) + 1, vals = [];
+    map.forEach((v, k) => { if (k >= per.from && k <= per.to) vals.push([daysBetween(new Date(per.from + 'T12:00:00'), new Date(k + 'T12:00:00')), v]); });
+    return { n, vals, up };
+  };
+  const a = mk(A, true), b = mk(B, false), all = a.vals.concat(b.vals).map(x => x[1]), lo = Math.min.apply(null, all.length ? all : [0]), hi = Math.max.apply(null, all.length ? all : [1]);
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Period A above a midline, period B reflected below"><line x1="0" y1="' + mid + '" x2="' + W + '" y2="' + mid + '" stroke="#F1E9DC" stroke-opacity=".3"/>';
+  [a, b].forEach(p => p.vals.forEach(v => { const x = 6 + v[0] / Math.max(1, p.n) * (W - 12), h = 6 + (hi === lo ? .5 : (v[1] - lo) / (hi - lo)) * (mid - 12), w = Math.max(1.5, (W - 12) / Math.max(1, p.n) * .7); s += '<rect x="' + artF(x) + '" y="' + artF(p.up ? mid - h : mid) + '" width="' + artF(w) + '" height="' + artF(h) + '" fill="' + (p.up ? '#B9A6CC' : '#E3B79F') + '" fill-opacity="' + (p.up ? .95 : .8) + '"/>'; }));
+  return s + '</svg><div class="plo-s" style="margin-top:6px">' + esc(artVarLabel(varId)) + ' · same scale for both periods · gaps are days with no entry</div>';
+}
+
+/* ---- Data Art Studio ---- */
+function plPeriodPreset(id) { const t = plToday(), first = trackingStartKey() || labAddDays(t, -89); return ({ '28': [labAddDays(t, -27), t], '90': [labAddDays(t, -89), t], all: [first, t] })[id] || [labAddDays(t, -27), t]; }
+function plPlayExtras() { return plElements().filter(e => ['facets', 'beams', 'mirror'].indexOf(e) >= 0); }
+function openStudioPage(cfg) {
+  cfg = cfg || {};
+  const t = plToday(), S0 = cfg.season || null;
+  let st;
+  if (cfg.piece) st = { from: cfg.piece.snap.from, to: cfg.piece.snap.to, types: cfg.piece.snap.series.map(s => s.id), prm: Object.assign({}, cfg.piece.prm, { extras: (cfg.piece.prm.extras || []).slice() }), snap: cfg.piece.snap, seasonId: cfg.piece.seasonId || null, parentId: cfg.piece.id, frozen: true };
+  else {
+    const per = S0 ? [S0.startKey, t < plSeasonEnd(S0) ? t : plSeasonEnd(S0)] : plPeriodPreset('28'), types = S0 ? plLensTypes(S0.lens) : ['sleep', 'energy', 'workoutSets'];
+    st = { from: per[0], to: per[1], types, prm: Object.assign(artDefaults(), { extras: plPlayExtras() }), seasonId: S0 ? S0.id : null, parentId: null, frozen: false };
+    st.snap = artSnapshot(st.from, st.to, st.types);
+  }
+  const resnap = () => { st.snap = artSnapshot(st.from, st.to, st.types); st.frozen = false; };
+  Pages.push({
+    title: 'Data Art Studio', render(body) {
+      const prm = st.prm, earned = plPlayExtras(), pal = artPalette(prm.palette);
+      const chips = (key, arr) => arr.map(a => '<button class="plc' + (String(prm[key]) === String(a[0]) ? ' on' : '') + '" data-sa="' + key + '" data-v="' + a[0] + '" aria-pressed="' + (String(prm[key]) === String(a[0])) + '">' + esc(a[1]) + '</button>').join('');
+      const typeChips = ART_VARS.map(id => { const n = [...labDaily(id).keys()].filter(k => k >= st.from && k <= st.to).length, on = st.types.indexOf(id) >= 0, sens = ART_SENSITIVE[id]; return '<button class="plc' + (on ? ' on' : '') + '" data-st="' + id + '" aria-pressed="' + on + '">' + esc(artVarLabel(id)) + ' <small>' + n + 'd' + (sens ? ' · sensitive' : '') + '</small></button>'; }).join('');
+      body.innerHTML = plWrap(
+        (st.frozen && cfg.piece ? '<div class="plt-s" style="margin-bottom:8px">Using the snapshot saved ' + esc(playDateLong(dateKey(st.snap.takenAt))) + '. Changing the period or data types takes a fresh snapshot.</div>' : '') +
+        '<div class="artbox" id="art-prev">' + artRender(prm, st.snap, { uid: 'p' }) + '</div>' +
+        '<div class="plrow"><button class="plb" data-save>Save to Gallery</button><button class="plb ghost" data-png>PNG</button><button class="plb ghost" data-svg>SVG</button></div>' +
+        plKick('Period') + '<div class="plchips">' + [['28', 'Last 28 days'], ['90', 'Last 90 days'], ['all', 'Everything']].map(a => '<button class="plc" data-sp="' + a[0] + '">' + a[1] + '</button>').join('') + '</div><div class="plgrid2"><input class="field" type="date" data-sd="from" value="' + st.from + '" max="' + t + '"><input class="field" type="date" data-sd="to" value="' + st.to + '" max="' + t + '"></div>' +
+        plKick('Records to include (1–5)') + '<div class="plchips">' + typeChips + '</div><div class="plt-s">Sensitive categories are only drawn because you picked them. Days without an entry stay empty.</div>' +
+        plKick('Composition') + '<div class="plchips">' + chips('system', ART_SYSTEMS.map(s => [s.id, s.name])) + '</div><div class="plt-s">' + esc(ART_SYSTEMS.find(s => s.id === prm.system).note) + '</div>' +
+        plKick('Palette') + '<div class="plchips">' + ART_PALETTES.map(p => '<button class="plc pal' + (prm.palette === p.id ? ' on' : '') + '" data-sa="palette" data-v="' + p.id + '" aria-pressed="' + (prm.palette === p.id) + '"><i style="background:' + p.bg + '"></i><i style="background:' + p.c[0] + '"></i><i style="background:' + p.c[1] + '"></i><i style="background:' + p.c[2] + '"></i>' + esc(p.name) + '</button>').join('') + '</div>' +
+        plKick('Style') + '<label class="plsl">Density <input type="range" min="1" max="5" step="1" value="' + prm.density + '" data-range="density"></label>' +
+        '<div class="plo-s">Symmetry (decoration only)</div><div class="plchips">' + chips('symmetry', [[0, 'None'], [2, '2'], [4, '4'], [6, '6']]) + '</div>' +
+        '<div class="plo-s">Texture</div><div class="plchips">' + chips('texture', [['none', 'None'], ['grain', 'Grain'], ['lines', 'Lines']]) + '</div>' +
+        '<div class="plo-s">Framing</div><div class="plchips">' + chips('frame', [['none', 'None'], ['line', 'Line'], ['double', 'Double'], ['matte', 'Matte']]) + '</div>' +
+        '<div class="plo-s">Layering</div><div class="plchips">' + chips('layers', [['single', 'Single'], ['layered', 'Layered'], ['deep', 'Deep']]) + '</div>' +
+        (earned.length && prm.system === 'orbit' ? '<div class="plo-s">Season layers you have opened</div><div class="plchips">' + earned.map(e => '<button class="plc' + (prm.extras.indexOf(e) >= 0 ? ' on' : '') + '" data-ex="' + e + '" aria-pressed="' + (prm.extras.indexOf(e) >= 0) + '">' + esc({ facets: 'Facets', beams: 'Signal beams', mirror: 'Mirror plane' }[e]) + '</button>').join('') + '</div>' : '') +
+        '<div class="plchips" style="margin-top:12px"><button class="plc' + (prm.title ? ' on' : '') + '" data-tg="title" aria-pressed="' + prm.title + '">Title</button><button class="plc' + (prm.legend ? ' on' : '') + '" data-tg="legend" aria-pressed="' + prm.legend + '">Data legend</button><button class="plc" data-shuf>New arrangement</button></div>' +
+        '<input class="field" type="text" data-name placeholder="Title (optional)" value="' + esc(prm.name) + '" style="margin-top:10px">' +
+        '<details class="pldet" open><summary>How the records shape this piece</summary>' + artMappingText(prm, st.snap).map(l => '<p>' + esc(l) + '</p>').join('') + '</details>');
+      const prev = () => { const el = body.querySelector('#art-prev'); if (el) el.innerHTML = artRender(st.prm, st.snap, { uid: 'p' }); };
+      body.querySelectorAll('[data-sa]').forEach(b => b.addEventListener('click', () => { const k = b.dataset.sa, v = b.dataset.v; prm[k] = (k === 'symmetry') ? +v : v; Pages.render(); }));
+      body.querySelectorAll('[data-ex]').forEach(b => b.addEventListener('click', () => { const i = prm.extras.indexOf(b.dataset.ex); if (i >= 0) prm.extras.splice(i, 1); else prm.extras.push(b.dataset.ex); Pages.render(); }));
+      body.querySelectorAll('[data-tg]').forEach(b => b.addEventListener('click', () => { prm[b.dataset.tg] = !prm[b.dataset.tg]; Pages.render(); }));
+      body.querySelectorAll('[data-st]').forEach(b => b.addEventListener('click', () => { const i = st.types.indexOf(b.dataset.st); if (i >= 0) { if (st.types.length > 1) st.types.splice(i, 1); else return toast('Keep at least one'); } else { if (st.types.length >= 5) return toast('Up to five at a time'); st.types.push(b.dataset.st); } resnap(); Pages.render(); }));
+      body.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => { const p = plPeriodPreset(b.dataset.sp); st.from = p[0]; st.to = p[1]; resnap(); Pages.render(); }));
+      body.querySelectorAll('[data-sd]').forEach(i => i.addEventListener('change', () => { if (!i.value) return; st[i.dataset.sd] = i.value; if (st.from > st.to) { toast('Start must be on or before the end'); st.from = st.to; } resnap(); Pages.render(); }));
+      const rg = body.querySelector('[data-range]'); rg.addEventListener('input', () => { prm.density = +rg.value; prev(); });
+      rg.addEventListener('change', () => Pages.render());
+      body.querySelector('[data-name]').addEventListener('input', e => { prm.name = e.target.value; prev(); });
+      body.querySelector('[data-shuf]').addEventListener('click', () => { prm.variant = (prm.variant || 1) + 1; Pages.render(); });
+      body.querySelector('[data-save]').addEventListener('click', () => {
+        if (!st.snap.series.some(s => s.days.length)) return toast('Nothing recorded in this period for those types');
+        const dflt = prm.name || (ART_SYSTEMS.find(s => s.id === prm.system).name.toLowerCase().replace(/^./, c => c.toUpperCase()) + ' · ' + playDateShort(st.from) + ' – ' + playDateShort(st.to));
+        openTextSheet('Name this piece', dflt, name => {
+          const piece = { id: uid(), name, prm: JSON.parse(JSON.stringify(prm)), snap: JSON.parse(JSON.stringify(st.snap)), seasonId: st.seasonId, parentId: st.parentId, createdAt: nowISO(), coll: '' };
+          piece.prm.name = name; playGallery().push(piece);
+          const sea = st.seasonId && plSeason(st.seasonId); if (sea) { sea.art = piece.id; plComplete(sea, 'c4'); }
+          Store.save(); toast('Saved to your Gallery'); st.parentId = piece.id;
+        });
+      });
+      body.querySelector('[data-png]').addEventListener('click', () => playExport(prm, st.snap, 'png'));
+      body.querySelector('[data-svg]').addEventListener('click', () => playExport(prm, st.snap, 'svg'));
+    }
+  });
+}
+function playSaveBlob(filename, blob) {
+  const go = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800); };
+  if (navigator.share && navigator.canShare) { try { const f = new File([blob], filename, { type: blob.type }); if (navigator.canShare({ files: [f] })) { navigator.share({ files: [f], title: filename }).catch(e => { if (!e || e.name !== 'AbortError') go(); }); return; } } catch (e) { /* fall through */ } }
+  go();
+}
+function playExport(prm, snap, kind) {
+  const name = plPlain(prm.name || prm.system).replace(/[^\w\- ]+/g, '').replace(/\s+/g, '-').toLowerCase() || 'tempo-art', file = 'tempo-' + name + '-' + stamp();
+  if (kind === 'svg') { playSaveBlob(file + '.svg', new Blob([artRender(prm, snap, { uid: 'e' })], { type: 'image/svg+xml' })); return; }
+  const svg = artRender(prm, snap, { uid: 'e', w: 2400 }), img = new Image();
+  img.onload = () => { const c = document.createElement('canvas'); c.width = 2400; c.height = 3000; c.getContext('2d').drawImage(img, 0, 0, 2400, 3000); c.toBlob(b => { if (b) playSaveBlob(file + '.png', b); else toast('Could not make the image'); }, 'image/png'); };
+  img.onerror = () => toast('Could not make the image');
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+/* ---- Living Gallery ---- */
+function openGalleryPage() {
+  Pages.push({
+    title: 'Living Gallery', render(body) {
+      const g = playGallery().slice().reverse();
+      if (!g.length) { body.innerHTML = plWrap('<div class="plcard"><div class="plt-n">Nothing here yet</div><div class="plt-s">Pieces you save from the Data Art Studio collect here. They are frozen at the moment you save them.</div><div class="plrow"><button class="plb" data-act="play-studio">Open the Studio</button></div></div>'); return; }
+      const groups = new Map();
+      g.forEach(p => { const s = p.seasonId && plSeason(p.seasonId); const k = p.coll ? p.coll : s ? 'PRISM · ' + playDateShort(s.startKey) : 'Studio'; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(p); });
+      let h = '';
+      groups.forEach((arr, k) => {
+        h += plKick(k) + '<div class="plgal">' + arr.map((p, i) => '<button class="plthumb" data-art="' + p.id + '"><div class="artbox">' + artRender(p.prm, p.snap, { thumb: true, uid: 't' + p.id, w: 300 }) + '</div><div class="plo-t">' + esc(p.name) + '</div><div class="plo-s">' + esc(ART_SYSTEMS.find(s => s.id === p.prm.system).name) + ' · ' + esc(playDateShort(p.snap.from)) + ' – ' + esc(playDateShort(p.snap.to)) + '</div></button>').join('') + '</div>';
+      });
+      body.innerHTML = plWrap(h);
+      body.querySelectorAll('[data-art]').forEach(b => b.addEventListener('click', () => openArtViewer(b.dataset.art)));
+    }
+  });
+}
+function openArtViewer(id) {
+  Pages.push({
+    title: 'Piece', render(body) {
+      const p = playGallery().find(x => x.id === id); if (!p) { body.innerHTML = '<div class="empty">Not found</div>'; return; }
+      const sys = ART_SYSTEMS.find(s => s.id === p.prm.system);
+      body.innerHTML = plWrap('<div class="artbox">' + artRender(p.prm, p.snap, { uid: 'v' }) + '</div><div class="plt-n" style="margin-top:12px">' + esc(p.name) + '</div><div class="plt-s">' + esc(sys.name) + ' · ' + esc(playDateLong(p.snap.from)) + ' – ' + esc(playDateLong(p.snap.to)) + (p.coll ? ' · ' + esc(p.coll) : '') + '</div>' +
+        '<div class="plchips" style="margin-top:12px"><button class="plb" data-v="full">Full screen</button><button class="plb ghost" data-v="remix">Remix</button><button class="plb ghost" data-v="newver">New version with current data</button><button class="plb ghost" data-v="cmp">Compare</button></div>' +
+        '<div class="plchips"><button class="plb ghost" data-v="png">PNG</button><button class="plb ghost" data-v="svg">SVG</button><button class="plb ghost" data-v="ren">Rename</button><button class="plb ghost" data-v="coll">Group</button><button class="plb ghost" data-v="del">Delete</button></div>' +
+        '<details class="pldet"><summary>Data mapping</summary>' + artMappingText(p.prm, p.snap).map(l => '<p>' + esc(l) + '</p>').join('') + '</details>');
+      body.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => {
+        const a = b.dataset.v;
+        if (a === 'full') plFullScreen(p);
+        else if (a === 'remix') openStudioPage({ piece: p });
+        else if (a === 'newver') { const snap = artSnapshot(p.snap.from, p.snap.to, p.snap.series.map(s => s.id)); openStudioPage({ piece: Object.assign({}, p, { snap, prm: Object.assign({}, p.prm, { name: '' }) }) }); toast('Fresh data loaded — save it as a new piece'); }
+        else if (a === 'cmp') plCompareSheet(p);
+        else if (a === 'png' || a === 'svg') playExport(p.prm, p.snap, a);
+        else if (a === 'ren') openTextSheet('Rename', p.name, v => { p.name = v; p.prm.name = v; Store.save(); Pages.render(); });
+        else if (a === 'coll') openTextSheet('Group (e.g. a season or theme)', p.coll || '', v => { p.coll = v; Store.save(); Pages.render(); });
+        else if (a === 'del') confirmDlg('Delete this piece?', 'It is removed from your Gallery. Your records are not affected.', 'Delete', true).then(yes => { if (yes) { const m = Store.state.meta; m.playGallery = playGallery().filter(x => x.id !== id); plSeasons().forEach(s => { if (s.art === id) s.art = null; }); Store.save(); Pages.pop(); } });
+      }));
+    }
+  });
+}
+function plFullScreen(p) {
+  const wrap = document.createElement('div'); wrap.className = 'phfull plfull';
+  wrap.innerHTML = '<button class="phclose" aria-label="Close">' + ic('x', 20) + '</button><div class="artbox">' + artRender(p.prm, p.snap, { uid: 'f' }) + '</div>';
+  $('#overlays').appendChild(wrap); wrap.querySelector('.phclose').addEventListener('click', () => wrap.remove());
+}
+function plCompareSheet(p) {
+  const others = playGallery().filter(x => x.id !== p.id).sort((a, b) => (b.snap.from === p.snap.from && b.snap.to === p.snap.to) - (a.snap.from === p.snap.from && a.snap.to === p.snap.to));
+  if (!others.length) return toast('Save a second piece to compare');
+  Sheet.open({
+    title: 'Compare with…', sub: 'Pieces of the same period are listed first.',
+    html: others.map(o => '<button class="row" style="width:100%;text-align:left" data-o="' + o.id + '"><div class="rmain"><div class="rtitle">' + esc(o.name) + '</div><div class="rsub">' + esc(ART_SYSTEMS.find(s => s.id === o.prm.system).name) + ' · ' + esc(playDateShort(o.snap.from)) + ' – ' + esc(playDateShort(o.snap.to)) + (o.snap.from === p.snap.from && o.snap.to === p.snap.to ? ' · same period' : '') + '</div></div></button>').join(''),
+    mount(el, close) { el.querySelectorAll('[data-o]').forEach(b => b.addEventListener('click', () => { const o = playGallery().find(x => x.id === b.dataset.o); close(); setTimeout(() => plComparePage(p, o), 320); })); }
+  });
+}
+function plComparePage(a, b) {
+  Pages.push({
+    title: 'Compare', render(body) {
+      const same = a.snap.from === b.snap.from && a.snap.to === b.snap.to;
+      body.innerHTML = plWrap('<div class="plt-s" style="margin-bottom:10px">' + (same ? 'Same period, two treatments.' : 'Different periods.') + '</div><div class="plgrid2">' + [a, b].map((p, i) => '<div><div class="artbox">' + artRender(p.prm, p.snap, { thumb: true, uid: 'c' + i, w: 400 }) + '</div><div class="plo-t" style="margin-top:8px">' + esc(p.name) + '</div><div class="plo-s">' + esc(ART_SYSTEMS.find(s => s.id === p.prm.system).name) + ' · ' + esc(ART_PALETTES.find(x => x.id === p.prm.palette).name) + '</div></div>').join('') + '</div>' +
+        [a, b].map(p => '<details class="pldet"><summary>Data mapping — ' + esc(p.name) + '</summary>' + artMappingText(p.prm, p.snap).map(l => '<p>' + esc(l) + '</p>').join('') + '</details>').join(''));
+    }
+  });
+}
 
 /* -------- Calendar Export (.ics) -------- */
 function openIcsExportPage() {
@@ -8036,6 +8905,11 @@ const Handlers = {
   'open-periodlog': () => openPeriodLogPage(),
   'open-mypattern': () => openMyPatternPage(),
   'open-lab': () => openInsightsPage('lab'),
+  'open-play': () => openPlayPage(),
+  'play-seasons': () => openSeasonsPage(),
+  'play-arcade': () => openArcadePage(),
+  'play-studio': () => openStudioPage(),
+  'play-gallery': () => openGalleryPage(),
   'open-forecast': () => openForecastPage(),
   'open-bodystudio': () => openBodyStudioPage(),
   'open-recomp': () => openRecompPage(),
