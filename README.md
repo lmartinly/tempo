@@ -78,6 +78,10 @@ Tools → *Forecast Lab*. A dynamic energy-balance simulation, not a calorie cal
 - **Outputs:** projection with a range from the unsettled assumptions (not a statistical interval), side-by-side scenarios, predicted vs. logged weights, a sensitivity chart and an explanation of what was and wasn't verified.
 - The 2025 machine-learning paper is a classifier and is not used for the curve; the explanation screen says why.
 
+### Forecast Lab — forward from today (2.1.1)
+
+A new forecast starts **today** from your current weight (and, when you have at least 7 logged calorie days, uses "From my check-ins"). The projection leads the page: a headline with the end weight, the span, the end date and BMI, then **Graph / Table**. The table lists every day (date, weight, day-to-day change, plus your logged weigh-in where there is one) with today highlighted. A run that ends before today says so and offers **Project forward from today**.
+
 ### Forecast Lab — calories from check-ins (2.0)
 
 A third scenario, **From my check-ins**, runs the model on the calories you already log in the daily check-in: a logged day uses its own value, a past day without one uses the logged average, and days after today continue at the average of the last 14 logged days. It needs at least 7 logged days from the start date. Saved scenarios freeze the values they used.
@@ -90,3 +94,25 @@ Tools → *Tempo Play*. Visually separate from the tracking screens; nothing in 
 - **Arcade.** *Which Week?* and *Timeline Shuffle*, built only from real entries (never invented; an empty state offers a clearly labelled demonstration). Daily Drop is one featured puzzle; Free Play is unlimited. Weight, symptoms and doses stay out unless switched on. Every result has "How do we know?" with the source dates. No score; wrong guesses cost nothing.
 - **Data Art Studio.** ORBIT, CONSTELLATION and WOVEN. Choose period, record types, palette, density, symmetry (decoration only), texture, framing, layering, title and legend. Days with no entry stay empty; colour and style never depend on how the numbers turned out. PNG (2400 × 3000) and SVG export.
 - **Living Gallery.** Saved pieces are frozen snapshots of the values they used, so later logging never changes them. Rename, group, remix, compare, view the data mapping, full screen, export, or make a new version from current data. Play state is part of the JSON backup.
+
+## Language (English · Türkçe)
+
+English is the default. Settings → **Language / Dil** switches the whole app to Turkish (and back); the page reloads once.
+The choice is kept on that device only (it is not part of backups or Drive sync), so two people can use the same app in different languages.
+Turkish is a display layer: the text is translated from a dictionary embedded in `index.html` (parsed only when Turkish is on), so your data, exports and backups are never changed. Dates and weekdays follow Turkish too. The doctor summary was already in Turkish and stays that way.
+
+## Version 2.2.0 — personality layer
+
+An English-only voice (Tempo's responses, Little Praise, personalised moments, small hidden surprises, the Review of You,
+the Archive of Small Things, Margin Notes and an occasional visitor) was added on top of the existing app.
+
+- **Language gate:** nothing of it runs, speaks, counts or stores anything when the app language is Turkish.
+- **Its state** lives separately in the data under `meta.eggs`. It is included in backups and restores, and is never part of Drive sync.
+  Things that were already true when you updated are recorded silently, so past accomplishments are not replayed as news.
+- **Backup and storage wording** now says exactly where data lives: on this device, with an optional copy in your own Google Drive.
+- Service-worker behaviour is unchanged (only the cache name was bumped to `tempo-v2.2.0`).
+
+`dev/` holds what is needed to rebuild and re-test (not required to run the app): `build.py` + `index.orig.html` (v2.1.2) + `pers/` (the personality
+modules, styles and Turkish dictionary additions) rebuild `index.html`; `tests/` are the Playwright suites
+(`APP=/path/to/index.html BACKUP=/path/to/backup.json node tests/t_phase3.js`). Run `python3 build.py` inside `dev/`
+to regenerate `../index.html` (set `OUT` if you want it elsewhere).
