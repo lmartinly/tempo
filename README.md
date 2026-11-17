@@ -101,18 +101,23 @@ English is the default. Settings → **Language / Dil** switches the whole app t
 The choice is kept on that device only (it is not part of backups or Drive sync), so two people can use the same app in different languages.
 Turkish is a display layer: the text is translated from a dictionary embedded in `index.html` (parsed only when Turkish is on), so your data, exports and backups are never changed. Dates and weekdays follow Turkish too. The doctor summary was already in Turkish and stays that way.
 
-## Version 2.2.0 — personality layer
+## Version 2.2.1
 
-An English-only voice (Tempo's responses, Little Praise, personalised moments, small hidden surprises, the Review of You,
-the Archive of Small Things, Margin Notes and an occasional visitor) was added on top of the existing app.
+An English-only personality layer sits on top of the tracker (since 2.2.0); 2.2.1 refines it and fixes the rough edges.
 
-- **Language gate:** nothing of it runs, speaks, counts or stores anything when the app language is Turkish.
-- **Its state** lives separately in the data under `meta.eggs`. It is included in backups and restores, and is never part of Drive sync.
-  Things that were already true when you updated are recorded silently, so past accomplishments are not replayed as news.
-- **Backup and storage wording** now says exactly where data lives: on this device, with an optional copy in your own Google Drive.
-- Service-worker behaviour is unchanged (only the cache name was bumped to `tempo-v2.2.0`).
-
-`dev/` holds what is needed to rebuild and re-test (not required to run the app): `build.py` + `index.orig.html` (v2.1.2) + `pers/` (the personality
-modules, styles and Turkish dictionary additions) rebuild `index.html`; `tests/` are the Playwright suites
-(`APP=/path/to/index.html BACKUP=/path/to/backup.json node tests/t_phase3.js`). Run `python3 build.py` inside `dev/`
-to regenerate `../index.html` (set `OUT` if you want it elsewhere).
+- **Language gate:** nothing of the personality layer runs, speaks, counts or stores anything when the app language is Turkish.
+- **Its state** lives separately from your records under `meta.eggs`; it travels with backups and restores, and things that were
+  already true when you updated are recorded silently, so past accomplishments are never replayed as news.
+- **Voice:** one-time moments are heard once; routine lines keep their cadence (every 4th / 6th eligible occasion, at most 2 / 1 a day),
+  never repeat back to back, and a functional notification always goes first. A line that was suppressed is never counted as shown.
+- **Readable messages:** short lines stay ~8 s, long ones 12 s or more (timers run only while the app is visible); meaningful praise stays
+  until dismissed; every message can be dismissed with a tap that does not press whatever is underneath.
+- **Recent Notes** (Settings → About): the personality messages that were actually shown, newest first; clearable; never contains health details.
+- **Backup reminder:** never shows `undefined` / `NaN`; wording follows the real state (never backed up, manual, Drive enabled, outdated) and
+  stops claiming "only on this device" once a Google Drive copy may exist.
+- **Five Swatches** is a temporary visual preview: it never saves an intermediate theme and always ends on the theme you chose.
+- **Wrapped:** editorial captions (English only) written from verifiable facts; imported check-ins with a shared placeholder time never produce
+  time-of-day claims.
+- **Records / achievements:** *Current run* sits next to *Best run* (calendar days, no shaming). Early Bird and the 21-day protein streak are gone;
+  *Measured* now counts distinct measurement sessions with no deadline. Existing progress is migrated silently.
+- Service worker behaviour is unchanged (cache name `tempo-v2.2.1`).
